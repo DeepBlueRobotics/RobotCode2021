@@ -9,8 +9,9 @@ public class Shooter implements Subsystem {
         
     }
 
-    public void setTargetSpeed() {
-        // get speed necessary to hit target from limelight
+    
+    public void setTargetSpeed(double speed) {
+        this.targetSpeed = speed;
     }
 
     public double getTargetSpeed() {

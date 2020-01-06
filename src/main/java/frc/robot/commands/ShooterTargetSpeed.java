@@ -10,4 +10,20 @@ public class ShooterTargetSpeed extends CommandBase {
     determine whether y-value is within inner port 
     put to SmartDashboard
     */
+    private double limelightx;
+    private double limelighty;
+    private double speed;
+    private Shooter shooter;
+
+    public ShooterTargetSpeed(Shooter shooter) {
+        this.shooter = shooter;
+    }
+
+    public ShooterTargetSpeed() {
+	}
+
+    //math goes here to get speed from limelights;
+    public void TargetSpeed() {
+        shooter.setTargetSpeed(speed);
+    }
 }
