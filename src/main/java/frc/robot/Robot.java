@@ -13,6 +13,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.ShooterTargetSpeed;
+import frc.robot.subsystems.Shooter;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -26,12 +30,16 @@ public class Robot extends TimedRobot {
   private final Joystick m_stick = new Joystick(0);
   private final Timer m_timer = new Timer();
 
+  private static Shooter shooter;
+  private static CommandScheduler scheduler;
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
   @Override
   public void robotInit() {
+    scheduler.setDefaultCommand(shooter, new ShooterTargetSpeed());
   }
 
   /**
