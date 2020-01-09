@@ -10,12 +10,16 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.lib.Limelight;
 import frc.robot.subsystems.Drivetrain;
 
 public class TeleopDrive extends CommandBase {
   Drivetrain dt;
   Joystick leftJoy, rightJoy;
-
+  Limelight lime;
+  private Limelight.Mode limelightMode = Limelight.Mode.STEER;
+  private double adjustment = 0;
+  private double minError = 0.05;   // TODO: Test minimum values
   double prevSpeed = 0, prevLeft = 0, prevRight = 0;
 
   double outreachSpeed = 0.3;
@@ -26,8 +30,9 @@ public class TeleopDrive extends CommandBase {
    * @param dt the Drivetrain object to use, passing it in is useful for testing
    *           purposes
    */
-  public TeleopDrive(Drivetrain dt, Joystick leftJoy, Joystick rightJoy) {
+  public TeleopDrive(Drivetrain dt, Limelight lime, Joystick leftJoy, Joystick rightJoy) {
     this.dt = dt;
+    this.lime = lime;
     this.leftJoy = leftJoy;
     this.rightJoy = rightJoy;
     addRequirements(dt);
@@ -38,11 +43,15 @@ public class TeleopDrive extends CommandBase {
 
     @Override
     public void execute() {
+      if (SmartDashboard.getBoolean("Using Limelight", false)) {
+        autoAlign();
+      } else {
         if (SmartDashboard.getBoolean("Arcade Drive", true)) {
             arcadeDrive();
         } else {
             tankDrive();
         }
+    }
     }
 
   private void arcadeDrive() {
@@ -146,7 +155,29 @@ public class TeleopDrive extends CommandBase {
       }
     
   }
-
+  private void autoAlign() {
+    if (limelightMode == Limelight.Mode.DIST) {
+        adjustment = lime.distanceAssist();
+        dt.drive(adjustment, adjustment);
+        if (Math.abs(adjustment) < minError)  {
+          SmartDashboard.putBoolean("Finished Aligning", true);
+        }
+      }
+      else if (limelightMode == Limelight.Mode.STEER) {
+        adjustment = lime.steeringAssist();
+        dt.drive(adjustment, -adjustment);
+        if (Math.abs(adjustment) < minError)  {
+          SmartDashboard.putBoolean("Finished Aligning", true);
+        }
+      } else {
+        double[] params = lime.autoTarget();
+        dt.drive(params[0], params[1]);
+        double maxInput = Math.max(Math.abs(params[0]), Math.abs(params[1]));
+        if (maxInput < minError)  {
+          SmartDashboard.putBoolean("Finished Aligning", true);
+        }
+      }
+  }
 
     @Override
     public boolean isFinished() {
