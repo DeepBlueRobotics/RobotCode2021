@@ -30,13 +30,6 @@ public class Drivetrain extends SubsystemBase {
   private Encoder leftEnc, rightEnc;
   private AHRS ahrs;
 
-  private double maxVoltage;
-
-  private double flKV, flKA, flVI;
-  private double frKV, frKA, frVI;
-  private double blKV, blKA, blVI;
-  private double brKV, brKA, brVI;
-
   private boolean wobbleDone;
 
   public Drivetrain(WPI_TalonSRX leftMaster, BaseMotorController leftSlave1, BaseMotorController leftSlave2,
@@ -68,7 +61,6 @@ public class Drivetrain extends SubsystemBase {
 
     this.ahrs = ahrs;
 
-    maxVoltage = 12.0;
     wobbleDone = false;
   }
 
@@ -131,58 +123,4 @@ public class Drivetrain extends SubsystemBase {
     return 13 * 12;
   }
 
-  public void setMaxVoltage(double volts) {
-    maxVoltage = volts;
-  }
-
-  public double getMaxVoltage() {
-    return maxVoltage;
-  }
-
-  public void setVoltageCompensation(double volts) {
-    ErrorCode ecVoltSat = leftMaster.configVoltageCompSaturation(volts, 10);
-    RobotMap.catchError(ecVoltSat);
-
-    ecVoltSat = rightMaster.configVoltageCompSaturation(volts, 10);
-    RobotMap.catchError(ecVoltSat);
-
-    leftMaster.enableVoltageCompensation(true);
-    rightMaster.enableVoltageCompensation(true);
-  }
-
-  public void disableVoltageCompensation() {
-    leftMaster.enableVoltageCompensation(false);
-    rightMaster.enableVoltageCompensation(false);
-  }
-
-
-  public double calculateVoltage(Direction dir, double velocity, double acceleration) {
-    /*System.out.println("Velocity: " + velocity + ", Acceleration: " + acceleration);
-    System.out.println(flKV + "," + flKA + "," + flVI);
-    System.out.println(frKV + "," + frKA + "," + frVI);
-    System.out.println(blKV + "," + blKA + "," + blVI);
-    System.out.println(brKV + "," + brKA + "," + brVI);*/
-
-    if (dir == Direction.FL) {
-      return flKV * velocity + flKA * acceleration + flVI;
-    } else if (dir == Direction.FR) {
-      return frKV * velocity + frKA * acceleration + frVI;
-    } else if (dir == Direction.BL) {
-      return blKV * velocity + blKA * acceleration - blVI;
-    } else {
-      return brKV * velocity + brKA * acceleration - brVI;
-    }
-  }
-
-  public double calculateAcceleration(Direction dir, double velocity, double voltage) {
-    if (dir == Direction.FL) {
-      return (voltage - flKV * velocity - flVI) / flKA;
-    } else if (dir == Direction.FR) {
-      return (voltage - frKV * velocity - frVI) / frKA;
-    } else if (dir == Direction.BL) {
-      return (voltage - blKV * velocity - blVI) / blKA;
-    } else {
-      return (voltage - brKV * velocity + brVI) / brKA;
-    }
-  }
 }
