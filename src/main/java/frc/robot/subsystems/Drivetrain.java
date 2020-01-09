@@ -81,7 +81,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public boolean isStalled() {
-    return leftMaster.getOutputCurrent() >= 30 || rightMaster.getOutputCurrent() >= 30;
+    return leftMaster.getStatorCurrent() >= 30 || rightMaster.getStatorCurrent() >= 30;
   }
 
   public double getEncDist(Side type) {
