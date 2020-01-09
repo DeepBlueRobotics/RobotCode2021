@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.lib.Limelight;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -24,6 +25,7 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class Robot extends TimedRobot {
   private Drivetrain dt;
+  private Limelight lime;
   private Timer timer;
   private OI oi;
 
@@ -33,6 +35,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    lime = new Limelight();
     SmartDashboard.putBoolean("Arcade Drive", true);
     dt = new Drivetrain(RobotMap.leftMaster, RobotMap.leftSlave1, RobotMap.leftSlave2, RobotMap.rightMaster,
         RobotMap.rightSlave1, RobotMap.rightSlave2, RobotMap.leftEnc, RobotMap.rightEnc, RobotMap.ahrs);
@@ -65,7 +68,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    dt.setDefaultCommand((Command) new TeleopDrive(dt, oi.leftJoy, oi.rightJoy));
+    dt.setDefaultCommand((Command) new TeleopDrive(dt, lime, oi.leftJoy, oi.rightJoy));
   }
 
   /**

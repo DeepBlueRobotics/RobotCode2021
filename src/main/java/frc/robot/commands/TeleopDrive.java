@@ -165,7 +165,8 @@ public class TeleopDrive extends CommandBase {
       }
       else if (limelightMode == Limelight.Mode.STEER) {
         adjustment = lime.steeringAssist();
-        dt.drive(adjustment, -adjustment);
+        double[] charParams = dt.characterizedDrive(adjustment, -adjustment);
+        dt.drive(charParams[0], -charParams[1]);
         if (Math.abs(adjustment) < minError)  {
           SmartDashboard.putBoolean("Finished Aligning", true);
         }
