@@ -29,8 +29,8 @@ public class Drivetrain extends SubsystemBase {
   private WPI_TalonSRX leftMaster, rightMaster;
   private Encoder leftEnc, rightEnc;
   private AHRS ahrs;
-
-  private boolean wobbleDone;
+  private double kVolt, kVel, kAccel;
+  private double maxAccel;
 
   public Drivetrain(WPI_TalonSRX leftMaster, BaseMotorController leftSlave1, BaseMotorController leftSlave2,
       WPI_TalonSRX rightMaster, BaseMotorController rightSlave1, BaseMotorController rightSlave2, Encoder leftEnc,
@@ -61,7 +61,10 @@ public class Drivetrain extends SubsystemBase {
 
     this.ahrs = ahrs;
 
-    wobbleDone = false;
+    kVolt = 0.0;
+    kVel = 0.0;
+    kAccel = 0.0;
+    maxAccel = 0.0;
   }
 
   public void drive(double left, double right) {
@@ -110,17 +113,28 @@ public class Drivetrain extends SubsystemBase {
   public double getGyroAngle() {
     return ahrs.getYaw();
   }
-
-  public void setWobbleDone(boolean set) {
-    wobbleDone = set;
-  }
-
-  public boolean wobbleDone() {
-    return wobbleDone;
-  }
   
   public double getMaxSpeed() { // Return must be adjusted in the future;
     return 13 * 12;
   }
 
+  // Characterizes the left/right motor values.
+  // Left and right are both values from -1 to 1.
+  public double[] characterizedDrive(double left, double right) {
+    double dt = 0.02;   // Characterized Drive is called 50 times a second
+    double actualLeftVel = getEncRate(Side.LEFT);
+    double actualRightVel = getEncRate(Side.RIGHT);
+
+    double desiredLeftVel = this.getMaxSpeed() * left;
+    double desiredRightVel = this.getMaxSpeed() * right;
+
+    double leftAccel = (desiredLeftVel - actualLeftVel) / dt;
+    double rightAccel = (desiredRightVel - actualRightVel) / dt;
+    leftAccel = Math.copySign(1.0, leftAccel) * Math.min(Math.abs(leftAccel), maxAccel);
+    rightAccel = Math.copySign(1.0, rightAccel) * Math.min(Math.abs(rightAccel), maxAccel);
+
+    double newLeft = kVolt + kVel * actualLeftVel + kAccel * leftAccel;
+    double newRight = kVolt + kVel * actualRightVel + kAccel * rightAccel;
+    return new double[]{newLeft, newRight};
+  }
 }
