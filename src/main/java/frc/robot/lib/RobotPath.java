@@ -5,7 +5,6 @@ import java.io.IOException;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.SpeedController;
 import frc.robot.subsystems.Drivetrain;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.PathfinderFRC;
