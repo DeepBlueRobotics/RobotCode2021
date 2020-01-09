@@ -40,6 +40,10 @@ public class Robot extends TimedRobot {
     oi=new OI(dt);
   }
 
+  @Override
+  public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+  }
   /**
    * This function is run once each time the robot enters autonomous mode.
    */
