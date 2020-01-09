@@ -7,21 +7,17 @@
 
 package frc.robot.subsystems;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends SubsystemBase {
   public enum Side {
     LEFT, RIGHT
   }
@@ -71,18 +67,9 @@ public class Drivetrain extends Subsystem {
     rightEnc.setReverseDirection(true);
 
     this.ahrs = ahrs;
-    updateDrivetrainParameters();
 
     maxVoltage = 12.0;
     wobbleDone = false;
-  }
-
-  /**
-   * teleop drive initialized in Robot.robotInit() to avoid dependency loops
-   * between dt and oi
-   */
-  @Override
-  public void initDefaultCommand() {
   }
 
   public void drive(double left, double right) {
@@ -168,64 +155,6 @@ public class Drivetrain extends Subsystem {
     rightMaster.enableVoltageCompensation(false);
   }
 
-  public void updateDrivetrainParameters() {
-    try {
-      Scanner filereader = new Scanner(new File("/home/lvuser/drive_char_params.csv"));
-      String line = filereader.next();
-      // Forward-Left
-      flKV = Double.valueOf(line.split(",")[0]);
-      flKA = Double.valueOf(line.split(",")[1]);
-      flVI = Double.valueOf(line.split(",")[2]);
-      System.out.println(flKV + "," + flKA + "," + flVI);
-
-      line = filereader.next();
-      // Forward-right
-      frKV = Double.valueOf(line.split(",")[0]);
-      frKA = Double.valueOf(line.split(",")[1]);
-      frVI = Double.valueOf(line.split(",")[2]);
-      System.out.println(frKV + "," + frKA + "," + frVI);
-
-      line = filereader.next();
-      // Backward-Left
-      blKV = Double.valueOf(line.split(",")[0]);
-      blKA = Double.valueOf(line.split(",")[1]);
-      blVI = Double.valueOf(line.split(",")[2]);
-      System.out.println(blKV + "," + blKA + "," + blVI);
-
-      line = filereader.next();
-      // Backward-Right
-      brKV = Double.valueOf(line.split(",")[0]);
-      brKA = Double.valueOf(line.split(",")[1]);
-      brVI = Double.valueOf(line.split(",")[2]);
-      System.out.println(brKV + "," + brKA + "," + brVI);
-      filereader.close();
-
-      // Averaging numbers because they vary so much
-      double avg = (flKA + frKA + blKA + brKA) / 4;
-      flKA = avg;
-      frKA = avg;
-      blKA = avg;
-      brKA = avg;
-    } catch (FileNotFoundException e) {
-      flKV = 0.06369046755507658;
-      flKA = 0.0215894793277297;
-      flVI = 0.8403701236277824;
-
-      frKV = 0.0619423013628032;
-      frKA = 0.04044703465602449;
-      frVI = 0.810212379284332;
-
-      blKV = 0.06388520699977113;
-      blKA = 0.025492804438184545;
-      blVI = 0.8071078220643216;
-
-      brKV = 0.06140765089854154;
-      brKA = 0.042046502553651215;
-      brVI = 0.7929289166816246;
-      
-      e.printStackTrace();
-    }
-  }
 
   public double calculateVoltage(Direction dir, double velocity, double acceleration) {
     /*System.out.println("Velocity: " + velocity + ", Acceleration: " + acceleration);

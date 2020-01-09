@@ -8,11 +8,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drivetrain;
 
-public class TeleopDrive extends Command {
+public class TeleopDrive extends CommandBase {
   Drivetrain dt;
   Joystick leftJoy, rightJoy;
 
@@ -27,11 +27,10 @@ public class TeleopDrive extends Command {
    *           purposes
    */
   public TeleopDrive(Drivetrain dt, Joystick leftJoy, Joystick rightJoy) {
-    requires(dt);
     this.dt = dt;
     this.leftJoy = leftJoy;
     this.rightJoy = rightJoy;
-
+    addRequirements(dt);
     if (!SmartDashboard.containsKey("Gradual Drive Max dV")) {
       SmartDashboard.putNumber("Gradual Drive Max dV", 0.04); // between zero (no movement) to 2 (any movement)
     }
@@ -45,14 +44,14 @@ public class TeleopDrive extends Command {
     }
   }
 
-  @Override
-  protected void execute() {
-    if (SmartDashboard.getBoolean("Arcade Drive", true)) {
-      arcadeDrive();
-    } else {
-      tankDrive();
+    @Override
+    public void execute() {
+        if (SmartDashboard.getBoolean("Arcade Drive", true)) {
+            arcadeDrive();
+        } else {
+            tankDrive();
+        }
     }
-  }
 
   private void arcadeDrive() {
     double speed = -leftJoy.getY();
@@ -230,18 +229,14 @@ public class TeleopDrive extends Command {
     dt.disableVoltageCompensation();
   }
 
-  @Override
-  protected boolean isFinished() {
-    return false;
-  }
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 
-  @Override
-  protected void end() {
-    dt.stop();
-  }
+    @Override
+    public void end(boolean interrupted) {
+        dt.stop();
+    }
 
-  @Override
-  protected void interrupted() {
-    end();
-  }
 }

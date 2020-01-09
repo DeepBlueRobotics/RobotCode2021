@@ -12,9 +12,11 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SPI;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -27,6 +29,7 @@ public class RobotMap {
     static WPI_TalonSRX leftMaster, rightMaster;
     static BaseMotorController leftSlave1, leftSlave2, rightSlave1, rightSlave2;
     static Encoder leftEnc, rightEnc;
+    static AHRS ahrs;
 
     static {
         // Initialize motors on the left side of the drivetrain.
@@ -42,6 +45,8 @@ public class RobotMap {
         // Initialize encoders on right and left side
         leftEnc = new Encoder(new DigitalInput(0), new DigitalInput(1));
         rightEnc = new Encoder(new DigitalInput(2), new DigitalInput(3));
+    
+        ahrs = new AHRS(SPI.Port.kMXP);
     }
 
     private static BaseMotorController createConfiguredMotorController(int port) {
