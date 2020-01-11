@@ -7,7 +7,7 @@ public class ShooterTargetSpeed extends CommandBase {
 
   public static void ShooterTargetSpeed(double speed) {
     /*
-   Get the spinner up to speed (math needed to determine speed necessary)
+   Always set the flywheel to the current desired speed using PID
    */
   }
 }

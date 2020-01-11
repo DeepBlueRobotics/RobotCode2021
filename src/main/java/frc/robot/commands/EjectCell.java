@@ -4,9 +4,25 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
 public class EjectCell extends CommandBase {
-    public static void EjectCell() {
+    Shooter shooter;
+
+    public EjectCell(Shooter shooter) {
+        this.shooter = shooter;
+    }
+
+    public void initialize() {
+        // start timer
+    }
+
+    public void execute() {
         /*
-        Put cell into flywheel Once it is up to speed
+        spin thing that puts ball into shooter
+        */
+    }
+    public void end(boolean interrupted) {
+        /*
+        decrease ball count
+        do wait time thing and then schedule another EjectCell if there are more power cells
         */
     }
 }

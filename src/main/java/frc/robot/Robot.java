@@ -31,7 +31,6 @@ public class Robot extends TimedRobot {
   private final Timer m_timer = new Timer();
 
   private static Shooter shooter;
-  private static CommandScheduler scheduler;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -39,7 +38,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    scheduler.setDefaultCommand(shooter, new ShooterTargetSpeed());
+    CommandScheduler.getInstance().setDefaultCommand(shooter, new ShooterTargetSpeed());
   }
 
   /**

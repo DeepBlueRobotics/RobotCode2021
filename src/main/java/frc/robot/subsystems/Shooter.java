@@ -7,19 +7,22 @@ import frc.robot.commands.ShooterTargetSpeed;
 import frc.robot.commands.EjectCell;
 
 public class Shooter implements Subsystem {
-    private double speed;
+    public static final double SHOOTING_SPEED = 0;
+    private double targetSpeed;
+    private double currentSpeed;
     public Shooter() {
         
-        /*
-            When button pressed (command already in wpilib)
-        */
-
-        ShooterTargetSpeed.ShooterTargetSpeed(speed);
-        EjectCell.EjectCell();
-
     }
 
+    public double getCurrentSpeed() {
+        return currentSpeed;
+    }
 
+    public double getTargetSpeed() {
+        return targetSpeed;
+    }
 
-    
+    public void setTargetSpeed(double speed) {
+        targetSpeed = speed;
+    }
 }
