@@ -12,6 +12,11 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -26,21 +31,19 @@ import edu.wpi.first.wpilibj.SPI;
  */
 public class RobotMap {
 
-    static WPI_TalonSRX leftMaster, rightMaster;
-    static BaseMotorController leftSlave1, leftSlave2, rightSlave1, rightSlave2;
+    static CANSparkMax leftMaster, rightMaster;
+    static CANSparkMax leftSlave, rightSlave;
     static Encoder leftEnc, rightEnc;
     static AHRS ahrs;
 
     static {
         // Initialize motors on the left side of the drivetrain.
-        leftMaster = createConfiguredTalon(8);
-        leftSlave1 = createConfiguredMotorController(9);
-        leftSlave2 = createConfiguredMotorController(10);
+        leftMaster = createConfiguredSparkMax(8); // TODO: set correct motor ports
+        leftSlave = createConfiguredSparkMax(9);
 
         // Initialize motors on the right side of the drivetrain.
-        rightMaster = createConfiguredTalon(5);
-        rightSlave1 = createConfiguredMotorController(6);
-        rightSlave2 = createConfiguredMotorController(7);
+        rightMaster = createConfiguredSparkMax(5);
+        rightSlave = createConfiguredSparkMax(6);
 
         // Initialize encoders on right and left side
         leftEnc = new Encoder(new DigitalInput(0), new DigitalInput(1));
@@ -48,23 +51,6 @@ public class RobotMap {
     
         ahrs = new AHRS(SPI.Port.kMXP);
     }
-
-    private static BaseMotorController createConfiguredMotorController(int port) {
-        BaseMotorController mc = new WPI_VictorSPX(port);
-    
-        // Put all configurations for the talon motor controllers in here.
-        // All values are from last year's code.
-        ErrorCode e = mc.configNominalOutputForward(0, 10);
-        if (e == ErrorCode.OK) {
-          mc = createConfiguredVictor(port);
-        } else {
-          mc = createConfiguredTalon(port);
-        }
-    
-        return mc;
-      }
-
-
 
   private static WPI_TalonSRX createConfiguredTalon(int port) {
     WPI_TalonSRX tsrx = new WPI_TalonSRX(port);
@@ -98,6 +84,20 @@ public class RobotMap {
     vspx.setNeutralMode(NeutralMode.Brake);
 
     return vspx;
+  }
+
+  private static CANSparkMax createConfiguredSparkMax(int port) {
+    CANSparkMax spark = new CANSparkMax(port, CANSparkMaxLowLevel.MotorType.kBrushless);
+    spark.restoreFactoryDefaults();
+    spark.setIdleMode(IdleMode.kBrake);
+    spark.enableVoltageCompensation(12);
+    CANPIDController controller = spark.getPIDController();
+    controller.setOutputRange(-1, 1);
+    controller.setP(0);
+    controller.setI(0);
+    controller.setD(0);
+    controller.setFF(0);
+    return spark;
   }
 
   public static void catchError(ErrorCode ec) {

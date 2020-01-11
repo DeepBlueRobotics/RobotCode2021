@@ -7,8 +7,7 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Encoder;
@@ -24,27 +23,24 @@ public class Drivetrain extends SubsystemBase {
     FL, FR, BL, BR    // Forward-Left, Forward-Right, Backward-Left, Backward-Right
   }
 
-  private WPI_TalonSRX leftMaster, rightMaster;
+  private CANSparkMax leftMaster, rightMaster;
   private Encoder leftEnc, rightEnc;
   private AHRS ahrs;
   private double kVolt, kVel, kAccel;
   private double maxAccel;
 
-  public Drivetrain(WPI_TalonSRX leftMaster, BaseMotorController leftSlave1, BaseMotorController leftSlave2,
-      WPI_TalonSRX rightMaster, BaseMotorController rightSlave1, BaseMotorController rightSlave2, Encoder leftEnc,
+  public Drivetrain(CANSparkMax leftMaster, CANSparkMax leftSlave,
+      CANSparkMax rightMaster, CANSparkMax rightSlave, Encoder leftEnc,
       Encoder rightEnc, AHRS ahrs) {
 
-    leftSlave1.follow(leftMaster);
-    leftSlave2.follow(leftMaster);
+    leftSlave.follow(leftMaster);
     this.leftMaster = leftMaster;
 
-    rightSlave1.follow(rightMaster);
-    rightSlave2.follow(rightMaster);
+    rightSlave.follow(rightMaster);
     this.rightMaster = rightMaster;
 
     rightMaster.setInverted(true);
-    rightSlave1.setInverted(true);
-    rightSlave2.setInverted(true);
+    rightSlave.setInverted(true);
 
     this.leftEnc = leftEnc;
     this.rightEnc = rightEnc;
@@ -81,7 +77,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public boolean isStalled() {
-    return leftMaster.getStatorCurrent() >= 30 || rightMaster.getStatorCurrent() >= 30;
+    return leftMaster.getOutputCurrent() >= 30 || rightMaster.getOutputCurrent() >= 30;
   }
 
   public double getEncDist(Side type) {
