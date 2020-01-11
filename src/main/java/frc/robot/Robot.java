@@ -10,9 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -26,7 +24,7 @@ public class Robot extends TimedRobot {
   private Drivetrain dt;
   private Timer timer;
   private OI oi;
-
+  private RobotContainer rc;
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -38,6 +36,7 @@ public class Robot extends TimedRobot {
         RobotMap.rightSlave1, RobotMap.rightSlave2, RobotMap.leftEnc, RobotMap.rightEnc, RobotMap.ahrs);
     timer=new Timer();
     oi=new OI(dt);
+    rc=new RobotContainer(dt, oi.leftJoy,oi.rightJoy);
   }
 
   @Override
@@ -65,7 +64,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    dt.setDefaultCommand((Command) new TeleopDrive(dt, oi.leftJoy, oi.rightJoy));
+    dt.setDefaultCommand(rc.getTeleopCommand());
   }
 
   /**
