@@ -130,6 +130,7 @@ public class Limelight {
         }
       }
     } else {
+      newPIDLoop = false;
       pidController.reset();
       adjustment += Math.signum(prev_tx) * steering_factor;
     }
