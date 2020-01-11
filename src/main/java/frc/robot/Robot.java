@@ -32,8 +32,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     SmartDashboard.putBoolean("Arcade Drive", true);
-    dt = new Drivetrain(RobotMap.leftMaster, RobotMap.leftSlave1, RobotMap.leftSlave2, RobotMap.rightMaster,
-        RobotMap.rightSlave1, RobotMap.rightSlave2, RobotMap.leftEnc, RobotMap.rightEnc, RobotMap.ahrs);
+    dt = new Drivetrain(RobotMap.leftMaster, RobotMap.leftSlave, RobotMap.rightMaster,
+        RobotMap.rightSlave, RobotMap.leftEnc, RobotMap.rightEnc, RobotMap.ahrs);
     timer=new Timer();
     oi=new OI(dt);
     rc=new RobotContainer(dt, oi.leftJoy,oi.rightJoy);
