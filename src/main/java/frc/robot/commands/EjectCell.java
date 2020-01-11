@@ -19,6 +19,12 @@ public class EjectCell extends CommandBase {
         spin thing that puts ball into shooter
         */
     }
+
+    public boolean isFinished() {
+        return false;
+        // When timer ends return true
+    }
+
     public void end(boolean interrupted) {
         /*
         decrease ball count
