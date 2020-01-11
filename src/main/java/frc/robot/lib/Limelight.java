@@ -8,6 +8,7 @@
 package frc.robot.lib;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight {
@@ -26,7 +27,10 @@ public class Limelight {
   private boolean stopSteer = false;
   private double mounting_angle;
   private double prev_tx = 1.0;
-  
+
+  private PIDController pidController;
+  private double backlashOffset = 0;
+  private boolean newPIDLoop = false;
   // Parameters for vision using linear algebra. 
   private double[][] rotMat = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
   private double[] translateVec = {0, 0, 0};
@@ -34,6 +38,9 @@ public class Limelight {
 
   public Limelight() {
     SmartDashboard.putNumber("Area Threshold", 0.02);
+    pidController = new PIDController(0.015,0,0,1/90); // TODO: Set correct i and d values
+    pidController.setSetpoint(0);
+    pidController.setTolerance(0.01); // TODO: Set correct tolerance
   }
 
   // For the shooter. Given what the limelight sees and the shooter angle, compute the desired initial speed for the shooter.
@@ -108,16 +115,22 @@ public class Limelight {
     SmartDashboard.putNumber("Crosshair Horizontal Offset", tx);
     SmartDashboard.putNumber("Found Vision Target", tv);
     SmartDashboard.putNumber("Prev_tx", prev_tx);
-    double adjustment = 0.0;
+    double adjustment = 0;
     double steering_factor = 0.25;
-    double Kp = 0.015;
+    
 
     if (tv == 1.0 && !stopSteer) {
       if (ta > SmartDashboard.getNumber("Area Threshold", 0.02)) {
-        adjustment += Kp * tx;
+        adjustment = pidController.calculate(tx);
         prev_tx = tx;
+
+        if (!newPIDLoop) {
+          newPIDLoop = true;
+          pidController.setSetpoint(Math.signum(tx)*backlashOffset);
+        }
       }
     } else {
+      pidController.reset();
       adjustment += Math.signum(prev_tx) * steering_factor;
     }
 
@@ -132,7 +145,9 @@ public class Limelight {
     SmartDashboard.putNumber("Adjustment", adjustment);
     return adjustment;
   }
-
+  public boolean isAligned() {
+    return pidController.atSetpoint();
+  }
   // Combination of distance assist and steering assist
   public double[] autoTarget() {
     double dist_assist = distanceAssist();

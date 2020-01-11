@@ -18,8 +18,7 @@ public class TeleopDrive extends CommandBase {
   Joystick leftJoy, rightJoy;
   Limelight lime;
   private Limelight.Mode limelightMode = Limelight.Mode.STEER;
-  private double adjustment = 0;
-  private double minError = 0.05;   // TODO: Test minimum values
+  private double minError = 0.05; // currently only used for steer and distance combo
   double prevSpeed = 0, prevLeft = 0, prevRight = 0;
 
   double outreachSpeed = 0.3;
@@ -30,7 +29,7 @@ public class TeleopDrive extends CommandBase {
    * @param dt the Drivetrain object to use, passing it in is useful for testing
    *           purposes
    */
-  public TeleopDrive(Drivetrain dt, Limelight lime, Joystick leftJoy, Joystick rightJoy) {
+  public TeleopDrive(final Drivetrain dt, final Limelight lime, final Joystick leftJoy, final Joystick rightJoy) {
     this.dt = dt;
     this.lime = lime;
     this.leftJoy = leftJoy;
@@ -75,7 +74,7 @@ public class TeleopDrive extends CommandBase {
     }
 
     if (SmartDashboard.getBoolean("Gradual Drive", true)) {
-      double dV = SmartDashboard.getNumber("Gradual Drive Max dV", 0.04);
+      final double dV = SmartDashboard.getNumber("Gradual Drive Max dV", 0.04);
       if (Math.abs(speed - prevSpeed) > dV) {
         speed = prevSpeed + dV * Math.signum(speed - prevSpeed);
       }
@@ -137,7 +136,7 @@ public class TeleopDrive extends CommandBase {
     }
 
     if (SmartDashboard.getBoolean("Gradual Drive", true)) {
-      double dV = SmartDashboard.getNumber("Gradual Drive Max dV", 0.04);
+      final double dV = SmartDashboard.getNumber("Gradual Drive Max dV", 0.04);
       if (Math.abs(left - prevLeft) > dV) {
         left = prevLeft + dV * Math.signum(left - prevLeft);
       }
@@ -156,24 +155,25 @@ public class TeleopDrive extends CommandBase {
     
   }
   private void autoAlign() {
+    double adjustment;
     if (limelightMode == Limelight.Mode.DIST) {
         adjustment = lime.distanceAssist();
         dt.drive(adjustment, adjustment);
-        if (Math.abs(adjustment) < minError)  {
+        if (lime.isAligned())  {
           SmartDashboard.putBoolean("Finished Aligning", true);
         }
       }
       else if (limelightMode == Limelight.Mode.STEER) {
         adjustment = lime.steeringAssist();
-        double[] charParams = dt.characterizedDrive(adjustment, -adjustment);
+        final double[] charParams = dt.characterizedDrive(adjustment, -adjustment);
         dt.drive(charParams[0], -charParams[1]);
-        if (Math.abs(adjustment) < minError)  {
+        if (lime.isAligned())  {
           SmartDashboard.putBoolean("Finished Aligning", true);
         }
       } else {
-        double[] params = lime.autoTarget();
+        final double[] params = lime.autoTarget();
         dt.drive(params[0], params[1]);
-        double maxInput = Math.max(Math.abs(params[0]), Math.abs(params[1]));
+        final double maxInput = Math.max(Math.abs(params[0]), Math.abs(params[1]));
         if (maxInput < minError)  {
           SmartDashboard.putBoolean("Finished Aligning", true);
         }
@@ -186,7 +186,7 @@ public class TeleopDrive extends CommandBase {
     }
 
     @Override
-    public void end(boolean interrupted) {
+    public void end(final boolean interrupted) {
         dt.stop();
     }
 
