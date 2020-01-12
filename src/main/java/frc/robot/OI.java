@@ -20,7 +20,7 @@ import frc.robot.subsystems.Drivetrain;
 public class OI {
 
     Joystick leftJoy, rightJoy, manipulator;
-    JoystickButton arcadeOrTankBtn;
+    JoystickButton arcadeOrTankBtn, charDrive;
 
     OI(Drivetrain dt){
 
@@ -28,12 +28,13 @@ public class OI {
         rightJoy = new Joystick(1);
         manipulator = new Joystick(2);
 
-
         arcadeOrTankBtn = new JoystickButton(leftJoy, 4);
         arcadeOrTankBtn.whenPressed(new InstantCommand(() -> 
             SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive",false))));
 
-
+        charDrive = new JoystickButton(leftJoy, 5);
+        charDrive.whenPressed(new InstantCommand(() -> 
+            SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive",false))));
     }
 
 

@@ -101,14 +101,16 @@ public class TeleopDrive extends CommandBase {
       }
     }
 
-    
-      SmartDashboard.putBoolean("is in char drive", false);
+    if (!SmartDashboard.getBoolean("Characterized Drive", false)) {
       if (SmartDashboard.getBoolean("Outreach Mode", false)) {
         dt.drive(left * outreachSpeed, right * outreachSpeed);
       } else {
         dt.drive(left, right);
       }
-    
+    } else {
+      double[] charParams = dt.characterizedDrive(left, right);
+      dt.drive(charParams[0], charParams[1]);
+    }
   }
 
   private void tankDrive() {
@@ -139,12 +141,16 @@ public class TeleopDrive extends CommandBase {
     prevLeft = left;
     prevRight = right;
 
+    if (!SmartDashboard.getBoolean("Characterized Drive", false)) {
       if (SmartDashboard.getBoolean("Outreach Mode", false)) {
         dt.drive(left * outreachSpeed, right * outreachSpeed);
       } else {
         dt.drive(left, right);
       }
-    
+    } else {
+      double[] charParams = dt.characterizedDrive(left, right);
+      dt.drive(charParams[0], charParams[1]);
+    }
   }
 
 
