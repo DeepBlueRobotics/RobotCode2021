@@ -38,7 +38,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    CommandScheduler.getInstance().setDefaultCommand(shooter, new ShooterTargetSpeed());
+    shooter = new Shooter();
+    CommandScheduler.getInstance().setDefaultCommand(shooter, new ShooterTargetSpeed(shooter));
   }
 
   /**
