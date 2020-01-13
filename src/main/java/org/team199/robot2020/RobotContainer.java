@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 
+import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.subsystems.Drivetrain;
 
 /**
@@ -30,7 +31,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureButtonBindings();
-        drivetrain.setDefaultCommand(new RunCommand(() -> drivetrain.arcadeDrive(-leftJoy.getY(), rightJoy.getX())));
+        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
     }
 
     private void configureButtonBindings() {
