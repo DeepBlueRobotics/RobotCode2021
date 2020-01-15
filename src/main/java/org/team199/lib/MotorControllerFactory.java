@@ -19,7 +19,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
  * Add your docs here.
  */
 public class MotorControllerFactory {
-  
+
   public static WPI_VictorSPX createVictor(int port) {
     WPI_VictorSPX victor = new WPI_VictorSPX(port);
 

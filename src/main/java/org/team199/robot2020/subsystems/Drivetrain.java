@@ -15,7 +15,6 @@ import org.team199.robot2020.Constants;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,7 +27,7 @@ public class Drivetrain extends SubsystemBase {
   private final Encoder leftEnc = new Encoder(Constants.Drive.LEFT_ENCODER[0], Constants.Drive.LEFT_ENCODER[1]);
   private final Encoder rightEnc = new Encoder(Constants.Drive.RIGHT_ENCODER[0], Constants.Drive.RIGHT_ENCODER[1]);
 
-  private final AHRS gyro = new AHRS(SPI.Port.kMXP);
+  private final AHRS gyro = new AHRS();
 
   private final DifferentialDrive diffDrive = new DifferentialDrive(leftMaster, rightMaster);
 
@@ -65,8 +64,10 @@ public class Drivetrain extends SubsystemBase {
     leftAccel = Math.copySign(1.0, leftAccel) * Math.min(Math.abs(leftAccel), Constants.Drivetrain.MAX_ACCEL);
     rightAccel = Math.copySign(1.0, rightAccel) * Math.min(Math.abs(rightAccel), Constants.Drivetrain.MAX_ACCEL);
 
-    final double newLeft = Constants.Drivetrain.VOLT + Constants.Drivetrain.VEL * actualLeftVel + Constants.Drivetrain.ACCEL * leftAccel;
-    final double newRight = Constants.Drivetrain.VOLT + Constants.Drivetrain.VEL * actualRightVel + Constants.Drivetrain.ACCEL * rightAccel;
+    final double newLeft = Constants.Drivetrain.VOLT + Constants.Drivetrain.VEL * actualLeftVel
+        + Constants.Drivetrain.ACCEL * leftAccel;
+    final double newRight = Constants.Drivetrain.VOLT + Constants.Drivetrain.VEL * actualRightVel
+        + Constants.Drivetrain.ACCEL * rightAccel;
     return new double[] { newLeft, newRight };
   }
 }

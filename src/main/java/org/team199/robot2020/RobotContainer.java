@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.subsystems.Drivetrain;
@@ -37,8 +36,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         // characterize drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.CHARACTERIZED_DRIVE_BUTTON)
-                .whenPressed(new InstantCommand(() -> 
-                    SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
+                .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
+                        !SmartDashboard.getBoolean("Characterized Drive", false))));
     }
 
     public CommandBase getAutonomousCommand() {

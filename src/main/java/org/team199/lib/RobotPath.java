@@ -13,7 +13,7 @@ import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.followers.EncoderFollower;
 
 public class RobotPath {
-    
+
     private Trajectory leftTrajectory, rightTrajectory;
     private Drivetrain drivetrain;
     private Encoder leftEncoder, rightEncoder;
@@ -28,8 +28,9 @@ public class RobotPath {
         isInit = false;
     }
 
-    public void init(Drivetrain drivetrain, Encoder leftEncoder, Encoder rightEncoder, AnalogGyro gyro, int ticksPerRev, double wheelDiameter, double maxVelocity) {
-        if(isInit) {
+    public void init(Drivetrain drivetrain, Encoder leftEncoder, Encoder rightEncoder, AnalogGyro gyro, int ticksPerRev,
+            double wheelDiameter, double maxVelocity) {
+        if (isInit) {
             return;
         }
         this.drivetrain = drivetrain;
@@ -46,7 +47,7 @@ public class RobotPath {
     }
 
     public void start() {
-        if(!isInit) {
+        if (!isInit) {
             return;
         }
         notifier = new Notifier(this::followPath);
@@ -54,14 +55,14 @@ public class RobotPath {
     }
 
     public void stop() {
-        if(!isInit) {
+        if (!isInit) {
             return;
         }
         notifier.stop();
     }
 
     private void followPath() {
-        if(leftEncoderFollower.isFinished() || rightEncoderFollower.isFinished()) {
+        if (leftEncoderFollower.isFinished() || rightEncoderFollower.isFinished()) {
             notifier.stop();
         } else {
             double leftSpeed = leftEncoderFollower.calculate(leftEncoder.get());
@@ -69,13 +70,13 @@ public class RobotPath {
             double heading = gyro.getAngle();
             double desiredHeading = Pathfinder.r2d(leftEncoderFollower.getHeading());
             double headingDifference = Pathfinder.boundHalfDegrees(desiredHeading - heading);
-            double turn =  0.8 * (-1.0/80.0) * headingDifference;
+            double turn = 0.8 * (-1.0 / 80.0) * headingDifference;
             if (!SmartDashboard.getBoolean("Characterized Drive", false)) {
                 drivetrain.tankDrive(leftSpeed + turn, rightSpeed - turn);
-              } else {
+            } else {
                 double[] charParams = drivetrain.characterizedDrive(leftSpeed + turn, rightSpeed - turn);
                 drivetrain.tankDrive(charParams[0], charParams[1]);
-              }
+            }
         }
     }
 
