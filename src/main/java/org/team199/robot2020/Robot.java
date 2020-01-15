@@ -5,13 +5,10 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot;
+package org.team199.robot2020;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -21,36 +18,27 @@ import frc.robot.subsystems.Drivetrain;
  * directory.
  */
 public class Robot extends TimedRobot {
-  private Drivetrain dt;
-  private Timer timer;
-  private OI oi;
-  private RobotContainer rc;
+  private RobotContainer robotContainer;
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
    */
   @Override
   public void robotInit() {
-    SmartDashboard.putBoolean("Arcade Drive", true);
-    SmartDashboard.putBoolean("Characterized Drive", true);
-    dt = new Drivetrain(RobotMap.leftMaster, RobotMap.leftSlave, RobotMap.rightMaster,
-        RobotMap.rightSlave, RobotMap.leftEnc, RobotMap.rightEnc, RobotMap.ahrs);
-    timer=new Timer();
-    oi=new OI(dt);
-    rc=new RobotContainer(dt, oi.leftJoy,oi.rightJoy);
+    robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
   }
+
   /**
    * This function is run once each time the robot enters autonomous mode.
    */
   @Override
   public void autonomousInit() {
-    timer.reset();
-    timer.start();
   }
 
   /**
@@ -65,7 +53,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    dt.setDefaultCommand(rc.getTeleopCommand());
   }
 
   /**
