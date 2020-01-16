@@ -1,8 +1,8 @@
-package frc.robot.commands;
+package org.team199.robot2020.commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.Intake;
-import frc.robot.commands.DeployIntake;
-import frc.robot.commands.RunIntakeAndHopper;
+import org.team199.robot2020.subsystems.Intake;
+import org.team199.robot2020.commands.DeployIntake;
+import org.team199.robot2020.commands.RunIntakeAndHopper;
 public class DeployAndRunIntake extends SequentialCommandGroup{
     
     public DeployAndRunIntake(Intake intake){

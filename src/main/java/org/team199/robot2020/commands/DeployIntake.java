@@ -1,7 +1,7 @@
-package frc.robot.commands;
+package org.team199.robot2020.commands;
 import java.lang.module.ModuleDescriptor.Requires;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.Intake;
+import org.team199.robot2020.subsystems.Intake;
 
 public class DeployIntake extends InstantCommand {
     Intake intake;

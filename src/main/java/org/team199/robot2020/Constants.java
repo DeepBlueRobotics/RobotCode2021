@@ -50,6 +50,8 @@ public final class Constants {
 
         public static final class Controller {
             public static final int PORT = 2;
+
+            public static final int INTAKE_BUTTON = 2; // TODO: change to correct button
         }
     }
 
