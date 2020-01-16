@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.ShooterTargetSpeed;
-import frc.robot.subsystems.Shooter;
+import org.team199.robot2020.commands.ShooterTargetSpeed;
+import org.team199.robot2020.subsystems.Shooter;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -32,17 +32,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-<<<<<<< HEAD:src/main/java/frc/robot/Robot.java
     shooter = new Shooter();
     CommandScheduler.getInstance().setDefaultCommand(shooter, new ShooterTargetSpeed(shooter));
-=======
     robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
->>>>>>> 6482d8aca4a5380bd97afb8abac1cfadce8320f4:src/main/java/org/team199/robot2020/Robot.java
   }
 
   /**
