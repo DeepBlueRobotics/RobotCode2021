@@ -8,30 +8,32 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-//import motors
+//import motors and encoder(s)
 
-public class ArmAndLiftMotor extends CommandBase {
-  //initialize motors
-
-  public ArmAndLiftMotor() {
-    //control the motor with a button on the remote
-    //when the button is pressed the motor raises the lift and then slowly starts to lower
+public class RaiseRobot extends CommandBase {
+ //initialize motors and encoder(s)
+  public RaiseRobot() {
+   //when a button is pressed(not held), then the motor starts to spin
+   //which would gather the string and pull the robot upwards
+   //encoders tell when the motor should stop based on the height of the robot relative to the bar 
   }
 
   
   @Override
-  public void initialize() {     
+  public void initialize() {
+    
   }
 
+  
   @Override
   public void execute() {
-    //make motor run
+    //motors start to spin
   }
 
   
   @Override
   public void end(boolean interrupted) {
-    //motors stop running
+    //when the encoders reach a certain value, then the motors stop
   }
 
   
