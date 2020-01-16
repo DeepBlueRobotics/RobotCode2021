@@ -8,27 +8,32 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+//import motors and encoder(s)
 
 public class ClimbingMotor extends CommandBase {
- 
-
+ //initialize motors and encoder(s)
   public ClimbingMotor() {
-   
+   //when a button is pressed(not held), then the motor starts to spin
+   //which would gather the string and pull the robot upwards
+   //encoders tell when the motor should stop based on the height of the robot relative to the bar 
   }
 
   
   @Override
   public void initialize() {
+    
   }
 
   
   @Override
   public void execute() {
+    //motors start to spin
   }
 
   
   @Override
   public void end(boolean interrupted) {
+    //when the encoders reach a certain value, then the motors stop
   }
 
   
