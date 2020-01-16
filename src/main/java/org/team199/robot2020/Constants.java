@@ -26,6 +26,7 @@ public final class Constants {
         public static final int LEFT_MOTOR_2 = 9;
         public static final int RIGHT_MOTOR_1 = 5;
         public static final int RIGHT_MOTOR_2 = 6;
+        public static final int FLYWHEEL_MOTOR = 4;
 
         public static final int[] LEFT_ENCODER = { 0, 1 };
         public static final int[] RIGHT_ENCODER = { 0, 1 };
