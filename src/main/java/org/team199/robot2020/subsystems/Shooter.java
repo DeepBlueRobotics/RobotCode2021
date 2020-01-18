@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends SubsystemBase {
     private final WPI_VictorSPX flywheel = MotorControllerFactory.createVictor(Constants.Drive.FLYWHEEL_MOTOR);
@@ -11,7 +12,7 @@ public class Shooter extends SubsystemBase {
     private double targetSpeed;
 
     public Shooter() {
-        
+        SmartDashboard.putNumber("Shooter Target Speed", 0);
     }
 
     public double getCurrentSpeed() {

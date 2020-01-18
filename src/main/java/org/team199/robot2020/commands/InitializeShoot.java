@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.team199.robot2020.subsystems.Shooter;
 import org.team199.robot2020.commands.EjectOneCell;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class InitializeShoot extends CommandBase {
     Shooter shooter;
@@ -13,7 +14,7 @@ public class InitializeShoot extends CommandBase {
     }
 
     public void initialize() {
-        shooter.setTargetSpeed(Shooter.SHOOTING_SPEED);
+        shooter.setTargetSpeed(SmartDashboard.getNumber("Shooter Target Speed", 0));
     }
 
     public boolean isFinished() {
