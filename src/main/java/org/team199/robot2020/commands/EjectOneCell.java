@@ -3,10 +3,10 @@ package org.team199.robot2020.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.team199.robot2020.subsystems.Shooter;
 
-public class EjectCell extends CommandBase {
+public class EjectOneCell extends CommandBase {
     Shooter shooter;
 
-    public EjectCell(Shooter shooter) {
+    public EjectOneCell(Shooter shooter) {
         this.shooter = shooter;
     }
 

@@ -14,7 +14,9 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import org.team199.robot2020.commands.TeleopDrive;
+import org.team199.robot2020.commands.InitializeShoot;
 import org.team199.robot2020.subsystems.Drivetrain;
+import org.team199.robot2020.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -25,12 +27,14 @@ import org.team199.robot2020.subsystems.Drivetrain;
  */
 public class RobotContainer {
     private final Drivetrain drivetrain = new Drivetrain();
+    private final Shooter shooter = new Shooter();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.PORT);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.PORT);
 
     public RobotContainer() {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
+        shooter.setDefaultCommand(new InitializeShoot(shooter));
     }
 
     private void configureButtonBindings() {
