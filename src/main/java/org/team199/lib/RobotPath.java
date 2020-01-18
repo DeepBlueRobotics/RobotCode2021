@@ -2,7 +2,8 @@ package org.team199.lib;
 
 import java.io.IOException;
 
-import edu.wpi.first.wpilibj.AnalogGyro;
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,7 +18,7 @@ public class RobotPath {
     private Trajectory leftTrajectory, rightTrajectory;
     private Drivetrain drivetrain;
     private Encoder leftEncoder, rightEncoder;
-    private AnalogGyro gyro;
+    private AHRS gyro;
     private EncoderFollower leftEncoderFollower, rightEncoderFollower;
     private Notifier notifier;
     private boolean isInit;
@@ -28,7 +29,7 @@ public class RobotPath {
         isInit = false;
     }
 
-    public void init(Drivetrain drivetrain, Encoder leftEncoder, Encoder rightEncoder, AnalogGyro gyro, int ticksPerRev,
+    public void init(Drivetrain drivetrain, Encoder leftEncoder, Encoder rightEncoder, AHRS gyro, int ticksPerRev,
             double wheelDiameter, double maxVelocity) {
         if (isInit) {
             return;
@@ -36,6 +37,7 @@ public class RobotPath {
         this.drivetrain = drivetrain;
         this.leftEncoder = leftEncoder;
         this.rightEncoder = rightEncoder;
+        rightEncoder.setReverseDirection(true);
         this.gyro = gyro;
         leftEncoderFollower = new EncoderFollower(leftTrajectory);
         leftEncoderFollower.configureEncoder(leftEncoder.get(), ticksPerRev, wheelDiameter);
