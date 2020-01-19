@@ -22,7 +22,7 @@ import org.team199.robot2020.subsystems.Shooter;
 public class Robot extends TimedRobot {
   private RobotContainer robotContainer;
 
-  private static Shooter shooter;
+  
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -30,8 +30,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    shooter = new Shooter();
-    CommandScheduler.getInstance().setDefaultCommand(shooter, new ShooterTargetSpeed(shooter));
     robotContainer = new RobotContainer();
   }
 

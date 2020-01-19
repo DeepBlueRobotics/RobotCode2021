@@ -26,10 +26,10 @@ public final class Constants {
         public static final int LEFT_MOTOR_2 = 9;
         public static final int RIGHT_MOTOR_1 = 5;
         public static final int RIGHT_MOTOR_2 = 6;
-        public static final int FLYWHEEL_MOTOR = 4;
+        public static final int FLYWHEEL_MOTOR = 3;
 
-        public static final int[] LEFT_ENCODER = { 0, 1 };
-        public static final int[] RIGHT_ENCODER = { 0, 1 };
+        //public static final int[] LEFT_ENCODER = { 0, 1 };
+        //public static final int[] RIGHT_ENCODER = { 0, 1 };
     }
 
     /**
@@ -47,11 +47,11 @@ public final class Constants {
             public static final int PORT = 1;
 
             public static final int SLOW_DRIVE_BUTTON = 5;
+            public static final int SHOOT_BUTTON = 1;
         }
 
         public static final class Controller {
             public static final int PORT = 2;
-            public static final int SHOOT_BUTTON = 2;
         }
     }
 

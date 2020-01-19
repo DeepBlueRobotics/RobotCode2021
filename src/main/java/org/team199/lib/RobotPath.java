@@ -34,8 +34,8 @@ public class RobotPath {
             return;
         }
         this.drivetrain = drivetrain;
-        this.leftEncoder = leftEncoder;
-        this.rightEncoder = rightEncoder;
+        //this.leftEncoder = leftEncoder;
+        //this.rightEncoder = rightEncoder;
         this.gyro = gyro;
         leftEncoderFollower = new EncoderFollower(leftTrajectory);
         leftEncoderFollower.configureEncoder(leftEncoder.get(), ticksPerRev, wheelDiameter);
@@ -74,8 +74,8 @@ public class RobotPath {
             if (!SmartDashboard.getBoolean("Characterized Drive", false)) {
                 drivetrain.tankDrive(leftSpeed + turn, rightSpeed - turn);
             } else {
-                double[] charParams = drivetrain.characterizedDrive(leftSpeed + turn, rightSpeed - turn);
-                drivetrain.tankDrive(charParams[0], charParams[1]);
+                //double[] charParams = drivetrain.characterizedDrive(leftSpeed + turn, rightSpeed - turn);
+                //drivetrain.tankDrive(charParams[0], charParams[1]);
             }
         }
     }

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.commands.InitializeShoot;
+import org.team199.robot2020.commands.ShooterTargetSpeed;
 import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Shooter;
 
@@ -34,7 +35,7 @@ public class RobotContainer {
     public RobotContainer() {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
-        shooter.setDefaultCommand(new InitializeShoot(shooter));
+        shooter.setDefaultCommand(new ShooterTargetSpeed(shooter));
     }
 
     private void configureButtonBindings() {
@@ -43,7 +44,7 @@ public class RobotContainer {
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
 
-        new JoystickButton(leftJoy, Constants.OI.Controller.SHOOT_BUTTON).whenPressed(new InitializeShoot(shooter));
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.SHOOT_BUTTON).whenPressed(new InitializeShoot(shooter));
     }
 
     public CommandBase getAutonomousCommand() {
