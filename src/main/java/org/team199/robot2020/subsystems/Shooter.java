@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends PIDSubsystem {
     private final WPI_VictorSPX flywheel = MotorControllerFactory.createVictor(Constants.Drive.FLYWHEEL_MOTOR);
-    private final Encoder encoder = new Encoder(new DigitalInput(0), new DigitalInput(1));
+    private final Encoder encoder = new Encoder(new DigitalInput(4), new DigitalInput(5));
     public static final double SHOOTING_SPEED = 0;
     private double targetSpeed;
 
@@ -21,7 +21,8 @@ public class Shooter extends PIDSubsystem {
         super(new PIDController(Constants.Shooter.KP, Constants.Shooter.KI, Constants.Shooter.KD));
         setTargetSpeed(0);
         SmartDashboard.putNumber("Shooter Target Speed", 0);
-        encoder.setDistancePerPulse(Math.PI * 5 / 256);
+        encoder.setDistancePerPulse(-1/8.75);
+        encoder.setSamplesToAverage(20);
     }
 
     public void useOutput(double output, double setpoint) { // set flywheel speed
@@ -30,6 +31,10 @@ public class Shooter extends PIDSubsystem {
 
     public double getMeasurement() { // get current speed
         return encoder.getRate();
+    }
+
+    public double getCurrentDistance() {
+        return encoder.getDistance();
     }
 
     public double getTargetSpeed() {
