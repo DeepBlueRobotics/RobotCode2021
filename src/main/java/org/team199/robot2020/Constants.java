@@ -57,9 +57,9 @@ public final class Constants {
      * Drivetrain constants used in characterization
      */
     public static final class Drivetrain {
-        public static final double VOLT = 0.0;
-        public static final double VEL = 0.0;
-        public static final double ACCEL = 0.0;
+        public static final double[] kVOLTS = {0.0, 0.0, 0.0, 0.0};
+        public static final double[] kVELS = {0.0, 0.0, 0.0, 0.0};
+        public static final double[] kACCELS = {0.0, 0.0, 0.0, 0.0};
         public static final double MAX_ACCEL = 0.0;
         public static final double MAX_SPEED = 13 * 12; // TODO: change to correct values
         public static final double LOOP_TIME = 0.02;

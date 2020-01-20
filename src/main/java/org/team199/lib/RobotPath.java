@@ -1,85 +1,52 @@
 package org.team199.lib;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
-import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.team199.robot2020.subsystems.Drivetrain;
-import jaci.pathfinder.Pathfinder;
-import jaci.pathfinder.PathfinderFRC;
-import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.followers.EncoderFollower;
 
 public class RobotPath {
 
-    private Trajectory leftTrajectory, rightTrajectory;
-    private Drivetrain drivetrain;
-    private Encoder leftEncoder, rightEncoder;
-    private AHRS gyro;
-    private EncoderFollower leftEncoderFollower, rightEncoderFollower;
-    private Notifier notifier;
+    private Trajectory trajectory;
+    private Drivetrain dt;
+    private double trackWidth;
     private boolean isInit;
 
     public RobotPath(String pathName) throws IOException {
-        leftTrajectory = PathfinderFRC.getTrajectory(pathName + ".left");
-        leftTrajectory = PathfinderFRC.getTrajectory(pathName + ".right");
+        trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/" + pathName + ".wpilib.json"));
         isInit = false;
     }
 
-    public void init(Drivetrain drivetrain, Encoder leftEncoder, Encoder rightEncoder, AHRS gyro, int ticksPerRev,
-            double wheelDiameter, double maxVelocity) {
+    public void init(Drivetrain dt, double trackWidth) {
         if (isInit) {
             return;
         }
-        this.drivetrain = drivetrain;
-        this.leftEncoder = leftEncoder;
-        this.rightEncoder = rightEncoder;
-        rightEncoder.setReverseDirection(true);
-        this.gyro = gyro;
-        leftEncoderFollower = new EncoderFollower(leftTrajectory);
-        leftEncoderFollower.configureEncoder(leftEncoder.get(), ticksPerRev, wheelDiameter);
-        leftEncoderFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / maxVelocity, 0);
-        rightEncoderFollower = new EncoderFollower(rightTrajectory);
-        rightEncoderFollower.configureEncoder(rightEncoder.get(), ticksPerRev, wheelDiameter);
-        rightEncoderFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / maxVelocity, 0);
+        this.dt = dt;
+        this.trackWidth = trackWidth;
         isInit = true;
     }
 
-    public void start() {
-        if (!isInit) {
-            return;
+    public Command getPathCommand() {
+        if(!isInit) {
+            return new RunCommand(() -> {});
         }
-        notifier = new Notifier(this::followPath);
-        notifier.startPeriodic(leftTrajectory.get(0).dt);
-    }
-
-    public void stop() {
-        if (!isInit) {
-            return;
+        if(dt.getOdometry() == null) {
+            Trajectory.State state = trajectory.getStates().get(0);
+            dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), state.poseMeters));
         }
-        notifier.stop();
-    }
-
-    private void followPath() {
-        if (leftEncoderFollower.isFinished() || rightEncoderFollower.isFinished()) {
-            notifier.stop();
-        } else {
-            double leftSpeed = leftEncoderFollower.calculate(leftEncoder.get());
-            double rightSpeed = rightEncoderFollower.calculate(rightEncoder.get());
-            double heading = gyro.getAngle();
-            double desiredHeading = Pathfinder.r2d(leftEncoderFollower.getHeading());
-            double headingDifference = Pathfinder.boundHalfDegrees(desiredHeading - heading);
-            double turn = 0.8 * (-1.0 / 80.0) * headingDifference;
-            if (!SmartDashboard.getBoolean("Characterized Drive", false)) {
-                drivetrain.tankDrive(leftSpeed + turn, rightSpeed - turn);
-            } else {
-                double[] charParams = drivetrain.characterizedDrive(leftSpeed + turn, rightSpeed - turn);
-                drivetrain.tankDrive(charParams[0], charParams[1]);
-            }
-        }
+        return new RamseteCommand(trajectory, () -> dt.getOdometry().getPoseMeters(),
+        new RamseteController(0, 0), new DifferentialDriveKinematics(trackWidth), dt::characterizedDrive, dt)
+        .andThen(new RunCommand(() -> dt.characterizedDrive(0, 0), dt)); //TODO: Configure Ramsete Controller Values
     }
 
 }
