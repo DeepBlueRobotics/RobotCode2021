@@ -37,8 +37,8 @@ public class TeleopDrive extends CommandBase {
   @Override
   public void execute() {
     if (SmartDashboard.getBoolean("Arcade Drive", true)) {
-      double speed = -leftJoy.getY();
-      double rotation = rightJoy.getX();
+      double speed = -leftJoy.getX();
+      double rotation = -rightJoy.getY();
 
       if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
         speed *= Constants.SLOW_DRIVE_SPEED;
@@ -80,16 +80,16 @@ public class TeleopDrive extends CommandBase {
       }
     } else {
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-        drivetrain.characterizedDrive(-leftJoy.getY(), -rightJoy.getY());
+        drivetrain.characterizedDrive(-leftJoy.getY(), rightJoy.getY());
       } else {
-        drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY());
+        drivetrain.tankDrive(-leftJoy.getY(), rightJoy.getY());
       }
     }
 
     SmartDashboard.putNumber("Left Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.LEFT));
-    SmartDashboard.putNumber("Right Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.LEFT));
-    SmartDashboard.putNumber("Left Encoder Distance", drivetrain.getEncRate(Drivetrain.Side.LEFT));
-    SmartDashboard.putNumber("Right Encoder Distance", drivetrain.getEncRate(Drivetrain.Side.LEFT));
+    SmartDashboard.putNumber("Right Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.RIGHT));
+    SmartDashboard.putNumber("Left Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.LEFT));
+    SmartDashboard.putNumber("Right Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.RIGHT));
   }
 
   // Called once the command ends or is interrupted.

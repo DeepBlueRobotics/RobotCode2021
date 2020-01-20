@@ -22,10 +22,13 @@ public final class Constants {
      * Constants for things on our robot. Used to go in RobotMap.java
      */
     public static final class Drive {
-        public static final int LEFT_MOTOR_1 = 5;
-        public static final int LEFT_MOTOR_2 = 6;
-        public static final int RIGHT_MOTOR_1 = 3;
-        public static final int RIGHT_MOTOR_2 = 4;
+        public static final int LEFT_MOTOR_1 = 3;
+        public static final int LEFT_MOTOR_2 = 4;
+        public static final int RIGHT_MOTOR_1 = 5;
+        public static final int RIGHT_MOTOR_2 = 6;
+
+        public static final int[] LEFT_ENCODER = { 0, 1 };
+        public static final int[] RIGHT_ENCODER = { 2, 3 };
     }
 
     /**
@@ -33,7 +36,7 @@ public final class Constants {
      */
     public static final class OI {
         public static final class LeftJoy {
-            public static final int PORT = 0;
+            public static final int PORT = 1;
 
             public static final int ARCADETANK_DRIVE_BUTTON = 4;
             public static final int CHARACTERIZED_DRIVE_BUTTON = 5;
@@ -41,7 +44,7 @@ public final class Constants {
         }
 
         public static final class RightJoy {
-            public static final int PORT = 1;
+            public static final int PORT = 0;
 
             public static final int SLOW_DRIVE_BUTTON = 5;
         }

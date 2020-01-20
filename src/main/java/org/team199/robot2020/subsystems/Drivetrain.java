@@ -49,12 +49,6 @@ public class Drivetrain extends SubsystemBase {
     leftEnc.setVelocityConversionFactor(conversion);
     rightEnc.setPositionConversionFactor(conversion);
     rightEnc.setVelocityConversionFactor(conversion);
-
-    try {
-      rightEnc.setInverted(true);
-    } catch (IllegalArgumentException e) {
-      e.printStackTrace();
-    }
   }
 
   public void setOdometry(DifferentialDriveOdometry odometry) {
