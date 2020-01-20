@@ -44,6 +44,11 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
+        // Arcade/Tank drive button
+        new JoystickButton(leftJoy, Constants.OI.LeftJoy.ARCADETANK_DRIVE_BUTTON)
+                .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Arcade Drive",
+                        !SmartDashboard.getBoolean("Arcade Drive", true))));
+
         // characterize drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.CHARACTERIZED_DRIVE_BUTTON)
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",

@@ -8,24 +8,28 @@
 package org.team199.robot2020.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
+  public enum Side {
+    LEFT, RIGHT;
+  }
+
   private final CANSparkMax leftMaster = MotorControllerFactory.createSparkMax(Constants.Drive.LEFT_MOTOR_1);
   private final CANSparkMax leftSlave = MotorControllerFactory.createSparkMax(Constants.Drive.LEFT_MOTOR_2);
   private final CANSparkMax rightMaster = MotorControllerFactory.createSparkMax(Constants.Drive.RIGHT_MOTOR_1);
   private final CANSparkMax rightSlave = MotorControllerFactory.createSparkMax(Constants.Drive.RIGHT_MOTOR_2);
 
-  private final Encoder leftEnc = new Encoder(Constants.Drive.LEFT_ENCODER[0], Constants.Drive.LEFT_ENCODER[1]);
-  private final Encoder rightEnc = new Encoder(Constants.Drive.RIGHT_ENCODER[0], Constants.Drive.RIGHT_ENCODER[1]);
+  private final CANEncoder leftEnc = leftMaster.getEncoder();
+  private final CANEncoder rightEnc = rightMaster.getEncoder();
 
   private final AHRS gyro = new AHRS();
 
@@ -39,6 +43,18 @@ public class Drivetrain extends SubsystemBase {
     rightSlave.follow(rightMaster);
     rightMaster.setInverted(true);
     rightSlave.setInverted(true);
+
+    double conversion = Math.PI * 2 * 5;
+    leftEnc.setPositionConversionFactor(conversion);
+    leftEnc.setVelocityConversionFactor(conversion);
+    rightEnc.setPositionConversionFactor(conversion);
+    rightEnc.setVelocityConversionFactor(conversion);
+
+    try {
+      rightEnc.setInverted(true);
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    }
   }
 
   public void setOdometry(DifferentialDriveOdometry odometry) {
@@ -51,6 +67,30 @@ public class Drivetrain extends SubsystemBase {
 
   public double getHeading() {
     return Math.IEEEremainder(gyro.getAngle(), 360) * (isGyroReversed ? -1.0 : 1.0);
+  }
+
+  public double getEncPos(Side s) {
+    if (s == Side.LEFT) {
+      return leftEnc.getPosition();
+    } else {
+      return rightEnc.getPosition();
+    }
+  }
+
+  public double getEncRate(Side s) {
+    if (s == Side.LEFT) {
+      return leftEnc.getVelocity();
+    } else {
+      return rightEnc.getVelocity();
+    }
+  }
+
+  public CANEncoder getEncoder(Side s) {
+    if (s == Side.LEFT) {
+      return leftEnc;
+    } else {
+      return rightEnc;
+    }
   }
 
   public void arcadeDrive(double speed, double rotation) {
@@ -68,8 +108,8 @@ public class Drivetrain extends SubsystemBase {
    * @param right from -1 to 1
    */
   public void characterizedDrive(double left, double right) {
-    final double actualLeftVel = leftEnc.getRate();
-    final double actualRightVel = rightEnc.getRate();
+    final double actualLeftVel = leftEnc.getVelocity();
+    final double actualRightVel = rightEnc.getVelocity();
 
     final double desiredLeftVel = Constants.Drivetrain.MAX_SPEED * left;
     final double desiredRightVel = Constants.Drivetrain.MAX_SPEED * right;
