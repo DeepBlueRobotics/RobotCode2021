@@ -10,10 +10,10 @@ package org.team199.robot2020.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 //import motors
 
-public class DeployLift extends CommandBase {
+public class ExtendElevator extends CommandBase {
   //initialize motors
 
-  public DeployLift() {
+  public ExtendElevator() {
     //control the motor with a button on the remote
     //when the button is pressed the motor raises the lift and then slowly starts to lower
   }
@@ -30,7 +30,7 @@ public class DeployLift extends CommandBase {
 
   
   @Override
-  public void end(boolean interrupted) {
+  public void end(final boolean interrupted) {
     //motors stop running
   }
 
