@@ -10,9 +10,13 @@ package org.team199.robot2020;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+import java.io.IOException;
+
+import org.team199.lib.RobotPath;
 import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.subsystems.Drivetrain;
 
@@ -27,10 +31,16 @@ public class RobotContainer {
     private final Drivetrain drivetrain = new Drivetrain();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.PORT);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.PORT);
+    private RobotPath path;
 
     public RobotContainer() {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
+        try {
+            path = new RobotPath("Blue1");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void configureButtonBindings() {
@@ -41,6 +51,7 @@ public class RobotContainer {
     }
 
     public CommandBase getAutonomousCommand() {
-        return null;
+        Command pathCommand = path.getPathCommand();
+        return pathCommand.andThen(() -> drivetrain.tankDrive(0, 0));
     }
 }
