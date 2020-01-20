@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import org.team199.robot2020.commands.TeleopDrive;
-import org.team199.robot2020.commands.DeployAndRunIntake;
+import org.team199.robot2020.commands.DeployIntake;
+import org.team199.robot2020.commands.RunIntakeAndHopper;
 import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Intake;
 
@@ -43,7 +45,8 @@ public class RobotContainer {
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
         // intake button
-        new JoystickButton(manipulator, Constants.OI.Controller.INTAKE_BUTTON).whenPressed(new DeployAndRunIntake(intake));;
+        new JoystickButton(manipulator, Constants.OI.Controller.INTAKE_BUTTON)
+            .whenPressed(new SequentialCommandGroup(new DeployIntake(intake), new RunIntakeAndHopper(intake)));
     }
 
     public CommandBase getAutonomousCommand() {
