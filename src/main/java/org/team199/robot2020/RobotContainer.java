@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import org.team199.robot2020.commands.TeleopDrive;
+import org.team199.robot2020.commands.UpdateIntake;
 import org.team199.robot2020.commands.DeployIntake;
 import org.team199.robot2020.commands.RunIntakeAndHopper;
 import org.team199.robot2020.subsystems.Drivetrain;
@@ -37,6 +38,9 @@ public class RobotContainer {
     public RobotContainer() {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
+        intake.setDefaultCommand(new UpdateIntake(intake));
+        SmartDashboard.putBoolean("Desired Intake Deployment", false);
+        SmartDashboard.putBoolean("Actual Intake Deployment",false);
     }
 
     private void configureButtonBindings() {
@@ -46,7 +50,8 @@ public class RobotContainer {
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
         // intake button
         new JoystickButton(manipulator, Constants.OI.Controller.INTAKE_BUTTON)
-            .whenPressed(new SequentialCommandGroup(new DeployIntake(intake), new RunIntakeAndHopper(intake)));
+            .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Desired Intake Deployment",
+                    !SmartDashboard.getBoolean("Desired Intake Deployment", false))));
     }
 
     public CommandBase getAutonomousCommand() {
