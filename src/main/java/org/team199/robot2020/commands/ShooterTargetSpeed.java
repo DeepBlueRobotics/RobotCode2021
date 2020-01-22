@@ -15,7 +15,7 @@ public class ShooterTargetSpeed extends CommandBase {
     timer = new Timer();
   }
 
-  public void initialize(){
+  public void initialize() {
     timer.start();
   }
 
@@ -31,7 +31,7 @@ public class ShooterTargetSpeed extends CommandBase {
     shooter.setSetpoint(speed);
     SmartDashboard.putNumber("Shooter Distance", shooter.getCurrentDistance());
 
-    if (timer.get() >= 0.1){
+    if (timer.get() >= 0.1) {
       SmartDashboard.putNumber("Shooter Speed", shooter.getMeasurement());
       timer.reset();
     }

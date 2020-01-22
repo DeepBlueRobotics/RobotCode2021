@@ -16,7 +16,6 @@ public class Shooter extends PIDSubsystem {
     private final WPI_VictorSPX flywheel = MotorControllerFactory.createVictor(Constants.Drive.FLYWHEEL_MOTOR);
     private final Encoder encoder = new Encoder(new DigitalInput(4), new DigitalInput(5));
     private final SimpleMotorFeedforward ff = new SimpleMotorFeedforward(-3.42857142857, 6.0/35);
-    public static final double SHOOTING_SPEED = 0;
     private double targetSpeed;
 
     public Shooter() {
@@ -30,7 +29,7 @@ public class Shooter extends PIDSubsystem {
     }
 
     public void useOutput(double output, double setpoint) { // set flywheel speed
-        flywheel.setVoltage(output + ff.calculate(setpoint)); // TODO: add feedforward
+        flywheel.setVoltage(output + ff.calculate(output)); // TODO: add feedforward
     }
 
     public double getMeasurement() { // get current speed
