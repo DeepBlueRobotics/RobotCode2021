@@ -42,7 +42,10 @@ public class RobotContainer {
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.CHARACTERIZED_DRIVE_BUTTON)
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
-        new JoystickButton(rightJoy, Constants.OI.RightJoy.LIMELIGHT_BUTTON).whenPressed(new ToggleLimelight());
+        
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.LIMELIGHT_BUTTON)
+            .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Using Limelight",
+                !SmartDashboard.getBoolean("Using Limelight", false))));
     }
 
     public CommandBase getAutonomousCommand() {
