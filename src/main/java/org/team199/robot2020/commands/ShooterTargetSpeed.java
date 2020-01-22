@@ -11,6 +11,7 @@ public class ShooterTargetSpeed extends CommandBase {
 
   public ShooterTargetSpeed(Shooter shooter) {
     this.shooter = shooter;
+    addRequirements(shooter);
     timer = new Timer();
   }
 
@@ -23,12 +24,16 @@ public class ShooterTargetSpeed extends CommandBase {
    Always set the flywheel to the current desired speed using PID
    Update current velocity measurement
    */
+    if (SmartDashboard.getNumber("Shooter kP", 0) != shooter.getP()) {
+      shooter.setP(SmartDashboard.getNumber("Shooter kP", 0));
+    }
     double speed = SmartDashboard.getNumber("Shooter Target Speed", 0); //makes Kevin #4 feel better
     shooter.setSetpoint(speed);
     SmartDashboard.putNumber("Shooter Distance", shooter.getCurrentDistance());
 
-    if ((timer.get() * 10) % 10 == 0){
+    if (timer.get() >= 0.1){
       SmartDashboard.putNumber("Shooter Speed", shooter.getMeasurement());
+      timer.reset();
     }
   }
 
