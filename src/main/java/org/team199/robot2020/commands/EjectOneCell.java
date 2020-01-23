@@ -12,6 +12,7 @@ public class EjectOneCell extends CommandBase {
 
     public void initialize() {
         // start timer
+        
     }
 
     public void execute() {

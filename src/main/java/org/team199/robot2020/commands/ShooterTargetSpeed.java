@@ -31,6 +31,14 @@ public class ShooterTargetSpeed extends CommandBase {
     shooter.setSetpoint(speed);
     SmartDashboard.putNumber("Shooter Distance", shooter.getCurrentDistance());
 
+    shooter.setSparkMaxStatus(SmartDashboard.getBoolean("Spark Max in use", true));
+
+    if (shooter.getSparkMaxStatus() == true) {
+      SmartDashboard.putString("Motor status", "The shooter is using the spark max");
+    } else {
+      SmartDashboard.putString("Motor status", "The shooter is using the Victor SPX");
+    }
+
     if (timer.get() >= 0.1) {
       SmartDashboard.putNumber("Shooter Speed", shooter.getMeasurement());
       timer.reset();

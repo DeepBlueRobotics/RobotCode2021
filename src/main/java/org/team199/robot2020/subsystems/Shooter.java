@@ -2,6 +2,7 @@ package org.team199.robot2020.subsystems;
 
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
@@ -13,7 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public class Shooter extends PIDSubsystem {
-    private final WPI_VictorSPX flywheel = MotorControllerFactory.createVictor(Constants.Drive.FLYWHEEL_MOTOR);
+    public boolean sparkMax = true;
+
+    private final WPI_VictorSPX flywheel1 = MotorControllerFactory.createVictor(Constants.Drive.FLYWHEEL_MOTOR);
+    private final CANSparkMax flywheel2 = MotorControllerFactory.createSparkMax(Constants.Drive.FLYWHEEL_MOTOR);
+    
     private final Encoder encoder = new Encoder(new DigitalInput(4), new DigitalInput(5));
     private final SimpleMotorFeedforward ff = new SimpleMotorFeedforward(-3.42857142857, 6.0/35);
     private double targetSpeed;
@@ -26,11 +31,19 @@ public class Shooter extends PIDSubsystem {
         SmartDashboard.putNumber("Shooter kP", 0);
         encoder.setDistancePerPulse(-1/8.75);
         encoder.setSamplesToAverage(20);
+        
+        
     }
 
     public void useOutput(double output, double setpoint) { // set flywheel speed
-        flywheel.setVoltage(output + ff.calculate(output)); // TODO: add feedforward
+        if (sparkMax == true) {
+            flywheel2.setVoltage(output + ff.calculate(output));
+        } else {
+            flywheel1.setVoltage(output + ff.calculate(output));
+        }
     }
+
+
 
     public double getMeasurement() { // get current speed
         return encoder.getRate();
@@ -38,6 +51,14 @@ public class Shooter extends PIDSubsystem {
 
     public double getCurrentDistance() {
         return encoder.getDistance();
+    }
+
+    public boolean getSparkMaxStatus() {
+        return sparkMax;
+    }
+
+    public void setSparkMaxStatus(boolean SparkMax) {
+        this.sparkMax = SparkMax;
     }
 
     public double getTargetSpeed() {

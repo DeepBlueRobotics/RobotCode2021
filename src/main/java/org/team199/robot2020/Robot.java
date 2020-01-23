@@ -19,17 +19,17 @@ import org.team199.robot2020.subsystems.Shooter;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class Robot extends TimedRobot {
+public class Robot extends TimedRobot { 
   private RobotContainer robotContainer;
-
-  
-
+  private static Shooter shooter;
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
    */
   @Override
   public void robotInit() {
+    shooter = new Shooter();
+    CommandScheduler.getInstance().setDefaultCommand(shooter, new ShooterTargetSpeed(shooter));
     robotContainer = new RobotContainer();
   }
 
