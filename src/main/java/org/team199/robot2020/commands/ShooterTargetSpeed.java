@@ -27,6 +27,18 @@ public class ShooterTargetSpeed extends CommandBase {
     if (SmartDashboard.getNumber("Shooter kP", 0) != shooter.getP()) {
       shooter.setP(SmartDashboard.getNumber("Shooter kP", 0));
     }
+    if (SmartDashboard.getNumber("Shooter kI", 0) != shooter.getI()) {
+      shooter.setI(SmartDashboard.getNumber("Shooter kI", 0));
+    }
+    if (SmartDashboard.getNumber("Shooter kD", 0) != shooter.getD()) {
+      shooter.setD(SmartDashboard.getNumber("Shooter kD", 0));
+    }
+    if (SmartDashboard.getNumber("Shooter kV", 0) != shooter.getV()) {
+      shooter.setV(SmartDashboard.getNumber("Shooter kV", 0));
+    }
+    if (SmartDashboard.getNumber("Shooter kS", 0) != shooter.getS()) {
+      shooter.setS(SmartDashboard.getNumber("Shooter kS", 0));
+    }
     double speed = SmartDashboard.getNumber("Shooter Target Speed", 0); //makes Kevin #4 feel better
     shooter.setSetpoint(speed);
     SmartDashboard.putNumber("Shooter Distance", shooter.getCurrentDistance());

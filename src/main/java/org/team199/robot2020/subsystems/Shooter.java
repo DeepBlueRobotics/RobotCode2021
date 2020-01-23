@@ -25,12 +25,16 @@ public class Shooter extends PIDSubsystem {
         setTargetSpeed(0);
         SmartDashboard.putNumber("Shooter Target Speed", 0);
         SmartDashboard.putNumber("Shooter kP", 0);
+        SmartDashboard.putNumber("Shooter kI", 0);
+        SmartDashboard.putNumber("Shooter kD", 0);
+        SmartDashboard.putNumber("Shooter kV", 0);
+        SmartDashboard.putNumber("Shooter kS", 0);
         encoder.setDistancePerPulse(-1/8.75);
         encoder.setSamplesToAverage(24);
     }
 
     public void useOutput(double output, double setpoint) { // set flywheel speed
-        flywheel.setVoltage(output + ff.calculate(output)); // TODO: add feedforward
+        flywheel.setVoltage(output + ff.calculate(setpoint)); // TODO: add feedforward
     }
     
 
@@ -58,4 +62,22 @@ public class Shooter extends PIDSubsystem {
     public void setP(double kP) {
         getController().setP(kP);
     }
+
+    public double getI() {
+        return getController().getI();
+    }
+
+    public void setI(double kI) {
+        getController().setI(kI);
+    }
+
+    public double getD() {
+        return getController().getD();
+    }
+
+    public void setD(double kD) {
+        getController().setD(kD);
+    }
+
+    
 }

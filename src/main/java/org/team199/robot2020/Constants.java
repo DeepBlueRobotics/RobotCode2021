@@ -73,6 +73,8 @@ public final class Constants {
     public static final class Shooter {
         public static final double KP = 0.0; // TODO: change all to correct values 
         public static final double KI = 0.0;
-        public static final double KD = 0.0; // add feedforward? arbitrary feedforward? 
+        public static final double KD = 0.0;
+        public static final double KV = 0.0;
+        public static final double KS = 0.0; // add feedforward? arbitrary feedforward? 
     }
 }
