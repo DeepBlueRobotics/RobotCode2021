@@ -7,12 +7,12 @@
 
 package org.team199.robot2020;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.io.IOException;
 
@@ -47,7 +47,7 @@ public class RobotContainer {
         // Arcade/Tank drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.ARCADETANK_DRIVE_BUTTON)
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Arcade Drive",
-                        !SmartDashboard.getBoolean("Arcade Drive", true))));
+                !SmartDashboard.getBoolean("Arcade Drive", false))));
 
         // characterize drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.CHARACTERIZED_DRIVE_BUTTON)

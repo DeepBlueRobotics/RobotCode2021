@@ -41,14 +41,14 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     leftSlave.follow(leftMaster);
     rightSlave.follow(rightMaster);
-    rightMaster.setInverted(true);
-    rightSlave.setInverted(true);
+    //rightMaster.setInverted(true);
+    //rightSlave.setInverted(true);
 
-    double conversion = Math.PI * 2 * 5;
+    double conversion = (Math.PI * 5.0) / 6.8;
     leftEnc.setPositionConversionFactor(conversion);
-    leftEnc.setVelocityConversionFactor(conversion);
+    leftEnc.setVelocityConversionFactor(conversion / 60);
     rightEnc.setPositionConversionFactor(conversion);
-    rightEnc.setVelocityConversionFactor(conversion);
+    rightEnc.setVelocityConversionFactor(conversion / 60);
   }
 
   public void setOdometry(DifferentialDriveOdometry odometry) {
@@ -65,7 +65,7 @@ public class Drivetrain extends SubsystemBase {
 
   public double getEncPos(Side s) {
     if (s == Side.LEFT) {
-      return leftEnc.getPosition();
+      return -leftEnc.getPosition();
     } else {
       return rightEnc.getPosition();
     }
@@ -73,7 +73,7 @@ public class Drivetrain extends SubsystemBase {
 
   public double getEncRate(Side s) {
     if (s == Side.LEFT) {
-      return leftEnc.getVelocity();
+      return -leftEnc.getVelocity();
     } else {
       return rightEnc.getVelocity();
     }
