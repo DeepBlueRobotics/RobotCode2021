@@ -25,6 +25,7 @@ public class Shooter extends PIDSubsystem {
         setTargetSpeed(0);
         SmartDashboard.putNumber("Shooter Target Speed", 0);
         SmartDashboard.putNumber("Shooter kP", 0);
+        flywheel.enableVoltageCompensation(true);
         encoder.setDistancePerPulse(-1/8.75);
         encoder.setSamplesToAverage(24);
     }
