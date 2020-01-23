@@ -65,6 +65,12 @@ public final class Constants {
         public static final double LOOP_TIME = 0.02;
     }
 
+    public static final class Climber {
+        public static final int liftRobotMotor = 0; //TODO - Change Ports
+        public static final int liftMotor = 1; //TODO - Change Ports
+
+    }
+
     public static final double SLOW_DRIVE_SPEED = 0.6;
     public static final double SLOW_DRIVE_ROTATION = 0.6;
 }
