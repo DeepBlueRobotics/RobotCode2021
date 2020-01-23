@@ -16,6 +16,7 @@ public class ExtendElevator extends CommandBase {
   public ExtendElevator() {
     //control the motor with a button on the remote
     //when the button is pressed the motor raises the lift and then slowly starts to lower
+  
   }
 
   
