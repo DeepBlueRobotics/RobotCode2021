@@ -13,10 +13,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class ResetClimber extends CommandBase {
  //initialize motors and encoder(s)
   public ResetClimber() {
-   //when a button is pressed(not held), then the motor starts to spin
-   //which would gather the string and pull the robot upwards
-   //encoders tell when the motor should stop based on the height of the robot relative to the bar 
-  
+   //liftRobotMotor spins backwards to unwind the string of the motor
+   //ratchet is manually take off beforehands to enable the motor to spin backwards  
   }
 
   
