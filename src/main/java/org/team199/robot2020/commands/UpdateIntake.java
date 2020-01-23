@@ -30,28 +30,25 @@ public class UpdateIntake extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boolean desired = SmartDashboard.getBoolean("Desired Intake Deployment", false );
-    boolean actual = SmartDashboard.getBoolean("Actual Intake Deployment", false );
+    double desired = SmartDashboard.getNumber("Desired Intake Deployment", 0.0 );
+    double actual = SmartDashboard.getNumber("Actual Intake Deployment", 0.0 );
     
-    if (desired && !actual) {
-      //run motor to put intake down
-      //start running motors that intake balls
-
+    if (desired == 1 && actual != 1) {
+      intake.intake();
     }
-    else if (!desired && actual) {
-      //run motor to pull intake up
-      //stop running motors that intake balls
-
+    else if (desired == 0 && actual != 0) {
+      intake.stopIntake();
     }
-    else {
-      SmartDashboard.putBoolean("Actual Intake Deployment", desired );
+    else if (desired == -1 && actual != -1){
+      intake.outtake();
     }
+    SmartDashboard.putNumber("Actual Intake Deployment", desired );
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //run motors at speed 0
+    intake.stopIntake();
 
   }
 

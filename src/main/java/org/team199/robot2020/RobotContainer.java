@@ -11,13 +11,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+import org.team199.robot2020.commands.ChangedDesiredIntake;
 import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.commands.UpdateIntake;
-import org.team199.robot2020.commands.DeployIntake;
-import org.team199.robot2020.commands.RunIntakeAndHopper;
 import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Intake;
 
@@ -48,10 +46,13 @@ public class RobotContainer {
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.CHARACTERIZED_DRIVE_BUTTON)
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
-        // intake button
+        
+        // intake/outtake buttons
         new JoystickButton(manipulator, Constants.OI.Controller.INTAKE_BUTTON)
-            .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Desired Intake Deployment",
-                    !SmartDashboard.getBoolean("Desired Intake Deployment", false))));
+            .whenPressed(new ChangedDesiredIntake(1.0));
+        new JoystickButton(manipulator, Constants.OI.Controller.OUTTAKE_BUTTON)
+            .whenPressed(new ChangedDesiredIntake(-1.0));
+            
     }
 
     public CommandBase getAutonomousCommand() {

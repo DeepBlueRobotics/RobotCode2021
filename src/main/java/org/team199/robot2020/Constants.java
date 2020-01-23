@@ -31,6 +31,13 @@ public final class Constants {
         public static final int[] RIGHT_ENCODER = { 0, 1 };
     }
 
+    /** 
+     *   Constants used for the intake
+     */
+    public static final class Intake {
+        public static final int INTAKE_MOTOR = 0; //TODO: Change to correct value
+    }
+
     /**
      * Constants for controllers and joysticks. Used to go in OI.java
      */
@@ -51,7 +58,9 @@ public final class Constants {
         public static final class Controller {
             public static final int PORT = 2;
 
-            public static final int INTAKE_BUTTON = 2; // TODO: change to correct button
+            public static final int INTAKE_BUTTON = 1; // TODO: change to correct button
+            public static final int OUTTAKE_BUTTON = 1; // TODO: change to correct button
+            
         }
     }
 
