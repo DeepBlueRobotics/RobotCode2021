@@ -16,12 +16,12 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public class Shooter extends PIDSubsystem {
 
-    public boolean sparkMax = true;
+    public boolean sparkMax = false;
     private final WPI_VictorSPX flywheel1 = MotorControllerFactory.createVictor(Constants.Drive.FLYWHEEL_MOTOR);
     private final CANSparkMax flywheel2 = MotorControllerFactory.createSparkMax(Constants.Drive.FLYWHEEL_MOTOR);
     
-    private final Encoder encoder = new Encoder(new DigitalInput(4), new DigitalInput(5), false, EncodingType.k1X );
-    private final SimpleMotorFeedforward ff = new SimpleMotorFeedforward(-3.42857142857, 6.0/35);
+    private final Encoder encoder = new Encoder(4, 5, false, EncodingType.k1X);
+    private SimpleMotorFeedforward ff = new SimpleMotorFeedforward(-3.42857142857, 6.0/35);
     private double targetSpeed;
 
     public Shooter() {
@@ -30,28 +30,21 @@ public class Shooter extends PIDSubsystem {
         setTargetSpeed(0);
         SmartDashboard.putNumber("Shooter Target Speed", 0);
         SmartDashboard.putNumber("Shooter kP", 0);
-<<<<<<< HEAD
         SmartDashboard.putNumber("Shooter kI", 0);
         SmartDashboard.putNumber("Shooter kD", 0);
         SmartDashboard.putNumber("Shooter kV", 0);
         SmartDashboard.putNumber("Shooter kS", 0);
-=======
-        flywheel.enableVoltageCompensation(true);
->>>>>>> 311af49f88e0b46432389db531a58ef495172cff
+        flywheel1.enableVoltageCompensation(true);
         encoder.setDistancePerPulse(-1/8.75);
         encoder.setSamplesToAverage(24);
     }
 
     public void useOutput(double output, double setpoint) { // set flywheel speed
-<<<<<<< HEAD
-        flywheel.setVoltage(output + ff.calculate(setpoint)); // TODO: add feedforward
-=======
         if (sparkMax == true) {
             flywheel2.setVoltage(output + ff.calculate(output));
         } else {
             flywheel1.setVoltage(output + ff.calculate(output));
         }
->>>>>>> 311af49f88e0b46432389db531a58ef495172cff
     }
     
 
@@ -106,5 +99,16 @@ public class Shooter extends PIDSubsystem {
         getController().setD(kD);
     }
 
-    
+    public double getS() {
+        return ff.ks;
+    }
+
+    public double getV() {
+        return ff.kv;
+    }
+
+    public void setSAndV(double kS, double kV) {
+        ff = new SimpleMotorFeedforward(kS, kV);
+        System.out.println("Created new ff with " + kS + ", " + kV);
+    }
 }
