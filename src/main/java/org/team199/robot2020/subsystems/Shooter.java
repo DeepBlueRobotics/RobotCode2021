@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.controller.PIDController;
 
 import org.team199.lib.MotorControllerFactory;
@@ -14,12 +15,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public class Shooter extends PIDSubsystem {
-    public boolean sparkMax = true;
 
+    public boolean sparkMax = true;
     private final WPI_VictorSPX flywheel1 = MotorControllerFactory.createVictor(Constants.Drive.FLYWHEEL_MOTOR);
     private final CANSparkMax flywheel2 = MotorControllerFactory.createSparkMax(Constants.Drive.FLYWHEEL_MOTOR);
     
-    private final Encoder encoder = new Encoder(new DigitalInput(4), new DigitalInput(5));
+    private final Encoder encoder = new Encoder(new DigitalInput(4), new DigitalInput(5), false, EncodingType.k1X );
     private final SimpleMotorFeedforward ff = new SimpleMotorFeedforward(-3.42857142857, 6.0/35);
     private double targetSpeed;
 
@@ -29,10 +30,9 @@ public class Shooter extends PIDSubsystem {
         setTargetSpeed(0);
         SmartDashboard.putNumber("Shooter Target Speed", 0);
         SmartDashboard.putNumber("Shooter kP", 0);
+        flywheel.enableVoltageCompensation(true);
         encoder.setDistancePerPulse(-1/8.75);
-        encoder.setSamplesToAverage(20);
-        
-        
+        encoder.setSamplesToAverage(24);
     }
 
     public void useOutput(double output, double setpoint) { // set flywheel speed
@@ -42,6 +42,7 @@ public class Shooter extends PIDSubsystem {
             flywheel1.setVoltage(output + ff.calculate(output));
         }
     }
+    
 
 
 
