@@ -35,7 +35,8 @@ public final class Constants {
      *   Constants used for the intake
      */
     public static final class Intake {
-        public static final int INTAKE_MOTOR = 0; //TODO: Change to correct value
+        public static final int INTAKE_MOTOR = 0; //TODO: Change to correct port
+        public static final int[] INTAKE_PISTONS= { 0 , 1 }; // TODO: Change to correct ports
     }
 
     /**
