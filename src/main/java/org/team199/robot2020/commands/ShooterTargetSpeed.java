@@ -24,6 +24,19 @@ public class ShooterTargetSpeed extends CommandBase {
    Always set the flywheel to the current desired speed using PID
    Update current velocity measurement
    */
+    readSmartDashboard();
+    
+    double speed = SmartDashboard.getNumber("Shooter Target Speed", 0); //makes Kevin #4 feel better
+    shooter.setSetpoint(speed);
+    SmartDashboard.putNumber("Shooter Distance", shooter.getCurrentDistance());
+
+    if (timer.get() >= 0.1) {
+      SmartDashboard.putNumber("Shooter Speed", shooter.getMeasurement());
+      timer.reset();
+    }
+  }
+
+  public void readSmartDashboard() {
     if (SmartDashboard.getNumber("Shooter kP", 0) != shooter.getP()) {
       shooter.setP(SmartDashboard.getNumber("Shooter kP", 0));
     }
@@ -37,22 +50,12 @@ public class ShooterTargetSpeed extends CommandBase {
         SmartDashboard.getNumber("Shooter kS", 0) != shooter.getS()) {
       shooter.setSAndV(SmartDashboard.getNumber("Shooter kS", 0), SmartDashboard.getNumber("Shooter kV", 0));
     }
-    double speed = SmartDashboard.getNumber("Shooter Target Speed", 0); //makes Kevin #4 feel better
-    shooter.setSetpoint(speed);
-    SmartDashboard.putNumber("Shooter Distance", shooter.getCurrentDistance());
-
-    shooter.setSparkMaxStatus(SmartDashboard.getBoolean("Motor status", false));
-
     if (shooter.getSparkMaxStatus() == true) {
       SmartDashboard.putString("Motor status", "The shooter is using the spark max");
     } else {
       SmartDashboard.putString("Motor status", "The shooter is using the Victor SPX");
     }
-
-    if (timer.get() >= 0.1) {
-      SmartDashboard.putNumber("Shooter Speed", shooter.getMeasurement());
-      timer.reset();
-    }
+    shooter.setSparkMaxStatus(SmartDashboard.getBoolean("Motor status", false));
   }
 
   public boolean isFinished() {

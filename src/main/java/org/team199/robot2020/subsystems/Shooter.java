@@ -3,11 +3,13 @@ package org.team199.robot2020.subsystems;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import com.revrobotics.CANPIDController;
 
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
@@ -16,9 +18,11 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public class Shooter extends PIDSubsystem {
 
-    public boolean sparkMax = false;
-    private final WPI_VictorSPX flywheel1 = MotorControllerFactory.createVictor(Constants.Drive.FLYWHEEL_MOTOR);
-    private final CANSparkMax flywheel2 = MotorControllerFactory.createSparkMax(Constants.Drive.FLYWHEEL_MOTOR);
+    private boolean sparkMax = false;
+    private final WPI_VictorSPX flywheel1 = MotorControllerFactory.createVictor(Constants.Shooter.FLYWHEEL_MOTOR);
+    private final CANSparkMax flywheel2 = MotorControllerFactory.createSparkMax(Constants.Shooter.FLYWHEEL_MOTOR);
+    private final CANSparkMax flywheel3 = MotorControllerFactory.createSparkMax(Constants.Shooter.FLYWHEEL_MOTOR);
+    private final CANPIDController sparkPID = flywheel2.getPIDController();
     
     private final Encoder encoder = new Encoder(4, 5, false, EncodingType.k1X);
     private SimpleMotorFeedforward ff = new SimpleMotorFeedforward(-3.42857142857, 6.0/35);
@@ -35,21 +39,20 @@ public class Shooter extends PIDSubsystem {
         SmartDashboard.putNumber("Shooter kV", 0);
         SmartDashboard.putNumber("Shooter kS", 0);
         flywheel1.enableVoltageCompensation(true);
+        flywheel3.setInverted(true);
+        flywheel3.follow(flywheel2);
         encoder.setDistancePerPulse(-1/8.75);
         encoder.setSamplesToAverage(24);
     }
 
     public void useOutput(double output, double setpoint) { // set flywheel speed
         if (sparkMax == true) {
-            flywheel2.setVoltage(output + ff.calculate(output));
+            sparkPID.setReference(setpoint, ControlType.kVelocity);
         } else {
-            flywheel1.setVoltage(output + ff.calculate(output));
+            flywheel1.setVoltage(output + ff.calculate(setpoint));
         }
     }
     
-
-
-
     public double getMeasurement() { // get current speed
         return encoder.getRate();
     }
@@ -62,8 +65,8 @@ public class Shooter extends PIDSubsystem {
         return sparkMax;
     }
 
-    public void setSparkMaxStatus(boolean SparkMax) {
-        this.sparkMax = SparkMax;
+    public void setSparkMaxStatus(boolean sparkMax) {
+        this.sparkMax = sparkMax;
     }
 
     public double getTargetSpeed() {
@@ -81,6 +84,7 @@ public class Shooter extends PIDSubsystem {
 
     public void setP(double kP) {
         getController().setP(kP);
+        sparkPID.setP(kP);
     }
 
     public double getI() {
@@ -89,6 +93,7 @@ public class Shooter extends PIDSubsystem {
 
     public void setI(double kI) {
         getController().setI(kI);
+        sparkPID.setI(kI);
     }
 
     public double getD() {
@@ -97,6 +102,7 @@ public class Shooter extends PIDSubsystem {
 
     public void setD(double kD) {
         getController().setD(kD);
+        sparkPID.setD(kD);
     }
 
     public double getS() {
@@ -109,6 +115,7 @@ public class Shooter extends PIDSubsystem {
 
     public void setSAndV(double kS, double kV) {
         ff = new SimpleMotorFeedforward(kS, kV);
+        // TODO: set spark feedforward
         System.out.println("Created new ff with " + kS + ", " + kV);
     }
 }
