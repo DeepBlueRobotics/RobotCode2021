@@ -28,10 +28,7 @@ public final class Constants {
         public static final int RIGHT_MOTOR_2 = 6;
 
         public static final int[] LEFT_ENCODER = { 0, 1 };
-        public static final int[] RIGHT_ENCODER = { 0, 1 };
-
-        public static final int INTAKE_MOTOR = 0;
-        public static final int[] INTAKE_PISTONS= { 0 , 1 };
+        public static final int[] RIGHT_ENCODER = { 2, 3 };
     }
     
     /**
@@ -74,4 +71,13 @@ public final class Constants {
 
     public static final double SLOW_DRIVE_SPEED = 0.6;
     public static final double SLOW_DRIVE_ROTATION = 0.6;
+
+    public static final class Intake {
+        public static final int INTAKE_MOTOR = 0; // TODO: set all to correct ports
+        public static final int FEEDER_MOTOR = 1;
+        public static final int[] INTAKE_PISTONS = { 0, 1 };
+
+        public static final double INTAKE_SPEED = 1; // TODO: set correct speeds
+        public static final double FEEDER_SPEED = 1;
+    }
 }

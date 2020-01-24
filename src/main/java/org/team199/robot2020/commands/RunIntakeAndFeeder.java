@@ -2,10 +2,10 @@ package org.team199.robot2020.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.team199.robot2020.subsystems.Intake;
 
-public class RunIntakeAndHopper extends CommandBase {
+public class RunIntakeAndFeeder extends CommandBase {
     Intake intake;
 
-    public RunIntakeAndHopper(Intake intake){
+    public RunIntakeAndFeeder(Intake intake){
         this.intake = intake;
         addRequirements(intake);
     }
