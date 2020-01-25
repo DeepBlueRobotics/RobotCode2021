@@ -50,6 +50,9 @@ public final class Constants {
 
         public static final class Controller {
             public static final int PORT = 2;
+            public static final int RAISE_LIFT_BUTTON = 3; //TODO: Find Ports
+            public static final int LOWER_LIFT_BUTTON = 4; //TODO: Find Ports
+            public static final int RAISE_ROBOT_BUTTON = 5; //TODO: Find Ports
         }
     }
 
@@ -66,8 +69,8 @@ public final class Constants {
     }
 
     public static final class Climber {
-        public static final int liftRobotMotor = 0; //TODO - Change Ports
-        public static final int liftMotor = 1; //TODO - Change Ports
+        public static final int liftRobotMotor = 0; //TODO: Find Ports
+        public static final int liftMotor = 1; //TODO: Find Ports
 
     }
 

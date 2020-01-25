@@ -12,31 +12,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import org.team199.robot2020.subsystems.Climber;
 //import motors and button
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import edu.wpi.first.wpilibj.XboxController.Button;
 
-public class Elevator extends CommandBase {
+public class RaiseLift extends CommandBase {
   //initialize motors
-  VictorSPX liftMotor;
-  Button liftButton;
-  public Elevator(VictorSPX liftMotor, Button liftButton) {
-    //control the motor with a button on the remote
-    //when the button is pressed the motor raises the lift and then slowly starts to lower
-    this.liftMotor = liftMotor;
-    this.liftButton = liftButton;
-    if /*buttonA pressed(use encoders for how much the motor will spin)*/ {
-      //raise the elevator arm
-    } elif /*buttonB pressed and held*/ {
-      //lower the arm until the buttonB is let go
-    }
+  Climber climber;
+  public RaiseLift(Climber climber) {
+    this.climber = climber;
   }
-
-  private enum State {
-    RAISING, //Going up
-    LOWERING, //Lowering to the Bar
-    ONBAR, //Getting on the Bar
-    LOWERED //Lowering to start position
-  }
-
   
   @Override
   public void initialize() {     
@@ -44,15 +26,16 @@ public class Elevator extends CommandBase {
 
   @Override
   public void execute() {
-    //make motor run
-    liftMotor.set(ControlMode.PercentOutput, 1);
+    //control the motor with a button on the remote
+    //when the button is pressed the motor raises the lift and then slowly starts to lower
+    climber.raiseLift();
   }
 
   
   @Override
   public void end(final boolean interrupted) {
     //motors stop running
-    liftMotor.set(ControlMode.PercentOutput, 0);
+    climber.stopLift();
   }
 
   
