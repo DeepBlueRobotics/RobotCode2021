@@ -8,39 +8,36 @@
 package org.team199.robot2020.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.team199.robot2020.Constants;
-import org.team199.lib.MotorControllerFactory;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import org.team199.robot2020.subsystems.Climber;
-//import motors and encoder(s)
-import com.revrobotics.CANSparkMax;
-import edu.wpi.first.wpilibj.Encoder;
+//import motors and button
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-public class RaiseRobot extends CommandBase {
+public class LowerLift extends CommandBase {
+  //initialize motors
   Climber climber;
-  public RaiseRobot(Climber climber) {
-   //when a button is pressed(not held), then the motor starts to spin
-   //which would gather the string and pull the robot upwards
-   //encoders tell when the motor should stop based on the height of the robot relative to the bar 
-   this.climber = climber;
+  double speed;
+  public LowerLift(Climber climber, double speed) {
+    this.climber = climber;
+    this.speed = speed;
   }
-
   
   @Override
-  public void initialize() {
-    
+  public void initialize() {     
   }
 
-  
   @Override
   public void execute() {
-    //motors start to spin
-    
+    //control the motor with a button on the remote
+    //when the button is pressed the motor raises the lift and then slowly starts to lower
+    climber.lowerLift(speed);
   }
 
   
   @Override
-  public void end(boolean interrupted) {
-    //when the encoders reach a certain value, then the motors stop
+  public void end(final boolean interrupted) {
+    //motors stop running
+    climber.stopLift();
   }
 
   

@@ -50,6 +50,9 @@ public final class Constants {
 
         public static final class Controller {
             public static final int PORT = 2;
+            public static final int RAISE_LIFT_BUTTON = 3; //TODO: Find Ports
+            public static final int LOWER_LIFT_BUTTON = 4; //TODO: Find Ports
+            public static final int RAISE_ROBOT_BUTTON = 5; //TODO: Find Ports
         }
     }
 
@@ -63,6 +66,12 @@ public final class Constants {
         public static final double MAX_ACCEL = 0.0;
         public static final double MAX_SPEED = 13 * 12; // TODO: change to correct values
         public static final double LOOP_TIME = 0.02;
+    }
+
+    public static final class Climber {
+        public static final int liftRobotMotor = 0; //TODO: Find Ports
+        public static final int liftMotor = 1; //TODO: Find Ports
+
     }
 
     public static final double SLOW_DRIVE_SPEED = 0.6;
