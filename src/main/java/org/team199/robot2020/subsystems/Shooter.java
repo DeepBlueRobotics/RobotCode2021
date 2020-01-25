@@ -36,8 +36,8 @@ public class Shooter extends PIDSubsystem {
         SmartDashboard.putNumber("Shooter kP", 0);
         SmartDashboard.putNumber("Shooter kI", 0);
         SmartDashboard.putNumber("Shooter kD", 0);
-        SmartDashboard.putNumber("Shooter kV", 0);
-        SmartDashboard.putNumber("Shooter kS", 0);
+        SmartDashboard.putNumber("Shooter kV", Constants.Shooter.KV);
+        SmartDashboard.putNumber("Shooter kS", Constants.Shooter.KS);
         SmartDashboard.putNumber("Margin of error", SmartDashboard.getNumber("Shooter Speed", 0) - SmartDashboard.getNumber("Shooter Target Speed", 0));
         flywheel1.enableVoltageCompensation(true);
         flywheel3.setInverted(true);
