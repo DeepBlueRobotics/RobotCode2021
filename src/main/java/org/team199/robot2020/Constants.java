@@ -74,10 +74,21 @@ public final class Constants {
 
     public static final class Intake {
         public static final int INTAKE_MOTOR = 0; // TODO: set all to correct ports
-        public static final int FEEDER_MOTOR = 1;
         public static final int[] INTAKE_PISTONS = { 0, 1 };
 
         public static final double INTAKE_SPEED = 1; // TODO: set correct speeds
-        public static final double FEEDER_SPEED = 1;
+    }
+
+    public static final class Feeder {
+        // TODO: change to correct values
+        public static final int BELT_MOTOR = 2;
+        public static final int EJECT_MOTOR = 3;
+
+        public static final int INDEX_SENSOR = 0;
+
+        public static final double BELT_SPEED = .8;
+        public static final double EJECT_SPEED = 1;
+
+        public static final double INDEXER_DISTANCE = 127; // in mm
     }
 }

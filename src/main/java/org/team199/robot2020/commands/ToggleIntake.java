@@ -7,27 +7,29 @@
 
 package org.team199.robot2020.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.team199.robot2020.subsystems.Intake;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class ChangedDesiredIntake extends InstantCommand {
-  double buttonPressed;
-
-  public ChangedDesiredIntake(double buttonPressed) {
-    this.buttonPressed=buttonPressed;
+public class ToggleIntake extends InstantCommand {
+  private Intake intake;
+  public ToggleIntake(Intake intake) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(this.intake = intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (buttonPressed == SmartDashboard.getNumber("Desired Intake Deployment", 0.0 )) {
-      SmartDashboard.putNumber("Desired Intake Deployment", 0.0 );
-    }
-    else {
-      SmartDashboard.putNumber("Desired Intake Deployment", buttonPressed );
+    if (intake.isRunning()) {
+      intake.deploy();
+      intake.intake();
+    } else {
+      intake.retract();
+      intake.stop();
     }
   }
 }
