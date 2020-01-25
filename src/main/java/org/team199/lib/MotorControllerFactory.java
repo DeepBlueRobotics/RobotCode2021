@@ -59,6 +59,7 @@ public class MotorControllerFactory {
     spark.restoreFactoryDefaults();
     spark.setIdleMode(IdleMode.kBrake);
     spark.enableVoltageCompensation(12);
+    spark.setSmartCurrentLimit(50);
 
     CANPIDController controller = spark.getPIDController();
     controller.setOutputRange(-1, 1);
