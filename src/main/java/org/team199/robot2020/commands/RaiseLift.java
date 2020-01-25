@@ -8,14 +8,13 @@
 package org.team199.robot2020.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import com.ctre.phoenix.motorcontrol.ControlMode;
+
+import org.team199.robot2020.Constants;
 import org.team199.robot2020.subsystems.Climber;
-//import motors and button
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 public class RaiseLift extends CommandBase {
-  //initialize motors
   Climber climber;
+
   public RaiseLift(Climber climber) {
     this.climber = climber;
   }
@@ -26,21 +25,18 @@ public class RaiseLift extends CommandBase {
 
   @Override
   public void execute() {
-    //control the motor with a button on the remote
-    //when the button is pressed the motor raises the lift and then slowly starts to lower
     climber.raiseLift();
   }
 
   
   @Override
   public void end(final boolean interrupted) {
-    //motors stop running
     climber.stopLift();
   }
 
   
   @Override
   public boolean isFinished() {
-    return false;
+    return climber.getLiftHeight() > Constants.Climber.LIFT_HEIGHT;
   }
 }

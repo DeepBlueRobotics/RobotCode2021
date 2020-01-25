@@ -20,7 +20,6 @@ import org.team199.robot2020.commands.RaiseRobot;
 import org.team199.robot2020.commands.LowerLift;
 import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Climber;
-import edu.wpi.first.wpilibj.Encoder;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -35,7 +34,6 @@ public class RobotContainer {
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.PORT);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.PORT);
     private final Joystick manipulator = new Joystick(Constants.OI.Controller.PORT);
-    private final Encoder liftEncoder = new Encoder();
 
 
     public RobotContainer() {
@@ -49,8 +47,10 @@ public class RobotContainer {
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
         new JoystickButton(manipulator, Constants.OI.Controller.RAISE_LIFT_BUTTON).whenPressed(new RaiseLift(climber));
-        new JoystickButton(manipulator, Constants.OI.Controller.LOWER_LIFT_BUTTON).whileHeld(new LowerLift(climber, -0.4));
-        new JoystickButton(manipulator, Constants.OI.Controller.RAISE_ROBOT_BUTTON).whenPressed(new ParallelCommandGroup(new LowerLift(climber, -0.9), new RaiseRobot(climber)));
+        new JoystickButton(manipulator, Constants.OI.Controller.LOWER_LIFT_BUTTON)
+                .whileHeld(new LowerLift(climber, -Constants.Climber.MANUAL_LIFT_SPEED));
+        new JoystickButton(manipulator, Constants.OI.Controller.RAISE_ROBOT_BUTTON)
+                .whenPressed(new ParallelCommandGroup(new LowerLift(climber, -Constants.Climber.AUTO_LIFT_SPEED), new RaiseRobot(climber)));
     }
 
     public CommandBase getAutonomousCommand() {

@@ -69,9 +69,16 @@ public final class Constants {
     }
 
     public static final class Climber {
-        public static final int liftRobotMotor = 0; //TODO: Find Ports
-        public static final int liftMotor = 1; //TODO: Find Ports
+        public static final int LIFT_ROBOT_MOTOR = 0; //TODO: Find Ports
+        public static final int LIFT_MOTOR = 1; //TODO: Find Ports
 
+        public static final double AUTO_LIFT_SPEED = 0.9;
+        public static final double MANUAL_LIFT_SPEED = 0.4;
+        public static final double ROBOT_SPEED = 0.4; // TODO: set correct speed
+        public static final double RESET_SPEED = -1; // TODO: set correct speed
+
+        public static final double LIFT_HEIGHT = 79; // TODO: set to correct height
+        public static final double ROBOT_HEIGHT = 12; // TODO: set to correct height + winding
     }
 
     public static final double SLOW_DRIVE_SPEED = 0.6;

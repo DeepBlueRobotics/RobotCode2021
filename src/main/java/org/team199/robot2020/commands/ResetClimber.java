@@ -8,13 +8,13 @@
 package org.team199.robot2020.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-//import motors and encoder(s)
+import org.team199.robot2020.subsystems.Climber;
 
 public class ResetClimber extends CommandBase {
- //initialize motors and encoder(s)
-  public ResetClimber() {
-   //liftRobotMotor spins backwards to unwind the string of the motor
-   //ratchet is manually take off beforehands to enable the motor to spin backwards  
+  Climber climber;
+
+  public ResetClimber(Climber climber) {
+   this.climber = climber;
   }
 
   
@@ -26,18 +26,18 @@ public class ResetClimber extends CommandBase {
   
   @Override
   public void execute() {
-    //motors start to spin
+    climber.reset();
   }
 
   
   @Override
   public void end(boolean interrupted) {
-    //when the encoders reach a certain value, then the motors stop
+    climber.stopRobot();
   }
 
   
   @Override
   public boolean isFinished() {
-    return false;
+    return climber.getRobotHeight() < 0.01;
   }
 }
