@@ -33,7 +33,7 @@ public class Shooter extends PIDSubsystem {
         enable();
         setTargetSpeed(0);
         SmartDashboard.putNumber("Shooter Target Speed", 0);
-        SmartDashboard.putNumber("Shooter kP", 0);
+        SmartDashboard.putNumber("Shooter kP", Constants.Shooter.KP);
         SmartDashboard.putNumber("Shooter kI", 0);
         SmartDashboard.putNumber("Shooter kD", 0);
         SmartDashboard.putNumber("Shooter kV", Constants.Shooter.KV);
