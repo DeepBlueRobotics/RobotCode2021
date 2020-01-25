@@ -30,6 +30,8 @@ public class ShooterTargetSpeed extends CommandBase {
     shooter.setSetpoint(speed);
     SmartDashboard.putNumber("Shooter Distance", shooter.getCurrentDistance());
 
+    SmartDashboard.putNumber("Margin of error", SmartDashboard.getNumber("Shooter Speed", 0) - SmartDashboard.getNumber("Shooter Target Speed", 0));
+
     if (timer.get() >= 0.1) {
       SmartDashboard.putNumber("Shooter Speed", shooter.getMeasurement());
       timer.reset();
