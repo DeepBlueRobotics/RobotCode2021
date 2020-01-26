@@ -33,7 +33,9 @@ public class ShooterTargetSpeed extends CommandBase {
     SmartDashboard.putNumber("Margin of error", SmartDashboard.getNumber("Shooter Speed", 0) - SmartDashboard.getNumber("Shooter Target Speed", 0));
 
     if (timer.get() >= 0.1) {
-      SmartDashboard.putNumber("Shooter Speed", shooter.getMeasurement());
+      SmartDashboard.putNumber("Spark Port 2 Speed", shooter.getMeasurement1());
+      SmartDashboard.putNumber("Spark Port 4 Speed", shooter.getMeasurement2());
+
       timer.reset();
     }
   }

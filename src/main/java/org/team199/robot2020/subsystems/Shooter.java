@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.controller.PIDController;
+
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 
 import org.team199.lib.MotorControllerFactory;
@@ -27,6 +29,8 @@ public class Shooter extends PIDSubsystem {
     //uses port 4
     private final CANPIDController sparkPID = flywheel2.getPIDController();
     private final Encoder encoder = new Encoder(4, 5, false, EncodingType.k1X);
+    private final CANEncoder sparkenconder1 = flywheel2.getEncoder();
+    private final CANEncoder sparkenconder2 = flywheel3.getEncoder();
     private SimpleMotorFeedforward victorFF = new SimpleMotorFeedforward(Constants.Shooter.KS, Constants.Shooter.KV);
     private SimpleMotorFeedforward sparkFF = new SimpleMotorFeedforward(Constants.Shooter.SPARK_KS, Constants.Shooter.SPARK_KV);
     private double targetSpeed;
@@ -65,8 +69,12 @@ public class Shooter extends PIDSubsystem {
         }
     }
     
-    public double getMeasurement() { // get current speed
-        return encoder.getRate();
+    public double getMeasurement1() { // get current speed
+        return sparkenconder1.getVelocity()/60;
+    }
+
+    public double getMeasurement2() { // get current speed
+        return sparkenconder2.getVelocity()/60;
     }
 
     public double getCurrentDistance() {
