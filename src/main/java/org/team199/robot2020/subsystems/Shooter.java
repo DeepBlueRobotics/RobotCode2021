@@ -33,12 +33,17 @@ public class Shooter extends PIDSubsystem {
         enable();
         setTargetSpeed(0);
         SmartDashboard.putNumber("Shooter Target Speed", 0);
-        SmartDashboard.putNumber("Shooter kP", Constants.Shooter.KP);
-        SmartDashboard.putNumber("Shooter kI", 0);
-        SmartDashboard.putNumber("Shooter kD", 0);
-        SmartDashboard.putNumber("Shooter kV", Constants.Shooter.KV);
-        SmartDashboard.putNumber("Shooter kS", Constants.Shooter.KS);
-        SmartDashboard.putNumber("Margin of error", SmartDashboard.getNumber("Shooter Speed", 0) - SmartDashboard.getNumber("Shooter Target Speed", 0));
+        SmartDashboard.putNumber("Victor kP", Constants.Shooter.KP);
+        SmartDashboard.putNumber("Victor kI", 0);
+        SmartDashboard.putNumber("Victor kD", 0);
+        SmartDashboard.putNumber("Victor kV", Constants.Shooter.KV);
+        SmartDashboard.putNumber("Victor kS", Constants.Shooter.KS);
+        SmartDashboard.putNumber("Victor kP", Constants.Shooter.KP);
+        SmartDashboard.putNumber("Spark kP", Constants.Shooter.SPARK_KP);
+        SmartDashboard.putNumber("Spark kI", 0);
+        SmartDashboard.putNumber("Spark kD", 0);
+        SmartDashboard.putNumber("Spark kV", Constants.Shooter.SPARK_KV);
+        SmartDashboard.putNumber("Spark kS", Constants.Shooter.SPARK_KS);
         flywheel1.enableVoltageCompensation(true);
         flywheel3.setInverted(true);
         flywheel3.follow(flywheel2);
@@ -116,6 +121,7 @@ public class Shooter extends PIDSubsystem {
 
     public void setSAndV(double kS, double kV) {
         ff = new SimpleMotorFeedforward(kS, kV);
+        
         // TODO: set spark feedforward
         System.out.println("Created new ff with " + kS + ", " + kV);
     }

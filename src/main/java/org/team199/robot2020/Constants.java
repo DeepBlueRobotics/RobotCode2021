@@ -75,6 +75,11 @@ public final class Constants {
         public static final double KD = 0.0;
         public static final double KV = 0.12;
         public static final double KS = 0.4;
+        public static final double SPARK_KP = 2.0; // TODO: change all to correct values 
+        public static final double SPARK_KI = 0.0;
+        public static final double SPARK_KD = 0.0;
+        public static final double SPARK_KV = 0.12;
+        public static final double SPARK_KS = 0.4;
 
         public static final int FLYWHEEL_MOTOR = 3;
     }
