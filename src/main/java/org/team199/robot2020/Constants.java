@@ -22,10 +22,10 @@ public final class Constants {
      * Constants for things on our robot. Used to go in RobotMap.java
      */
     public static final class Drive {
-        public static final int LEFT_MOTOR_1 = 5;
-        public static final int LEFT_MOTOR_2 = 6;
-        public static final int RIGHT_MOTOR_1 = 3;
-        public static final int RIGHT_MOTOR_2 = 4;
+        public static final int LEFT_MOTOR_1 = 3;
+        public static final int LEFT_MOTOR_2 = 4;
+        public static final int RIGHT_MOTOR_1 = 5;
+        public static final int RIGHT_MOTOR_2 = 6;
 
         public static final int[] LEFT_ENCODER = { 0, 1 };
         public static final int[] RIGHT_ENCODER = { 2, 3 };
@@ -58,11 +58,12 @@ public final class Constants {
      * Drivetrain constants used in characterization
      */
     public static final class Drivetrain {
-        public static final double[] kVOLTS = {0.0, 0.0, 0.0, 0.0};
-        public static final double[] kVELS = {0.0, 0.0, 0.0, 0.0};
-        public static final double[] kACCELS = {0.0, 0.0, 0.0, 0.0};
-        public static final double MAX_ACCEL = 0.0;
-        public static final double MAX_SPEED = 13 * 12; // TODO: change to correct values
+        public static final double[] kVOLTS = {0.232, 0.194, 0.229, 0.198};  // Volts
+        public static final double[] kVELS = {0.0545, 0.0529, 0.0545, 0.0528};  // Volt * seconds / inch
+        // 0.00475, 0.00597, 0.00318, 0.00616
+        public static final double[] kACCELS = {0.005015, 0.005015, 0.005015, 0.005015};  // Volt * seconds^2 / inch
+        public static final double MAX_ACCEL = 200.0;  // Inches / seconds^2
+        public static final double MAX_SPEED = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
         public static final double LOOP_TIME = 0.02;
     }
 

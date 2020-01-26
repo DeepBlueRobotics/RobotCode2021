@@ -38,7 +38,9 @@ public class TeleopDrive extends CommandBase {
   public void execute() {
     if (SmartDashboard.getBoolean("Arcade Drive", true)) {
       double speed = -leftJoy.getY();
-      double rotation = -rightJoy.getX();
+      double rotation = rightJoy.getX();
+      if (Math.abs(speed) < 0.001) { speed = 0.0; }
+      if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
 
       if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
         speed *= Constants.SLOW_DRIVE_SPEED;
@@ -51,7 +53,10 @@ public class TeleopDrive extends CommandBase {
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
         speed = Math.copySign(speed * speed, speed);
         rotation = Math.copySign(rotation * rotation, rotation);
-    
+
+        SmartDashboard.putNumber("Speed", speed);
+        SmartDashboard.putNumber("Rotation", rotation);
+
         double left, right;
         double maxInput = Math.copySign(Math.max(Math.abs(speed), Math.abs(rotation)), speed);
     
