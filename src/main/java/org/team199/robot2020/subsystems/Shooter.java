@@ -143,8 +143,6 @@ public class Shooter extends PIDSubsystem {
 
     public void setSAndV(double kS, double kV) {
         victorFF = new SimpleMotorFeedforward(kS, kV);
-        
-        // TODO: set spark feedforward
         System.out.println("Created new ff with " + kS + ", " + kV);
     }
 }

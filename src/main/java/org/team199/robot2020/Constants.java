@@ -62,7 +62,7 @@ public final class Constants {
         public static final double VEL = 0.0;
         public static final double ACCEL = 0.0;
         public static final double MAX_ACCEL = 0.0;
-        public static final double MAX_SPEED = 13 * 12; // TODO: change to correct values
+        public static final double MAX_SPEED = 13 * 12; // TODO: change rest to correct values as needed
         public static final double LOOP_TIME = 0.02;
     }
 
@@ -70,12 +70,12 @@ public final class Constants {
     public static final double SLOW_DRIVE_ROTATION = 0.6;
 
     public static final class Shooter {
-        public static final double KP = 0.959; // TODO: change all to correct values 
+        public static final double KP = 0.959; // TODO: change rest to correct values as needed
         public static final double KI = 0.0;
         public static final double KD = 0.0;
         public static final double KV = 0.129;
         public static final double KS = 0.0098;
-        public static final double SPARK_KP = 0.407; // TODO: change all to correct values 
+        public static final double SPARK_KP = 0.407; // TODO: change rest to correct values as needed
         public static final double SPARK_KI = 0.0;
         public static final double SPARK_KD = 0.0;
         public static final double SPARK_KV = 0.125;
