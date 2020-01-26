@@ -82,13 +82,13 @@ public final class Constants {
         public static final double SPARK_KS = 0.0845;
 
         public static final int VICTOR_FLYWHEEL = 3;
+        //VICTOR_FLYWHEEL is victorFlywheel
         //uses port 3
-        //TODO Rename flywheels to match what they are called elsewhere (see below)
         public static final int SPARK_FLYWHEEL_1 = 2;
-        //Spark flywheel1 is flywheel2
+        //SPARK_FLYWHEEL_1 is sparkFlywheel1
         //uses port 2
         public static final int SPARK_FLYWHEEL_2 = 4;
-        //Spark flywheel2 is flywheel3
+        //SPARK_FLYWHEEL_2 is sparkFlywheel2
         //uses port 4
 
     }
