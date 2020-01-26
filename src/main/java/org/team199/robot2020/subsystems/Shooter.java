@@ -69,7 +69,7 @@ public class Shooter extends PIDSubsystem {
         }
     }
     
-    public double getMeasurement1() { // get current speed
+    public double getMeasurement() { // get current speed
         return sparkenconder1.getVelocity()/60;
     }
 
