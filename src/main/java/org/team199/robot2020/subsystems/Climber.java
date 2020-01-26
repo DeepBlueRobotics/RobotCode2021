@@ -17,8 +17,8 @@ public class Climber {
     public Climber(){
         liftMotor.setNeutralMode(NeutralMode.Brake); // to assist keeping lift up
         liftRobotMotor.setIdleMode(CANSparkMax.IdleMode.kCoast); // hook can be passively pulled up
-        liftEncoder.setDistancePerPulse(1.0 / 256); // TODO: set unit to inches
-        robotEncoder.setDistancePerPulse(1.0 / 256); // TODO: set convenient rate
+        liftEncoder.setDistancePerPulse(43.98 / 256); // TODO: confirm numbers (inches)
+        robotEncoder.setDistancePerPulse(26.39 / 256); // TODO: confirm numbers (inches)
         liftEncoder.reset();
         robotEncoder.reset();
         /*

@@ -77,8 +77,8 @@ public final class Constants {
         public static final double ROBOT_SPEED = 0.4; // TODO: set correct speed
         public static final double RESET_SPEED = -1; // TODO: set correct speed
 
-        public static final double LIFT_HEIGHT = 79; // TODO: set to correct height
-        public static final double ROBOT_HEIGHT = 12; // TODO: set to correct height + winding
+        public static final double LIFT_HEIGHT = 18.8;
+        public static final double ROBOT_HEIGHT = 76.2 + 90;
     }
 
     public static final double SLOW_DRIVE_SPEED = 0.6;
