@@ -70,17 +70,26 @@ public final class Constants {
     public static final double SLOW_DRIVE_ROTATION = 0.6;
 
     public static final class Shooter {
-        public static final double KP = 2.0; // TODO: change all to correct values 
+        public static final double KP = 0.959; // TODO: change all to correct values 
         public static final double KI = 0.0;
         public static final double KD = 0.0;
-        public static final double KV = 0.12;
-        public static final double KS = 0.4;
-        public static final double SPARK_KP = 2.0; // TODO: change all to correct values 
+        public static final double KV = 0.129;
+        public static final double KS = 0.0098;
+        public static final double SPARK_KP = 0.407; // TODO: change all to correct values 
         public static final double SPARK_KI = 0.0;
         public static final double SPARK_KD = 0.0;
-        public static final double SPARK_KV = 0.12;
-        public static final double SPARK_KS = 0.4;
+        public static final double SPARK_KV = 0.125;
+        public static final double SPARK_KS = 0.0845;
 
-        public static final int FLYWHEEL_MOTOR = 3;
+        public static final int VICTOR_FLYWHEEL = 3;
+        //uses port 3
+        //TODO Rename flywheels to match what they are called elsewhere (see below)
+        public static final int SPARK_FLYWHEEL_1 = 2;
+        //Spark flywheel1 is flywheel2
+        //uses port 2
+        public static final int SPARK_FLYWHEEL_2 = 4;
+        //Spark flywheel2 is flywheel3
+        //uses port 4
+
     }
 }

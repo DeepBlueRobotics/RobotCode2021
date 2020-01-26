@@ -57,7 +57,7 @@ public class ShooterTargetSpeed extends CommandBase {
     } else {
       SmartDashboard.putString("Motor status", "The shooter is using the Victor SPX");
     }
-    shooter.setSparkMaxStatus(SmartDashboard.getBoolean("Motor status", false));
+    shooter.setSparkMaxStatus(SmartDashboard.getBoolean("Motor status", true));
   }
 
   public boolean isFinished() {

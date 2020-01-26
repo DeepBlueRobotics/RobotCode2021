@@ -19,13 +19,16 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 public class Shooter extends PIDSubsystem {
 
     private boolean sparkMax = false;
-    private final WPI_VictorSPX flywheel1 = MotorControllerFactory.createVictor(Constants.Shooter.FLYWHEEL_MOTOR);
-    private final CANSparkMax flywheel2 = MotorControllerFactory.createSparkMax(Constants.Shooter.FLYWHEEL_MOTOR);
-    private final CANSparkMax flywheel3 = MotorControllerFactory.createSparkMax(Constants.Shooter.FLYWHEEL_MOTOR);
+    private final WPI_VictorSPX flywheel1 = MotorControllerFactory.createVictor(Constants.Shooter.VICTOR_FLYWHEEL);
+    //uses port 3
+    private final CANSparkMax flywheel2 = MotorControllerFactory.createSparkMax(Constants.Shooter.SPARK_FLYWHEEL_1);
+    //uses port 2
+    private final CANSparkMax flywheel3 = MotorControllerFactory.createSparkMax(Constants.Shooter.SPARK_FLYWHEEL_2);
+    //uses port 4
     private final CANPIDController sparkPID = flywheel2.getPIDController();
-    
     private final Encoder encoder = new Encoder(4, 5, false, EncodingType.k1X);
-    private SimpleMotorFeedforward ff = new SimpleMotorFeedforward(-3.42857142857, 6.0/35);
+    private SimpleMotorFeedforward victorFF = new SimpleMotorFeedforward(Constants.Shooter.KS, Constants.Shooter.KV);
+    private SimpleMotorFeedforward sparkFF = new SimpleMotorFeedforward(Constants.Shooter.SPARK_KS, Constants.Shooter.SPARK_KV);
     private double targetSpeed;
 
     public Shooter() {
@@ -45,17 +48,20 @@ public class Shooter extends PIDSubsystem {
         SmartDashboard.putNumber("Spark kV", Constants.Shooter.SPARK_KV);
         SmartDashboard.putNumber("Spark kS", Constants.Shooter.SPARK_KS);
         flywheel1.enableVoltageCompensation(true);
-        flywheel3.setInverted(true);
-        flywheel3.follow(flywheel2);
+        flywheel3.follow(flywheel2, true);
+        //True makes the second one inverted, otherwise follow will override any inversions and break spark maxes
+        flywheel2.setInverted(true);
+        //flywheel 3 is slave, uses port 4
+        //flywheel 2 is master, uses port 2
         encoder.setDistancePerPulse(-1/8.75);
         encoder.setSamplesToAverage(24);
     }
 
     public void useOutput(double output, double setpoint) { // set flywheel speed
         if (sparkMax == true) {
-            sparkPID.setReference(setpoint, ControlType.kVelocity);
+            sparkPID.setReference(setpoint, ControlType.kVelocity, 0, sparkFF.calculate(setpoint));
         } else {
-            flywheel1.setVoltage(output + ff.calculate(setpoint));
+            flywheel1.setVoltage(output + victorFF.calculate(setpoint));
         }
     }
     
@@ -112,15 +118,15 @@ public class Shooter extends PIDSubsystem {
     }
 
     public double getS() {
-        return ff.ks;
+        return victorFF.ks;
     }
 
     public double getV() {
-        return ff.kv;
+        return victorFF.kv;
     }
 
     public void setSAndV(double kS, double kV) {
-        ff = new SimpleMotorFeedforward(kS, kV);
+        victorFF = new SimpleMotorFeedforward(kS, kV);
         
         // TODO: set spark feedforward
         System.out.println("Created new ff with " + kS + ", " + kV);
