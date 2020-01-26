@@ -77,6 +77,14 @@ public class Shooter extends PIDSubsystem {
         return sparkenconder2.getVelocity()/60;
     }
 
+    public double tempSpark1() {
+        return flywheel2.getMotorTemperature();
+    }
+
+    public double tempSpark2() {
+        return flywheel3.getMotorTemperature();
+    }
+
     public double getCurrentDistance() {
         return encoder.getDistance();
     }
