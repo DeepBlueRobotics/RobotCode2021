@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
         intakePistons.set(DoubleSolenoid.Value.kReverse);
     }
 
-    public boolean isRunning() {
+    public boolean isNotRunning() {
         return intakeMotor.get() == 0;
     }
 }
