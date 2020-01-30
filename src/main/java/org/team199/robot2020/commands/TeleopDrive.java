@@ -51,41 +51,13 @@ public class TeleopDrive extends CommandBase {
       }
 
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-        speed = Math.copySign(speed * speed, speed);
-        rotation = Math.copySign(rotation * rotation, rotation);
-
-        SmartDashboard.putNumber("Speed", speed);
-        SmartDashboard.putNumber("Rotation", rotation);
-
-        double left, right;
-        double maxInput = Math.copySign(Math.max(Math.abs(speed), Math.abs(rotation)), speed);
-    
-        if (speed >= 0.0) {
-          // First quadrant, else second quadrant
-          if (rotation >= 0.0) {
-            left = maxInput;
-            right = speed - rotation;
-          } else {
-            left = speed + rotation;
-            right = maxInput;
-          }
-        } else {
-          // Third quadrant, else fourth quadrant
-          if (rotation >= 0.0) {
-            left = speed + rotation;
-            right = maxInput;
-          } else {
-            left = maxInput;
-            right = speed - rotation;
-          }
-        }
-        drivetrain.characterizedDrive(left, right);
+        drivetrain.charDriveArcade(speed, rotation);
       } else {
         drivetrain.arcadeDrive(speed, rotation);
       }
     } else {
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-        drivetrain.characterizedDrive(-leftJoy.getY(), -rightJoy.getY());
+        drivetrain.charDriveTank(-leftJoy.getY(), -rightJoy.getY());
       } else {
         drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY());
       }
@@ -100,7 +72,7 @@ public class TeleopDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.arcadeDrive(0, 0);
+    drivetrain.tankDrive(0, 0);
   }
 
   // Returns true when the command should end.

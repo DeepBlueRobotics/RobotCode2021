@@ -14,8 +14,13 @@ import com.revrobotics.CANSparkMax;
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -36,6 +41,15 @@ public class Drivetrain extends SubsystemBase {
 
   private final DifferentialDrive diffDrive = new DifferentialDrive(leftMaster, rightMaster);
 
+  private final PIDController leftPIDController = new PIDController(Constants.Drivetrain.kPIDLEFT[0], Constants.Drivetrain.kPIDLEFT[1], Constants.Drivetrain.kPIDLEFT[2]);
+  private final PIDController rightPIDController = new PIDController(Constants.Drivetrain.kPIDRIGHT[0], Constants.Drivetrain.kPIDRIGHT[1], Constants.Drivetrain.kPIDRIGHT[2]);
+  private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.Drivetrain.TRACKWIDTH);
+  
+  private final SimpleMotorFeedforward forwardLeftFF = new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[0], Constants.Drivetrain.kVELS[0] / Constants.METERS_PER_INCH);
+  private final SimpleMotorFeedforward backwardLeftFF = new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[2], Constants.Drivetrain.kVELS[2] / Constants.METERS_PER_INCH);
+  private final SimpleMotorFeedforward forwardRightFF = new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[1], Constants.Drivetrain.kVELS[1] / Constants.METERS_PER_INCH);
+  private final SimpleMotorFeedforward backwardRightFF = new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[3], Constants.Drivetrain.kVELS[3] / Constants.METERS_PER_INCH);
+  
   private DifferentialDriveOdometry odometry = null;
   private static final boolean isGyroReversed = false;
 
@@ -90,12 +104,49 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
+  public DifferentialDriveKinematics getKinematics() { return kinematics; }
+
   public void arcadeDrive(double speed, double rotation) {
     diffDrive.arcadeDrive(speed, rotation);
   }
 
   public void tankDrive(double left, double right) {
     diffDrive.tankDrive(left, right);
+  }
+
+  public void charDriveArcade(double speed, double rotation) {
+    speed = Math.copySign(speed * speed, speed) * Constants.Drivetrain.MAX_SPEED * Constants.METERS_PER_INCH;
+    rotation = Math.copySign(rotation * rotation, rotation) * Constants.Drivetrain.MAX_ANGULAR_SPEED;
+
+    DifferentialDriveWheelSpeeds wheelspeeds = kinematics.toWheelSpeeds(new ChassisSpeeds(speed, 0.0, -rotation));
+    SmartDashboard.putNumber("WheelSpeedLeft", wheelspeeds.leftMetersPerSecond);
+    SmartDashboard.putNumber("WheelSpeedRight", wheelspeeds.rightMetersPerSecond);
+    charDrive(wheelspeeds);
+  }
+
+  public void charDriveTank(double left, double right) {
+    charDrive(new DifferentialDriveWheelSpeeds(left * Constants.Drivetrain.MAX_SPEED * Constants.METERS_PER_INCH, right * Constants.Drivetrain.MAX_SPEED * Constants.METERS_PER_INCH));
+  }
+
+  public void charDrive(DifferentialDriveWheelSpeeds wheelSpeeds) {
+    double left = wheelSpeeds.leftMetersPerSecond;
+    double right = wheelSpeeds.rightMetersPerSecond;
+    final double fwdLeftFF = forwardLeftFF.calculate(left);
+    final double backLeftFF = backwardLeftFF.calculate(left);
+    final double fwdRightFF = forwardRightFF.calculate(right);
+    final double backRightFF = backwardRightFF.calculate(right);
+
+    final double leftOutput = leftPIDController.calculate(getEncRate(Side.LEFT) * Constants.METERS_PER_INCH, left);
+    final double rightOutput = rightPIDController.calculate(getEncRate(Side.RIGHT) * Constants.METERS_PER_INCH, right);
+
+    double motorLeftOut = leftOutput + (left >= 0.0 ? fwdLeftFF : backLeftFF);
+    double motorRightOut = -rightOutput - (right >= 0.0 ? fwdRightFF : backRightFF);
+    motorLeftOut = Math.signum(motorLeftOut) * Math.min(Math.abs(motorLeftOut), Math.abs(left) * 12 / (Constants.Drivetrain.MAX_SPEED * 0.025));
+    motorRightOut = Math.signum(motorRightOut) * Math.min(Math.abs(motorRightOut), Math.abs(right) * 12 / (Constants.Drivetrain.MAX_SPEED * 0.025));
+    SmartDashboard.putNumber("MotorLeftOut", motorLeftOut);
+    SmartDashboard.putNumber("MotorRightOut", motorRightOut);
+    leftMaster.setVoltage(motorLeftOut);
+    rightMaster.setVoltage(motorRightOut);
   }
 
   /**

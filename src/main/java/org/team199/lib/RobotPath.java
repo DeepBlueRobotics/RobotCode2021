@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
@@ -19,7 +18,6 @@ public class RobotPath {
 
     private Trajectory trajectory;
     private Drivetrain dt;
-    private double trackWidth;
     private boolean isInit;
 
     public RobotPath(String pathName) throws IOException {
@@ -27,12 +25,11 @@ public class RobotPath {
         isInit = false;
     }
 
-    public void init(Drivetrain dt, double trackWidth) {
+    public void init(Drivetrain dt) {
         if (isInit) {
             return;
         }
         this.dt = dt;
-        this.trackWidth = trackWidth;
         isInit = true;
     }
 
@@ -45,7 +42,7 @@ public class RobotPath {
             dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), state.poseMeters));
         }
         return new RamseteCommand(trajectory, () -> dt.getOdometry().getPoseMeters(),
-        new RamseteController(0, 0), new DifferentialDriveKinematics(trackWidth), dt::characterizedDrive, dt)
+        new RamseteController(0, 0), dt.getKinematics(), dt::charDriveTank, dt)
         .andThen(new RunCommand(() -> dt.characterizedDrive(0, 0), dt)); //TODO: Configure Ramsete Controller Values
     }
 
