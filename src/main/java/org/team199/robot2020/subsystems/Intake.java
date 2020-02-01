@@ -1,6 +1,7 @@
 package org.team199.robot2020.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
 
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
@@ -9,9 +10,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
+    private final CANSparkMax intakeDownMotor = MotorControllerFactory.createSparkMax(Constants.Intake.INTAKE_DOWN_MOTOR);
     private final WPI_TalonSRX intakeMotor = MotorControllerFactory.createTalon(Constants.Intake.INTAKE_MOTOR);
-    private final DoubleSolenoid intakePistons = new DoubleSolenoid(Constants.Intake.INTAKE_PISTONS[0], Constants.Intake.INTAKE_PISTONS[1]);
-
     public Intake(){
     }
 
@@ -31,11 +31,11 @@ public class Intake extends SubsystemBase {
     }
 
     public void deploy() {
-        intakePistons.set(DoubleSolenoid.Value.kForward);
+        intakeDownMotor.set(0.5); //TODO: set to correct value
     }
 
     public void retract() {
-        intakePistons.set(DoubleSolenoid.Value.kReverse);
+        intakeDownMotor.set(0.5); //TODO: set to correct value
     }
 
     public boolean isNotRunning() {

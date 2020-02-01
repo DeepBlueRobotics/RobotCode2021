@@ -74,8 +74,7 @@ public final class Constants {
 
     public static final class Intake {
         public static final int INTAKE_MOTOR = 0; // TODO: set all to correct ports
-        public static final int[] INTAKE_PISTONS = { 0, 1 };
-
+        public static final int INTAKE_DOWN_MOTOR = 1; //TODO: set all to correct ports
         public static final double INTAKE_SPEED = 1; // TODO: set correct speeds
     }
 
