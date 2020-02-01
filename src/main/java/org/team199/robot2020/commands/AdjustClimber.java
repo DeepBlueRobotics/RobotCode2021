@@ -18,7 +18,7 @@ public class AdjustClimber extends CommandBase {
   private Joystick controller;
 
   /**
-   * Creates a new AdjustClimber.
+   * Manually adjusting the climber hook position
    */
   public AdjustClimber(Climber climber, Joystick manipulator) {
     addRequirements(this.climber = climber);
