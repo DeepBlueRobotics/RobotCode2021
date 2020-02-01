@@ -38,7 +38,7 @@ public class RobotContainer {
     public RobotContainer() {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
-        feeder.setDefaultCommand(new RunCommand(() -> { if (feeder.isBallEntering()) feeder.runForward(); }));
+        feeder.setDefaultCommand(new RunCommand(() -> { if (feeder.isBallEntering()) feeder.runForward(); else feeder.stop(); }));
     }
     private void configureButtonBindings() {
         // characterize drive button
