@@ -38,11 +38,10 @@ public class RobotPath {
             return new RunCommand(() -> {});
         }
         if(dt.getOdometry() == null) {
-            Trajectory.State state = trajectory.getStates().get(0);
-            dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), state.poseMeters));
+            dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
         }
         return new RamseteCommand(trajectory, () -> dt.getOdometry().getPoseMeters(),
-        new RamseteController(2, 0.7), dt.getKinematics(), dt::charDriveTank, dt)
+        new RamseteController(2, 0.7), dt.getKinematics(), dt::charDriveDirect, dt)
         .andThen(() -> dt.charDriveTank(0, 0), dt); //TODO: Configure Ramsete Controller Values
     }
 

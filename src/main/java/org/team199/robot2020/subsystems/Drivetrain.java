@@ -144,6 +144,10 @@ public class Drivetrain extends SubsystemBase {
     charDrive(new DifferentialDriveWheelSpeeds(left * Constants.Drivetrain.MAX_SPEED * Constants.METERS_PER_INCH, right * Constants.Drivetrain.MAX_SPEED * Constants.METERS_PER_INCH));
   }
 
+  public void charDriveDirect(double left, double right) {
+    charDrive(new DifferentialDriveWheelSpeeds(left, right));
+  }
+
   public void charDrive(DifferentialDriveWheelSpeeds wheelSpeeds) {
     double left = wheelSpeeds.leftMetersPerSecond;
     double right = wheelSpeeds.rightMetersPerSecond;
