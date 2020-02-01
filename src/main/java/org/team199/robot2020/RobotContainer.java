@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import org.team199.robot2020.commands.TeleopDrive;
-import org.team199.robot2020.commands.RaiseLift;
+import org.team199.robot2020.commands.AdjustClimber;
+import org.team199.robot2020.commands.DeployClimber;
 import org.team199.robot2020.commands.RaiseRobot;
-import org.team199.robot2020.commands.LowerLift;
 import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Climber;
 
@@ -33,7 +33,7 @@ public class RobotContainer {
     private final Climber climber = new Climber();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.PORT);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.PORT);
-    private final Joystick manipulator = new Joystick(Constants.OI.Controller.PORT);
+    private final Joystick controller = new Joystick(Constants.OI.Controller.PORT);
 
 
     public RobotContainer() {
@@ -46,11 +46,13 @@ public class RobotContainer {
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.CHARACTERIZED_DRIVE_BUTTON)
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
-        new JoystickButton(manipulator, Constants.OI.Controller.RAISE_LIFT_BUTTON).whenPressed(new RaiseLift(climber));
-        new JoystickButton(manipulator, Constants.OI.Controller.LOWER_LIFT_BUTTON)
-                .whileHeld(new LowerLift(climber, -Constants.Climber.MANUAL_LIFT_SPEED));
-        new JoystickButton(manipulator, Constants.OI.Controller.RAISE_ROBOT_BUTTON)
-                .whenPressed(new ParallelCommandGroup(new LowerLift(climber, -Constants.Climber.AUTO_LIFT_SPEED), new RaiseRobot(climber)));
+        new JoystickButton(controller, Constants.OI.Controller.DEPLOY_CLIMBER_BUTTON)
+                .whenPressed(new SequentialCommandGroup(
+                    new DeployClimber(climber),
+                    new AdjustClimber(climber, controller)
+                ));
+        new JoystickButton(controller, Constants.OI.Controller.RAISE_ROBOT_BUTTON)
+                .whenPressed(new RaiseRobot(climber));
     }
 
     public CommandBase getAutonomousCommand() {

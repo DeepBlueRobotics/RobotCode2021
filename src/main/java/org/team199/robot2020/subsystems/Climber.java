@@ -1,61 +1,33 @@
 package org.team199.robot2020.subsystems;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
-public class Climber {
-    private final CANSparkMax liftRobotMotor = MotorControllerFactory.createSparkMax(Constants.Climber.LIFT_ROBOT_MOTOR);
-    private final VictorSPX liftMotor = MotorControllerFactory.createVictor(Constants.Climber.LIFT_MOTOR);
-    private final Encoder liftEncoder = new Encoder(4, 5); // TODO: set correct values
-    private final Encoder robotEncoder = new Encoder(6, 7);
+public class Climber extends SubsystemBase {
+    private final CANSparkMax liftMotor = MotorControllerFactory.createSparkMax(Constants.Climber.LIFT_MOTOR);
+    private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Climber.WINCH_MOTOR);
 
     public Climber(){
-        liftMotor.setNeutralMode(NeutralMode.Brake); // to assist keeping lift up
-        liftRobotMotor.setIdleMode(CANSparkMax.IdleMode.kCoast); // hook can be passively pulled up
-        liftEncoder.setDistancePerPulse(43.98 / 256); // TODO: confirm numbers (inches)
-        robotEncoder.setDistancePerPulse(26.39 / 256); // TODO: confirm numbers (inches)
-        liftEncoder.reset();
-        robotEncoder.reset();
-        /*
-        Couldn't find a method to set encoder position, so robotEncoder starts at 0
-        Add the initial winding distance to the final height
-        */
+        liftMotor.getEncoder().setPositionConversionFactor(Constants.Climber.LIFT_CONVERSION_FACTOR);
+        winchMotor.getEncoder().setPositionConversionFactor(Constants.Climber.WINCH_CONVERSION_FACTOR);
+        winchMotor.getEncoder().setPosition(Constants.Climber.WINCH_START_HEIGHT);
     }
 
-    public void raiseLift(){
-        liftMotor.set(ControlMode.PercentOutput, Constants.Climber.AUTO_LIFT_SPEED);
+    public void runLift(double speed) {
+        liftMotor.set(speed);
     }
 
-    public void lowerLift(double speed){
-        liftMotor.set(ControlMode.PercentOutput, speed);
-    }
-
-    public void stopLift(){
-        liftMotor.set(ControlMode.PercentOutput, 0);
-    }
-
-    public void raiseRobot() {
-        liftRobotMotor.set(Constants.Climber.ROBOT_SPEED);
-    }
-
-    public void stopRobot() {
-        liftRobotMotor.set(0);
-    }
-
-    public void reset() {
-        liftRobotMotor.set(Constants.Climber.RESET_SPEED);
+    public void runWinch(double speed) {
+        winchMotor.set(Math.abs(speed));
     }
 
     public double getLiftHeight() {
-        return liftEncoder.getDistance();
+        return liftMotor.getEncoder().getPosition();
     }
 
-    public double getRobotHeight() {
-        return robotEncoder.getDistance();
+    public double getWinchHeight() {
+        return winchMotor.getEncoder().getPosition();
     }
 }
