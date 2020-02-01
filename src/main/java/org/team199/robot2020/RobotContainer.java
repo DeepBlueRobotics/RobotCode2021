@@ -50,7 +50,7 @@ public class RobotContainer {
         new JoystickButton(manipulator, Constants.OI.Controller.LOWER_LIFT_BUTTON)
                 .whileHeld(new LowerLift(climber, -Constants.Climber.MANUAL_LIFT_SPEED));
         new JoystickButton(manipulator, Constants.OI.Controller.RAISE_ROBOT_BUTTON)
-                .whenPressed(new ParallelCommandGroup(new LowerLift(climber, -Constants.Climber.AUTO_LIFT_SPEED), new RaiseRobot(climber)));
+                .whenPressed(new ParallelCommandGroup(new LowerLift(climber, -Constants.Climber.ROBOT_SPEED), new RaiseRobot(climber)));
     }
 
     public CommandBase getAutonomousCommand() {

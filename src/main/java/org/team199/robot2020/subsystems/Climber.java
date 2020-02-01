@@ -29,10 +29,12 @@ public class Climber {
 
     public void raiseLift(){
         liftMotor.set(ControlMode.PercentOutput, Constants.Climber.AUTO_LIFT_SPEED);
+        liftRobotMotor.set(Constants.Climber.AUTO_LIFT_SPEED*Constants.Climber.SPEED_EQUALIZER);
     }
 
     public void lowerLift(double speed){
         liftMotor.set(ControlMode.PercentOutput, speed);
+        liftRobotMotor.set(speed*Constants.Climber.SPEED_EQUALIZER);
     }
 
     public void stopLift(){

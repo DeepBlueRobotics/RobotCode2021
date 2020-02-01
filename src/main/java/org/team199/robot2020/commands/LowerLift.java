@@ -26,6 +26,7 @@ public class LowerLift extends CommandBase {
   @Override
   public void execute() {
     climber.lowerLift(speed);
+    
   }
 
   @Override

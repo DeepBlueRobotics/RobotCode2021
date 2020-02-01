@@ -74,8 +74,10 @@ public final class Constants {
 
         public static final double AUTO_LIFT_SPEED = 0.9;
         public static final double MANUAL_LIFT_SPEED = 0.4;
-        public static final double ROBOT_SPEED = 0.4; // TODO: set correct speed
+        public static final double ROBOT_SPEED = 0.7; // TODO: set correct speed
         public static final double RESET_SPEED = -1; // TODO: set correct speed
+        public static final double SPEED_EQUALIZER = 9/6.67; 
+        // Speed_Equalizer makes the two different motors spin at different rates so that the pulleys spin at the same rate
 
         public static final double LIFT_HEIGHT = 18.8;
         public static final double ROBOT_HEIGHT = 76.2 + 90;
