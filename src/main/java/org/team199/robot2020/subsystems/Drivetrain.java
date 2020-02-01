@@ -52,7 +52,7 @@ public class Drivetrain extends SubsystemBase {
   private final SimpleMotorFeedforward backwardRightFF = new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[3], Constants.Drivetrain.kVELS[3] / Constants.METERS_PER_INCH);
   
   private DifferentialDriveOdometry odometry = null;
-  private static final boolean isGyroReversed = false;
+  private static final boolean isGyroReversed = true;
 
   public Drivetrain() {
     leftSlave.follow(leftMaster);
@@ -73,8 +73,8 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     if (odometry != null) {
       odometry.update(Rotation2d.fromDegrees(getHeading()), 
-                      leftEnc.getPosition() / Constants.METERS_PER_INCH, 
-                      rightEnc.getPosition() / Constants.METERS_PER_INCH);
+                      leftEnc.getPosition() * Constants.METERS_PER_INCH, 
+                      rightEnc.getPosition() * Constants.METERS_PER_INCH);
     }
   }
 
