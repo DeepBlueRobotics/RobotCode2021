@@ -86,11 +86,11 @@ public class Shooter extends PIDSubsystem {
     }
 
     public double spark1Current() {
-        return flywheel2.getOutputCurrent();
+        return sparkFlywheel1.getOutputCurrent();
     }
 
     public double spark2Current() {
-        return flywheel3.getOutputCurrent();
+        return sparkFlywheel2.getOutputCurrent();
     }
 
     public double getCurrentDistance() {
