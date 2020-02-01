@@ -25,8 +25,8 @@ public class DeployClimber extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.runLift(Constants.Climber.LIFT_UP_SPEED);
-    climber.runWinch(Constants.Climber.WINCH_UP_SPEED);
+    climber.runLift(Constants.Climber.LIFT_DEPLOY_SPEED);
+    climber.runWinch(Constants.Climber.WINCH_DEPLOY_SPEED);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
