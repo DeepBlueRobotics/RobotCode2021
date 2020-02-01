@@ -21,7 +21,7 @@ public class RobotPath {
     private boolean isInit;
 
     public RobotPath(String pathName) throws IOException {
-        trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/" + pathName + ".wpilib.json"));
+        trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/output/" + pathName + ".wpilib.json"));
         isInit = false;
     }
 
@@ -42,8 +42,8 @@ public class RobotPath {
             dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), state.poseMeters));
         }
         return new RamseteCommand(trajectory, () -> dt.getOdometry().getPoseMeters(),
-        new RamseteController(0, 0), dt.getKinematics(), dt::charDriveTank, dt)
-        .andThen(new RunCommand(() -> dt.characterizedDrive(0, 0), dt)); //TODO: Configure Ramsete Controller Values
+        new RamseteController(2, 0.7), dt.getKinematics(), dt::charDriveTank, dt)
+        .andThen(() -> dt.charDriveTank(0, 0), dt); //TODO: Configure Ramsete Controller Values
     }
 
 }

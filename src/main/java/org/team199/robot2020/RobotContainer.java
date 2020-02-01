@@ -37,10 +37,11 @@ public class RobotContainer {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
         try {
-            path = new RobotPath("Blue1");
+            path = new RobotPath("Test");
         } catch (IOException e) {
             e.printStackTrace();
         }
+        path.init(drivetrain);
     }
 
     private void configureButtonBindings() {
@@ -55,8 +56,7 @@ public class RobotContainer {
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
     }
 
-    public CommandBase getAutonomousCommand() {
-        Command pathCommand = path.getPathCommand();
-        return pathCommand.andThen(() -> drivetrain.tankDrive(0, 0));
+    public Command getAutonomousCommand() {
+        return path.getPathCommand();    
     }
 }
