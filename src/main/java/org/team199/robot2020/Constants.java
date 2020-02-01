@@ -75,11 +75,12 @@ public final class Constants {
         public static final double KD = 0.0;
         public static final double KV = 0.129;
         public static final double KS = 0.0098;
-        public static final double SPARK_KP = 0.407; // TODO: change rest to correct values as needed
+        public static final double SPARK_KP = 0.208; // TODO: change rest to correct values as needed
         public static final double SPARK_KI = 0.0;
         public static final double SPARK_KD = 0.0;
-        public static final double SPARK_KV = 0.125;
-        public static final double SPARK_KS = 0.0845;
+        public static final double SPARK_KV = 0.129;
+        public static final double SPARK_KS = 0.105;
+        //public static final double SPARK_KA = 0.0135;
 
         public static final int VICTOR_FLYWHEEL = 3;
         //VICTOR_FLYWHEEL is victorFlywheel
