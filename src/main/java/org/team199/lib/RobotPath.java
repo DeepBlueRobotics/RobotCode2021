@@ -3,6 +3,7 @@ package org.team199.lib;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
@@ -21,7 +22,7 @@ public class RobotPath {
     private boolean isInit;
 
     public RobotPath(String pathName) throws IOException {
-        trajectory = TrajectoryUtil.fromPathweaverJson(Paths.get("/home/lvuser/deploy/output/" + pathName + ".wpilib.json"));
+        trajectory = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve(Paths.get("/home/lvuser/deploy/output/" + pathName + ".wpilib.json")));
         isInit = false;
     }
 
@@ -41,7 +42,7 @@ public class RobotPath {
             dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
         }
         return new RamseteCommand(trajectory, () -> dt.getOdometry().getPoseMeters(),
-        new RamseteController(2, 0.7), dt.getKinematics(), (left, right) -> dt.charDriveDirect(left, right), dt)
+        new RamseteController(), dt.getKinematics(), dt::charDriveDirect, dt)
         .andThen(() -> dt.charDriveTank(0, 0), dt); //TODO: Configure Ramsete Controller Values
     }
 
