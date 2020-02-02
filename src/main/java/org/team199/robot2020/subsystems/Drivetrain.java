@@ -133,11 +133,11 @@ public class Drivetrain extends SubsystemBase {
   public DifferentialDriveKinematics getKinematics() { return kinematics; }
 
   public void arcadeDrive(double speed, double rotation) {
-    //diffDrive.arcadeDrive(speed, rotation);
+    diffDrive.arcadeDrive(speed, rotation);
   }
 
   public void tankDrive(double left, double right) {
-    //diffDrive.tankDrive(left, right);
+    diffDrive.tankDrive(left, right);
   }
 
   public void charDriveArcade(double speed, double rotation) {
