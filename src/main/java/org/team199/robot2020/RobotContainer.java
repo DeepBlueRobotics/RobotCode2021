@@ -1,3 +1,4 @@
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+import org.team199.lib.Limelight;
 import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.commands.InitializeShoot;
 import org.team199.robot2020.commands.ShooterTargetSpeed;
@@ -31,11 +33,13 @@ public class RobotContainer {
     private final Shooter shooter = new Shooter();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.PORT);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.PORT);
+    private final Limelight lime;
 
     public RobotContainer() {
         configureButtonBindings();
-        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
         shooter.setDefaultCommand(new ShooterTargetSpeed(shooter));
+        lime = new Limelight();
+        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
     }
 
     private void configureButtonBindings() {
@@ -45,6 +49,10 @@ public class RobotContainer {
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
 
         new JoystickButton(rightJoy, Constants.OI.RightJoy.SHOOT_BUTTON).whenPressed(new InitializeShoot(shooter));
+        
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.LIMELIGHT_BUTTON)
+            .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Using Limelight",
+                !SmartDashboard.getBoolean("Using Limelight", false))));
     }
 
     public CommandBase getAutonomousCommand() {

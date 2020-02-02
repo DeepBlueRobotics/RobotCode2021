@@ -47,6 +47,7 @@ public final class Constants {
 
             public static final int SLOW_DRIVE_BUTTON = 5;
             public static final int SHOOT_BUTTON = 1;
+            public static final int LIMELIGHT_BUTTON = 2;
         }
 
         public static final class Controller {
