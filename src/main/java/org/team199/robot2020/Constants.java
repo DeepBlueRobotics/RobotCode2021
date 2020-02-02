@@ -18,7 +18,6 @@ package org.team199.robot2020;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final double METERS_PER_INCH = 0.0254;
     /**
      * Constants for things on our robot. Used to go in RobotMap.java
      */
@@ -61,9 +60,9 @@ public final class Constants {
     public static final class Drivetrain {
         public static final double TRACKWIDTH = 0.6223;
         // 0.183
-        public static final double[] kPIDLEFT = {0.2305, 0.0, 0.0};
+        public static final double[] kPIDLEFT = {5.45, 0.0, 0.0};
         // 0.278
-        public static final double[] kPIDRIGHT = {0.2305, 0.0, 0.0};
+        public static final double[] kPIDRIGHT = {6.02, 0.0, 0.0};
 
         // 0.232, 0.194, 0.229, 0.198
         public static final double[] kVOLTS = {0.228, 0.208, 0.213, 0.199};  // Volts
@@ -73,7 +72,7 @@ public final class Constants {
         public static final double[] kACCELS = {0.0985, 0.133, 0.144, 0.146};  // Volt * seconds^2 / inch
         public static final double MAX_ACCEL = 200.0;  // Inches / seconds^2
         public static final double MAX_SPEED = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
-        public static final double MAX_ANGULAR_SPEED = 2 * Math.PI; // Radians / second
+        public static final double MAX_ANGULAR_SPEED = 4 * Math.PI; // Radians / second
         public static final double LOOP_TIME = 0.02;
     }
 

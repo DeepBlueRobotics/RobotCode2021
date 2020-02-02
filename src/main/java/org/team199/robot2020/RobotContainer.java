@@ -37,7 +37,7 @@ public class RobotContainer {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
         try {
-            path = new RobotPath("Test");
+            path = new RobotPath("Test2");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,6 +57,6 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return path.getPathCommand();    
+        return path.getPathCommand();
     }
 }
