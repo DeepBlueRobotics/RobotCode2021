@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkMax;
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -46,14 +47,31 @@ public class Drivetrain extends SubsystemBase {
   private final PIDController leftPIDController = new PIDController(Constants.Drivetrain.kPIDLEFT[0], Constants.Drivetrain.kPIDLEFT[1], Constants.Drivetrain.kPIDLEFT[2]);
   private final PIDController rightPIDController = new PIDController(Constants.Drivetrain.kPIDRIGHT[0], Constants.Drivetrain.kPIDRIGHT[1], Constants.Drivetrain.kPIDRIGHT[2]);
   private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Constants.Drivetrain.TRACKWIDTH);
-  
-  private final SimpleMotorFeedforward forwardLeftFF = new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[0], Units.metersToInches(Constants.Drivetrain.kVELS[0]));
-  private final SimpleMotorFeedforward backwardLeftFF = new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[2], Units.metersToInches(Constants.Drivetrain.kVELS[2]));
-  private final SimpleMotorFeedforward forwardRightFF = new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[1], Units.metersToInches(Constants.Drivetrain.kVELS[1]));
-  private final SimpleMotorFeedforward backwardRightFF = new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[3], Units.metersToInches(Constants.Drivetrain.kVELS[3]));
+
+  private final SimpleMotorFeedforward forwardLeftFF = 
+    new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[0], 
+                               Constants.Drivetrain.kVELS[0], 
+                               Constants.Drivetrain.kACCELS[0]);
+  private final SimpleMotorFeedforward forwardRightFF = 
+    new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[1], 
+                               Constants.Drivetrain.kVELS[1], 
+                               Constants.Drivetrain.kACCELS[1]);
+  private final SimpleMotorFeedforward backwardLeftFF = 
+    new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[2], 
+                               Constants.Drivetrain.kVELS[2], 
+                               Constants.Drivetrain.kACCELS[2]);
+  private final SimpleMotorFeedforward backwardRightFF = 
+    new SimpleMotorFeedforward(Constants.Drivetrain.kVOLTS[3], 
+                               Constants.Drivetrain.kVELS[3], 
+                               Constants.Drivetrain.kACCELS[3]);
   
   private DifferentialDriveOdometry odometry = null;
   private static final boolean isGyroReversed = true;
+  private Timer timey = new Timer();
+
+  private double prevTime = 0;
+  private double prevLeftVel = 0;
+  private double prevRightVel = 0;
 
   public Drivetrain() {
     leftSlave.follow(leftMaster);
@@ -68,6 +86,7 @@ public class Drivetrain extends SubsystemBase {
     rightEnc.setPositionConversionFactor(conversion);
     rightEnc.setVelocityConversionFactor(conversion / 60);
     //rightEnc.setInverted(true);
+    timey.start();
   }
 
   @Override
@@ -136,8 +155,8 @@ public class Drivetrain extends SubsystemBase {
     diffDrive.arcadeDrive(speed, rotation);
   }
 
-  public void tankDrive(double left, double right) {
-    diffDrive.tankDrive(left, right);
+  public void tankDrive(double left, double right, boolean squareInputs) {
+    diffDrive.tankDrive(left, right, squareInputs);
   }
 
   public void charDriveArcade(double speed, double rotation) {
@@ -159,25 +178,39 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void charDrive(DifferentialDriveWheelSpeeds wheelSpeeds) {
-    double left = wheelSpeeds.leftMetersPerSecond;
-    double right = wheelSpeeds.rightMetersPerSecond;
-    final double fwdLeftFF = forwardLeftFF.calculate(left);
-    final double backLeftFF = backwardLeftFF.calculate(left);
-    final double fwdRightFF = forwardRightFF.calculate(right);
-    final double backRightFF = backwardRightFF.calculate(right);
+    double currentTime = timey.get();
 
-    final double leftOutput = leftPIDController.calculate(Units.inchesToMeters(getEncRate(Side.LEFT)), left);
-    final double rightOutput = rightPIDController.calculate(Units.inchesToMeters(getEncRate(Side.RIGHT)), right);
+    double desiredLeftVel = wheelSpeeds.leftMetersPerSecond;
+    double actualLeftVel = Units.inchesToMeters(getEncRate(Side.LEFT));
+    
+    double leftAccel = (desiredLeftVel - prevLeftVel) / (currentTime - prevTime);
 
-    double motorLeftOut = leftOutput + (left >= 0.0 ? fwdLeftFF : backLeftFF);
-    double motorRightOut = -rightOutput - (right >= 0.0 ? fwdRightFF : backRightFF);
-    motorLeftOut = Math.signum(motorLeftOut) * Math.min(Math.abs(motorLeftOut), Math.abs(left) * 12 / (Constants.Drivetrain.MAX_SPEED * 0.025));
-    motorRightOut = Math.signum(motorRightOut) * Math.min(Math.abs(motorRightOut), Math.abs(right) * 12 / (Constants.Drivetrain.MAX_SPEED * 0.025));
+    double desiredRightVel = wheelSpeeds.rightMetersPerSecond;
+    double actualRightVel = Units.inchesToMeters(getEncRate(Side.RIGHT));
+    double rightAccel = (desiredRightVel - prevRightVel) / (currentTime - prevTime);
+
+    final double fwdLeftFF = forwardLeftFF.calculate(desiredLeftVel, leftAccel);
+    //System.out.println(desiredLeftVel + ", " + leftAccel + ", " + fwdLeftFF);
+    final double backLeftFF = backwardLeftFF.calculate(desiredLeftVel, leftAccel);
+    final double fwdRightFF = forwardRightFF.calculate(desiredRightVel, rightAccel);
+    final double backRightFF = backwardRightFF.calculate(desiredRightVel, rightAccel);
+
+    final double leftOutput = leftPIDController.calculate(actualLeftVel, desiredLeftVel);
+    final double rightOutput = rightPIDController.calculate(actualRightVel, desiredRightVel);
+
+    double motorLeftOut = leftOutput + (desiredLeftVel >= 0.0 ? fwdLeftFF : backLeftFF);
+    double motorRightOut = rightOutput + (desiredRightVel >= 0.0 ? fwdRightFF : backRightFF);
+    // Clip motor voltages at desired voltage. Tank Drive already clips motor inputs.
+    //motorLeftOut = Math.signum(motorLeftOut) * Math.min(Math.abs(motorLeftOut), Math.abs(left) * 12.0 / (Constants.Drivetrain.MAX_SPEED * 0.0254));
+    //motorRightOut = Math.signum(motorRightOut) * Math.min(Math.abs(motorRightOut), Math.abs(right) * 12.0 / (Constants.Drivetrain.MAX_SPEED * 0.0254));
     //SmartDashboard.putNumber("MotorLeftOut", motorLeftOut);
     //SmartDashboard.putNumber("MotorRightOut", motorRightOut);
-    tankDrive(motorLeftOut / 12.0, -motorRightOut / 12.0);
+    tankDrive(motorLeftOut / 12.0, motorRightOut / 12.0, false);
     //leftMaster.setVoltage(motorLeftOut);
     //rightMaster.setVoltage(motorRightOut);
+    prevTime = currentTime;
+    prevLeftVel = desiredLeftVel;
+    prevRightVel = desiredRightVel;
   }
 
   /**
@@ -186,6 +219,7 @@ public class Drivetrain extends SubsystemBase {
    * @param left  from -1 to 1
    * @param right from -1 to 1
    */
+  /*
   public void characterizedDrive(double left, double right) {
     final double actualLeftVel = this.getEncRate(Side.LEFT);
     final double actualRightVel = this.getEncRate(Side.RIGHT);
@@ -221,7 +255,7 @@ public class Drivetrain extends SubsystemBase {
         // Backward-Right
         newRight = -Constants.Drivetrain.kVOLTS[3] + Constants.Drivetrain.kVELS[3] * actualRightVel + Constants.Drivetrain.kACCELS[3] * rightAccel;
     }
-    /*SmartDashboard.putNumber("VForwardLeft", Constants.Drivetrain.kVELS[0] * desiredLeftVel);
+    SmartDashboard.putNumber("VForwardLeft", Constants.Drivetrain.kVELS[0] * desiredLeftVel);
     SmartDashboard.putNumber("AForwardLeft", Constants.Drivetrain.kACCELS[0] * leftAccel);
     SmartDashboard.putNumber("VBackwardLeft", Constants.Drivetrain.kVELS[2] * desiredLeftVel);
     SmartDashboard.putNumber("ABackwardLeft", Constants.Drivetrain.kACCELS[2] * leftAccel);
@@ -229,7 +263,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("AForwardRight", Constants.Drivetrain.kACCELS[1] * rightAccel);
     SmartDashboard.putNumber("VBackwardRight", Constants.Drivetrain.kVELS[3] * desiredRightVel);
     SmartDashboard.putNumber("ABackwardRight", Constants.Drivetrain.kACCELS[3] * rightAccel);
-    */
+  
     newLeft = Math.signum(newLeft) * Math.min(Math.abs(newLeft), 12) / 12;
     newRight = Math.signum(newRight) * Math.min(Math.abs(newRight), 12) / 12;
 
@@ -237,5 +271,5 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("newRight", newRight);
 
     diffDrive.tankDrive(newLeft, newRight, false);
-  }
+  } */
 }

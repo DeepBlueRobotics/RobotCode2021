@@ -59,7 +59,7 @@ public class TeleopDrive extends CommandBase {
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
         drivetrain.charDriveTank(-leftJoy.getY(), -rightJoy.getY());
       } else {
-        drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY());
+        drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY(), true);
       }
     }
 
@@ -72,7 +72,7 @@ public class TeleopDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.tankDrive(0, 0);
+    drivetrain.tankDrive(0, 0, true);
   }
 
   // Returns true when the command should end.
