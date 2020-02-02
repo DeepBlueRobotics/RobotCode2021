@@ -12,8 +12,16 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+import java.io.IOException;
+
+import org.team199.lib.RobotPath;
 import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.commands.ToggleIntake;
 import org.team199.robot2020.subsystems.Drivetrain;
@@ -33,24 +41,38 @@ public class RobotContainer {
     private final Feeder feeder = new Feeder();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.PORT);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.PORT);
-    private final Joystick manipulator = new Joystick(Constants.OI.Controller.PORT);
+    private final Joystick controller = new Joystick(Constants.OI.Controller.PORT);
+    
+    private RobotPath path;
 
     public RobotContainer() {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
         feeder.setDefaultCommand(new RunCommand(() -> { if (feeder.isBallEntering()) feeder.runForward(); else feeder.stop(); }));
+        
+        try {
+            path = new RobotPath("Test2");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        path.init(drivetrain);
     }
     private void configureButtonBindings() {
+        // Arcade/Tank drive button
+        new JoystickButton(leftJoy, Constants.OI.LeftJoy.ARCADETANK_DRIVE_BUTTON)
+                .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Arcade Drive",
+                !SmartDashboard.getBoolean("Arcade Drive", false))));
+
         // characterize drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.CHARACTERIZED_DRIVE_BUTTON)
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
         
-        new JoystickButton(manipulator, Constants.OI.Controller.INTAKE_BUTTON)
+        new JoystickButton(controller, Constants.OI.Controller.INTAKE_BUTTON)
             .whenPressed(new ToggleIntake(intake));
     }
 
-    public CommandBase getAutonomousCommand() {
-        return null;
+    public Command getAutonomousCommand() {
+        return path.getPathCommand();
     }
 }
