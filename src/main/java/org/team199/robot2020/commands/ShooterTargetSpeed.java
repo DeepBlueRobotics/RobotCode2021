@@ -4,10 +4,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.team199.robot2020.subsystems.Shooter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
+import org.team199.lib.Limelight;
 
 public class ShooterTargetSpeed extends CommandBase {
   Shooter shooter;
   Timer timer;
+  Limelight limelight;
 
   public ShooterTargetSpeed(Shooter shooter) {
     this.shooter = shooter;
@@ -36,6 +38,10 @@ public class ShooterTargetSpeed extends CommandBase {
     SmartDashboard.putNumber("Temp Spark Max Port 4", shooter.tempSpark2());
     SmartDashboard.putNumber("Current Spark Max Port 2", shooter.spark1Current());
     SmartDashboard.putNumber("Current Spark Max Port 4", shooter.spark2Current());
+
+    SmartDashboard.putNumber("Limelight Distance Adjustment", limelight.distanceAssist());
+    SmartDashboard.putNumber("Limelight Angle Adjustment", limelight.steeringAssist());
+    //Limelight.java already puts horizontal and vertical offset numbers to Smartdashboard
 
     if (timer.get() >= 0.1) {
       SmartDashboard.putNumber("Spark Port 2 Speed", shooter.getMeasurement());
