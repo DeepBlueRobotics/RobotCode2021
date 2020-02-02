@@ -19,86 +19,77 @@ package org.team199.robot2020;
  */
 public final class Constants {
     /**
-     * Constants for things on our robot. Used to go in RobotMap.java
-     */
-    public static final class Drive {
-        public static final int LEFT_MOTOR_1 = 3;
-        public static final int LEFT_MOTOR_2 = 4;
-        public static final int RIGHT_MOTOR_1 = 5;
-        public static final int RIGHT_MOTOR_2 = 6;
-
-        public static final int[] LEFT_ENCODER = { 0, 1 };
-        public static final int[] RIGHT_ENCODER = { 2, 3 };
-    }
-    
-    /**
      * Constants for controllers and joysticks. Used to go in OI.java
      */
     public static final class OI {
         public static final class LeftJoy {
-            public static final int PORT = 0;
+            public static final int kPort = 0;
 
-            public static final int ARCADETANK_DRIVE_BUTTON = 4;
-            public static final int CHARACTERIZED_DRIVE_BUTTON = 5;
-            public static final int SLOW_DRIVE_BUTTON = 2;
+            public static final int kToggleDriveModeButton = 4;
+            public static final int kCharacterizedDriveButton = 5;
+            public static final int kSlowDriveButton = 2;
         }
 
         public static final class RightJoy {
-            public static final int PORT = 1;
+            public static final int kPort = 1;
 
-            public static final int SLOW_DRIVE_BUTTON = 5;
+            public static final int kSlowDriveButton = 5;
         }
 
         public static final class Controller {
-            public static final int PORT = 2;
+            public static final int kPort = 2;
 
-            public static final int INTAKE_BUTTON = 1; // TODO: change to correct button
-            public static final int OUTTAKE_BUTTON = 1; // TODO: change to correct button
-            
+            public static final int kIntakeButton = 1; // TODO: change to correct button
+            public static final int kOuttakeButton = 1; // TODO: change to correct button
         }
     }
 
-    /**
-     * Drivetrain constants used in characterization
-     */
     public static final class Drivetrain {
-        public static final double TRACKWIDTH = 0.6223;
+        public static final int kLeftMaster = 3;
+        public static final int kLeftSlave = 4;
+        public static final int kRightMaster = 5;
+        public static final int kRightSlave = 6;
+
+        public static final int[] kLeftEncoder = { 0, 1 };
+        public static final int[] kRightEncoder = { 2, 3 };
+
+        public static final double kTrackWidth = 0.6223;
         // 0.183
-        public static final double[] kPIDLEFT = {5.45, 0.0, 0.0};
+        public static final double[] kPidLeft = { 5.45, 0.0, 0.0 };
         // 0.278
-        public static final double[] kPIDRIGHT = {6.02, 0.0, 0.0};
+        public static final double[] kPidRight = { 6.02, 0.0, 0.0 };
 
         // 0.232, 0.194, 0.229, 0.198
-        public static final double[] kVOLTS = {0.228, 0.208, 0.213, 0.199};  // Volts
+        public static final double[] kVolts = { 0.228, 0.208, 0.213, 0.199 }; // Volts
         // 0.0545, 0.0529, 0.0545, 0.0528
-        public static final double[] kVELS = {1.42, 1.35, 1.41, 1.36};  // Volt * seconds / inch
+        public static final double[] kVels = { 1.42, 1.35, 1.41, 1.36 }; // Volt * seconds / inch
         // 0.00475, 0.00597, 0.00318, 0.00616
-        public static final double[] kACCELS = {0.0985, 0.133, 0.144, 0.146};  // Volt * seconds^2 / inch
-        public static final double MAX_ACCEL = 200.0;  // Inches / seconds^2
-        public static final double MAX_SPEED = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
-        public static final double MAX_ANGULAR_SPEED = 4 * Math.PI; // Radians / second
-        public static final double LOOP_TIME = 0.02;
+        public static final double[] kAccels = { 0.0985, 0.133, 0.144, 0.146 }; // Volt * seconds^2 / inch
+        public static final double kMaxAccel = 200.0; // Inches / seconds^2
+        public static final double kMaxSpeed = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
+        public static final double kMaxAngularSpeed = 4 * Math.PI; // Radians / second
+        public static final double kLoopTime = 0.02;
+
+        public static final double kSlowDriveSpeed = 0.6;
+        public static final double kSlowDriveRotation = 0.6;
     }
 
-    public static final double SLOW_DRIVE_SPEED = 0.6;
-    public static final double SLOW_DRIVE_ROTATION = 0.6;
-
     public static final class Intake {
-        public static final int INTAKE_MOTOR = 0; // TODO: set all to correct ports
-        public static final int INTAKE_DOWN_MOTOR = 1; //TODO: set all to correct ports
-        public static final double INTAKE_SPEED = 1; // TODO: set correct speeds
+        public static final int kIntakeMotor = 0; // TODO: set all to correct ports
+        public static final int kIntakeDownMotor = 1; // TODO: set all to correct ports
+        public static final double kIntakeSpeed = 1; // TODO: set correct speeds
     }
 
     public static final class Feeder {
         // TODO: change to correct values
-        public static final int BELT_MOTOR = 2;
-        public static final int EJECT_MOTOR = 3;
+        public static final int kBeltMotor = 2;
+        public static final int kEjectMotor = 3;
 
-        public static final int INDEX_SENSOR = 0;
+        public static final int kIndexSensor = 0;
 
-        public static final double BELT_SPEED = .8;
-        public static final double EJECT_SPEED = 1;
+        public static final double kBeltSpeed = .8;
+        public static final double kEjectSpeed = 1;
 
-        public static final double INDEXER_DISTANCE = 127; // in mm
+        public static final double kIndexerDistance = 127; // in mm
     }
 }

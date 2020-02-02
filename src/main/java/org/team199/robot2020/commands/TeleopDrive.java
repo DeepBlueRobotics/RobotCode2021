@@ -42,12 +42,12 @@ public class TeleopDrive extends CommandBase {
       if (Math.abs(speed) < 0.001) { speed = 0.0; }
       if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
 
-      if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
-        speed *= Constants.SLOW_DRIVE_SPEED;
+      if (leftJoy.getRawButton(Constants.OI.LeftJoy.kSlowDriveButton)) {
+        speed *= Constants.Drivetrain.kSlowDriveSpeed;
       }
 
-      if (rightJoy.getRawButton(Constants.OI.RightJoy.SLOW_DRIVE_BUTTON)) {
-        rotation *= Constants.SLOW_DRIVE_ROTATION;
+      if (rightJoy.getRawButton(Constants.OI.RightJoy.kSlowDriveButton)) {
+        rotation *= Constants.Drivetrain.kSlowDriveRotation;
       }
 
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {

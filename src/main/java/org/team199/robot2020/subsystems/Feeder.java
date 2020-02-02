@@ -16,9 +16,9 @@ import org.team199.robot2020.Constants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
-  private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Feeder.BELT_MOTOR);
-  private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Feeder.EJECT_MOTOR);
-  private final TimeOfFlight indexSensor = new TimeOfFlight(Constants.Feeder.INDEX_SENSOR);
+  private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Feeder.kBeltMotor);
+  private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Feeder.kEjectMotor);
+  private final TimeOfFlight indexSensor = new TimeOfFlight(Constants.Feeder.kIndexSensor);
 
   /**
    * Creates a new Feeder.
@@ -28,11 +28,11 @@ public class Feeder extends SubsystemBase {
   }
 
   public void runForward() {
-    beltMotor.set(Constants.Feeder.BELT_SPEED);
+    beltMotor.set(Constants.Feeder.kBeltSpeed);
   }
 
   public void runBackward() {
-    beltMotor.set(-Constants.Feeder.BELT_SPEED);
+    beltMotor.set(-Constants.Feeder.kBeltSpeed);
   }
 
   public void stop() {
@@ -40,10 +40,10 @@ public class Feeder extends SubsystemBase {
   }
 
   public void eject() {
-    ejectMotor.set(Constants.Feeder.EJECT_SPEED);
+    ejectMotor.set(Constants.Feeder.kEjectSpeed);
   }
 
   public boolean isBallEntering() {
-    return indexSensor.getRange() < Constants.Feeder.INDEXER_DISTANCE; // 5 inches in millimeters
+    return indexSensor.getRange() < Constants.Feeder.kIndexerDistance; // 5 inches in millimeters
   }
 }

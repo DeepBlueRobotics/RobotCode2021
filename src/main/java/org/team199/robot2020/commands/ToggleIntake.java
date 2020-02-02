@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
 public class ToggleIntake extends InstantCommand {
   private Intake intake;
+
   public ToggleIntake(Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(this.intake = intake);
