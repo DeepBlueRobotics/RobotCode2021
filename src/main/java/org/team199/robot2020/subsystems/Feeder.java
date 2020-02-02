@@ -16,23 +16,27 @@ import org.team199.robot2020.Constants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
-  private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Feeder.kBeltMotor);
-  private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Feeder.kEjectMotor);
-  private final TimeOfFlight indexSensor = new TimeOfFlight(Constants.Feeder.kIndexSensor);
+  private static final double kBeltSpeed = .8;
+  private static final double kEjectSpeed = 1;
+  private static final double kIndexerDistance = 127; // 5 inches in millimeters
+
+  private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederBelt);
+  private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederEjector);
+  private final TimeOfFlight inSensor = new TimeOfFlight(Constants.Drive.kFeederInSensor);
+  private final TimeOfFlight outSensor = new TimeOfFlight(Constants.Drive.kFeederOutSensor);
 
   /**
    * Creates a new Feeder.
    */
   public Feeder() {
-    
   }
 
   public void runForward() {
-    beltMotor.set(Constants.Feeder.kBeltSpeed);
+    beltMotor.set(kBeltSpeed);
   }
 
   public void runBackward() {
-    beltMotor.set(-Constants.Feeder.kBeltSpeed);
+    beltMotor.set(-kBeltSpeed);
   }
 
   public void stop() {
@@ -40,10 +44,10 @@ public class Feeder extends SubsystemBase {
   }
 
   public void eject() {
-    ejectMotor.set(Constants.Feeder.kEjectSpeed);
+    ejectMotor.set(kEjectSpeed);
   }
 
   public boolean isBallEntering() {
-    return indexSensor.getRange() < Constants.Feeder.kIndexerDistance; // 5 inches in millimeters
+    return inSensor.getRange() < kIndexerDistance;
   }
 }

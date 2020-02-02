@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class TeleopDrive extends CommandBase {
+  private static final double kSlowDriveSpeed = 0.6;
+  private static final double kSlowDriveRotation = 0.6;
+
+
   private Drivetrain drivetrain;
   private Joystick leftJoy, rightJoy;
 
@@ -43,11 +47,11 @@ public class TeleopDrive extends CommandBase {
       if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
 
       if (leftJoy.getRawButton(Constants.OI.LeftJoy.kSlowDriveButton)) {
-        speed *= Constants.Drivetrain.kSlowDriveSpeed;
+        speed *= kSlowDriveSpeed;
       }
 
       if (rightJoy.getRawButton(Constants.OI.RightJoy.kSlowDriveButton)) {
-        rotation *= Constants.Drivetrain.kSlowDriveRotation;
+        rotation *= kSlowDriveRotation;
       }
 
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
@@ -56,10 +60,21 @@ public class TeleopDrive extends CommandBase {
         drivetrain.arcadeDrive(speed, rotation);
       }
     } else {
+      double left = -leftJoy.getY();
+      double right = -rightJoy.getX();
+
+      if (leftJoy.getRawButton(Constants.OI.LeftJoy.kSlowDriveButton)) {
+        left *= kSlowDriveSpeed;
+      }
+
+      if (rightJoy.getRawButton(Constants.OI.RightJoy.kSlowDriveButton)) {
+        right *= kSlowDriveRotation;
+      }
+
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-        drivetrain.charDriveTank(-leftJoy.getY(), -rightJoy.getY());
+        drivetrain.charDriveTank(left, right);
       } else {
-        drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY());
+        drivetrain.tankDrive(left, right);
       }
     }
 

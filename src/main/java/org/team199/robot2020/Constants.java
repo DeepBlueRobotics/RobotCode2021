@@ -19,6 +19,29 @@ package org.team199.robot2020;
  */
 public final class Constants {
     /**
+     * Constants for motor ports and IDs, solenoid ports, sensor numbers, etc. Put
+     * other constants (like motor speed and characterization constants) in the
+     * subsystems themselves.
+     */
+    public static final class Drive {
+        // CAN IDs
+        public static final int kDtLeftMaster = 3;
+        public static final int kDtLeftSlave = 4;
+        public static final int kDtRightMaster = 5;
+        public static final int kDtRightSlave = 6;
+        public static final int kIntakeRoller = 0;
+        public static final int kFeederBelt = 1;
+        public static final int kFeederEjector = 2;
+
+        // solenoids
+        public static final int[] kIntakePistons = { 0, 1 };
+
+        // other
+        public static final int kFeederInSensor = 0;
+        public static final int kFeederOutSensor = 1;
+    }
+
+    /**
      * Constants for controllers and joysticks. Used to go in OI.java
      */
     public static final class OI {
@@ -42,54 +65,5 @@ public final class Constants {
             public static final int kIntakeButton = 1; // TODO: change to correct button
             public static final int kOuttakeButton = 1; // TODO: change to correct button
         }
-    }
-
-    public static final class Drivetrain {
-        public static final int kLeftMaster = 3;
-        public static final int kLeftSlave = 4;
-        public static final int kRightMaster = 5;
-        public static final int kRightSlave = 6;
-
-        public static final int[] kLeftEncoder = { 0, 1 };
-        public static final int[] kRightEncoder = { 2, 3 };
-
-        public static final double kTrackWidth = 0.6223;
-        // 0.183
-        public static final double[] kPidLeft = { 5.45, 0.0, 0.0 };
-        // 0.278
-        public static final double[] kPidRight = { 6.02, 0.0, 0.0 };
-
-        // 0.232, 0.194, 0.229, 0.198
-        public static final double[] kVolts = { 0.228, 0.208, 0.213, 0.199 }; // Volts
-        // 0.0545, 0.0529, 0.0545, 0.0528
-        public static final double[] kVels = { 1.42, 1.35, 1.41, 1.36 }; // Volt * seconds / inch
-        // 0.00475, 0.00597, 0.00318, 0.00616
-        public static final double[] kAccels = { 0.0985, 0.133, 0.144, 0.146 }; // Volt * seconds^2 / inch
-        public static final double kMaxAccel = 200.0; // Inches / seconds^2
-        public static final double kMaxSpeed = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
-        public static final double kMaxAngularSpeed = 4 * Math.PI; // Radians / second
-        public static final double kLoopTime = 0.02;
-
-        public static final double kSlowDriveSpeed = 0.6;
-        public static final double kSlowDriveRotation = 0.6;
-    }
-
-    public static final class Intake {
-        public static final int kIntakeMotor = 0; // TODO: set all to correct ports
-        public static final int kIntakeDownMotor = 1; // TODO: set all to correct ports
-        public static final double kIntakeSpeed = 1; // TODO: set correct speeds
-    }
-
-    public static final class Feeder {
-        // TODO: change to correct values
-        public static final int kBeltMotor = 2;
-        public static final int kEjectMotor = 3;
-
-        public static final int kIndexSensor = 0;
-
-        public static final double kBeltSpeed = .8;
-        public static final double kEjectSpeed = 1;
-
-        public static final double kIndexerDistance = 127; // in mm
     }
 }
