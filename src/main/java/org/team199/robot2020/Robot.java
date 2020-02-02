@@ -8,9 +8,8 @@
 package org.team199.robot2020;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.team199.robot2020.commands.ShooterTargetSpeed;
-import org.team199.robot2020.subsystems.Shooter;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,7 +18,8 @@ import org.team199.robot2020.subsystems.Shooter;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class Robot extends TimedRobot { 
+public class Robot extends TimedRobot {
+  
   private RobotContainer robotContainer;
   /**
    * This function is run when the robot is first started up and should be used
@@ -27,6 +27,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    SmartDashboard.putBoolean("Arcade Drive", true);
+    SmartDashboard.putBoolean("Characterized Drive", false);
     robotContainer = new RobotContainer();
   }
 
@@ -40,6 +42,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    robotContainer.getAutonomousCommand().schedule();
   }
 
   /**

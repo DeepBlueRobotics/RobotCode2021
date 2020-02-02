@@ -22,13 +22,13 @@ public final class Constants {
      * Constants for things on our robot. Used to go in RobotMap.java
      */
     public static final class Drive {
-        public static final int LEFT_MOTOR_1 = 8;
-        public static final int LEFT_MOTOR_2 = 9;
+        public static final int LEFT_MOTOR_1 = 3;
+        public static final int LEFT_MOTOR_2 = 4;
         public static final int RIGHT_MOTOR_1 = 5;
         public static final int RIGHT_MOTOR_2 = 6;
 
-        //public static final int[] LEFT_ENCODER = { 0, 1 };
-        //public static final int[] RIGHT_ENCODER = { 0, 1 };
+        public static final int[] LEFT_ENCODER = { 0, 1 };
+        public static final int[] RIGHT_ENCODER = { 2, 3 };
     }
 
     /**
@@ -38,8 +38,9 @@ public final class Constants {
         public static final class LeftJoy {
             public static final int PORT = 0;
 
+            public static final int ARCADETANK_DRIVE_BUTTON = 4;
             public static final int CHARACTERIZED_DRIVE_BUTTON = 5;
-            public static final int SLOW_DRIVE_BUTTON = 5;
+            public static final int SLOW_DRIVE_BUTTON = 2;
         }
 
         public static final class RightJoy {
@@ -47,6 +48,7 @@ public final class Constants {
 
             public static final int SLOW_DRIVE_BUTTON = 5;
             public static final int SHOOT_BUTTON = 1;
+            public static final int LIMELIGHT_BUTTON = 2;
         }
 
         public static final class Controller {
@@ -58,11 +60,21 @@ public final class Constants {
      * Drivetrain constants used in characterization
      */
     public static final class Drivetrain {
-        public static final double VOLT = 0.0;
-        public static final double VEL = 0.0;
-        public static final double ACCEL = 0.0;
-        public static final double MAX_ACCEL = 0.0;
-        public static final double MAX_SPEED = 13 * 12; // TODO: change rest to correct values as needed
+        public static final double TRACKWIDTH = 0.6223;
+        // 0.183
+        public static final double[] kPIDLEFT = {5.45, 0.0, 0.0};
+        // 0.278
+        public static final double[] kPIDRIGHT = {6.02, 0.0, 0.0};
+
+        // 0.232, 0.194, 0.229, 0.198
+        public static final double[] kVOLTS = {0.228, 0.208, 0.213, 0.199};  // Volts
+        // 0.0545, 0.0529, 0.0545, 0.0528
+        public static final double[] kVELS = {1.42, 1.35, 1.41, 1.36};  // Volt * seconds / inch
+        // 0.00475, 0.00597, 0.00318, 0.00616
+        public static final double[] kACCELS = {0.0985, 0.133, 0.144, 0.146};  // Volt * seconds^2 / inch
+        public static final double MAX_ACCEL = 200.0;  // Inches / seconds^2
+        public static final double MAX_SPEED = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
+        public static final double MAX_ANGULAR_SPEED = 4 * Math.PI; // Radians / second
         public static final double LOOP_TIME = 0.02;
     }
 
