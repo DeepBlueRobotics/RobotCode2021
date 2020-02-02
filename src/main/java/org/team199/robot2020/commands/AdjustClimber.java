@@ -37,6 +37,8 @@ public class AdjustClimber extends CommandBase {
       climber.runLift(Constants.Climber.LIFT_KEEP_SPEED + Constants.Climber.LIFT_ADJUST_SPEED);
     } else if (controller.getRawButton(Constants.OI.Controller.ADJUST_CLIMBER_DOWN_BUTTON)){ // down
       climber.runLift(Constants.Climber.LIFT_KEEP_SPEED - Constants.Climber.LIFT_ADJUST_SPEED);
+    } else { // neutral
+      climber.runLift(Constants.Climber.LIFT_KEEP_SPEED);
     }
   }
 
