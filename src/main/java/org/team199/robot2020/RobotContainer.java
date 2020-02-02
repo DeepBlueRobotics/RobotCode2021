@@ -12,8 +12,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 
+import java.io.IOException;
+
+import org.team199.lib.RobotPath;
 import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.commands.AdjustClimber;
 import org.team199.robot2020.commands.DeployClimber;
@@ -35,13 +38,25 @@ public class RobotContainer {
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.PORT);
     private final Joystick controller = new Joystick(Constants.OI.Controller.PORT);
 
+    private RobotPath path;
 
     public RobotContainer() {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
+        try {
+            path = new RobotPath("Test2");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        path.init(drivetrain);
     }
 
     private void configureButtonBindings() {
+        // Arcade/Tank drive button
+        new JoystickButton(leftJoy, Constants.OI.LeftJoy.ARCADETANK_DRIVE_BUTTON)
+                .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Arcade Drive",
+                !SmartDashboard.getBoolean("Arcade Drive", false))));
+
         // characterize drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.CHARACTERIZED_DRIVE_BUTTON)
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
@@ -55,7 +70,7 @@ public class RobotContainer {
                 .whenPressed(new RaiseRobot(climber));
     }
 
-    public CommandBase getAutonomousCommand() {
-        return null;
+    public Command getAutonomousCommand() {
+        return path.getPathCommand();
     }
 }
