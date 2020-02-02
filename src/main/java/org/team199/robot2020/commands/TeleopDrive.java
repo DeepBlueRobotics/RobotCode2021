@@ -44,16 +44,32 @@ public class TeleopDrive extends CommandBase {
     if (SmartDashboard.getBoolean("Using Limelight", false)) {
       autoAlign();
     } else {
-      double speed = -leftJoy.getY();
-      double rotation = rightJoy.getX();
-      if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
-        speed *= Constants.SLOW_DRIVE_SPEED;
-      }
+      if (SmartDashboard.getBoolean("Arcade Drive", true)) {
+        double speed = -leftJoy.getY();
+        double rotation = rightJoy.getX();
+        if (Math.abs(speed) < 0.001) { speed = 0.0; }
+        if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
 
-      if (rightJoy.getRawButton(Constants.OI.RightJoy.SLOW_DRIVE_BUTTON)) {
-        rotation *= Constants.SLOW_DRIVE_ROTATION;
+        if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
+          speed *= Constants.SLOW_DRIVE_SPEED;
+        }
+
+        if (rightJoy.getRawButton(Constants.OI.RightJoy.SLOW_DRIVE_BUTTON)) {
+          rotation *= Constants.SLOW_DRIVE_ROTATION;
+        }
+
+        if (SmartDashboard.getBoolean("Characterized Drive", false)) {
+          drivetrain.charDriveArcade(speed, rotation);
+        } else {
+          drivetrain.arcadeDrive(speed, rotation);
+        }
+      } else {
+        if (SmartDashboard.getBoolean("Characterized Drive", false)) {
+          drivetrain.charDriveTank(-leftJoy.getY(), -rightJoy.getY());
+        } else {
+          drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY());
+        }
       }
-      drivetrain.arcadeDrive(speed, rotation);
     }
   }
 
@@ -86,7 +102,7 @@ public class TeleopDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.arcadeDrive(0, 0);
+    drivetrain.tankDrive(0, 0);
   }
 
   // Returns true when the command should end.
