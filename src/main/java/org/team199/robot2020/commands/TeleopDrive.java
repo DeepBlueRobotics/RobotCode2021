@@ -11,6 +11,7 @@ import org.team199.robot2020.Constants;
 import org.team199.robot2020.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class TeleopDrive extends CommandBase {
@@ -35,24 +36,43 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speed = -leftJoy.getY();
-    double rotation = rightJoy.getX();
+    if (SmartDashboard.getBoolean("Arcade Drive", true)) {
+      double speed = -leftJoy.getY();
+      double rotation = rightJoy.getX();
+      if (Math.abs(speed) < 0.001) { speed = 0.0; }
+      if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
 
-    if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
-      speed *= Constants.SLOW_DRIVE_SPEED;
+      if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
+        speed *= Constants.SLOW_DRIVE_SPEED;
+      }
+
+      if (rightJoy.getRawButton(Constants.OI.RightJoy.SLOW_DRIVE_BUTTON)) {
+        rotation *= Constants.SLOW_DRIVE_ROTATION;
+      }
+
+      if (SmartDashboard.getBoolean("Characterized Drive", false)) {
+        drivetrain.charDriveArcade(speed, rotation);
+      } else {
+        drivetrain.arcadeDrive(speed, rotation);
+      }
+    } else {
+      if (SmartDashboard.getBoolean("Characterized Drive", false)) {
+        drivetrain.charDriveTank(-leftJoy.getY(), -rightJoy.getY());
+      } else {
+        drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY());
+      }
     }
 
-    if (rightJoy.getRawButton(Constants.OI.RightJoy.SLOW_DRIVE_BUTTON)) {
-      rotation *= Constants.SLOW_DRIVE_ROTATION;
-    }
-
-    drivetrain.arcadeDrive(speed, rotation);
+    SmartDashboard.putNumber("Left Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.LEFT));
+    SmartDashboard.putNumber("Right Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.RIGHT));
+    SmartDashboard.putNumber("Left Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.LEFT));
+    SmartDashboard.putNumber("Right Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.RIGHT));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.arcadeDrive(0, 0);
+    drivetrain.tankDrive(0, 0);
   }
 
   // Returns true when the command should end.

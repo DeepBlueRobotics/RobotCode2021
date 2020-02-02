@@ -11,8 +11,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 
+import java.io.IOException;
+
+import org.team199.lib.RobotPath;
 import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.commands.InitializeShoot;
 import org.team199.robot2020.commands.ShooterTargetSpeed;
@@ -31,14 +34,26 @@ public class RobotContainer {
     private final Shooter shooter = new Shooter();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.PORT);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.PORT);
+    private RobotPath path;
 
     public RobotContainer() {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
         shooter.setDefaultCommand(new ShooterTargetSpeed(shooter));
+        try {
+            path = new RobotPath("Test2");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        path.init(drivetrain);
     }
 
     private void configureButtonBindings() {
+        // Arcade/Tank drive button
+        new JoystickButton(leftJoy, Constants.OI.LeftJoy.ARCADETANK_DRIVE_BUTTON)
+                .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Arcade Drive",
+                !SmartDashboard.getBoolean("Arcade Drive", false))));
+
         // characterize drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.CHARACTERIZED_DRIVE_BUTTON)
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
@@ -47,7 +62,7 @@ public class RobotContainer {
         new JoystickButton(rightJoy, Constants.OI.RightJoy.SHOOT_BUTTON).whenPressed(new InitializeShoot(shooter));
     }
 
-    public CommandBase getAutonomousCommand() {
-        return null;
+    public Command getAutonomousCommand() {
+        return path.getPathCommand();
     }
 }

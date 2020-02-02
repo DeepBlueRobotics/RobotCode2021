@@ -8,6 +8,7 @@
 package org.team199.robot2020;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.team199.robot2020.commands.ShooterTargetSpeed;
 import org.team199.robot2020.subsystems.Shooter;
@@ -27,6 +28,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    SmartDashboard.putBoolean("Arcade Drive", true);
+    SmartDashboard.putBoolean("Characterized Drive", false);
     robotContainer = new RobotContainer();
   }
 
@@ -40,6 +43,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    robotContainer.getAutonomousCommand().schedule();
   }
 
   /**
