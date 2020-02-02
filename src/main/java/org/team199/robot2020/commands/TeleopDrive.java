@@ -40,19 +40,17 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    boolean slowLeft = leftJoy.getRawButton(Constants.OI.LeftJoy.kSlowDriveButton);
+    boolean slowRight = rightJoy.getRawButton(Constants.OI.RightJoy.kSlowDriveButton);
+
     if (SmartDashboard.getBoolean("Arcade Drive", true)) {
       double speed = -leftJoy.getY();
       double rotation = rightJoy.getX();
       if (Math.abs(speed) < 0.001) { speed = 0.0; }
       if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
 
-      if (leftJoy.getRawButton(Constants.OI.LeftJoy.kSlowDriveButton)) {
-        speed *= kSlowDriveSpeed;
-      }
-
-      if (rightJoy.getRawButton(Constants.OI.RightJoy.kSlowDriveButton)) {
-        rotation *= kSlowDriveRotation;
-      }
+      if (slowLeft) speed *= kSlowDriveSpeed;
+      if (slowRight) rotation *= kSlowDriveRotation;
 
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
         drivetrain.charDriveArcade(speed, rotation);
@@ -63,13 +61,8 @@ public class TeleopDrive extends CommandBase {
       double left = -leftJoy.getY();
       double right = -rightJoy.getX();
 
-      if (leftJoy.getRawButton(Constants.OI.LeftJoy.kSlowDriveButton)) {
-        left *= kSlowDriveSpeed;
-      }
-
-      if (rightJoy.getRawButton(Constants.OI.RightJoy.kSlowDriveButton)) {
-        right *= kSlowDriveRotation;
-      }
+      if (slowLeft) left *= kSlowDriveSpeed;
+      if (slowRight) right *= kSlowDriveRotation;
 
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
         drivetrain.charDriveTank(left, right);

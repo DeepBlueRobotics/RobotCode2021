@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import java.io.IOException;
 
 import org.team199.lib.RobotPath;
+import org.team199.robot2020.commands.Regurgitate;
 import org.team199.robot2020.commands.TeleopDrive;
-import org.team199.robot2020.commands.ToggleIntake;
 import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Feeder;
 import org.team199.robot2020.subsystems.Intake;
@@ -44,9 +44,9 @@ public class RobotContainer {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
         feeder.setDefaultCommand(new RunCommand(() -> {
-            if (feeder.isBallEntering())
+            if (feeder.isBallEntering()) 
                 feeder.runForward();
-            else
+            else 
                 feeder.stop();
         }));
 
@@ -67,7 +67,19 @@ public class RobotContainer {
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
                 () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
 
-        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
+        // Intake toggle button
+        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
+            if (intake.isDeployed()) {
+                intake.retract();
+                intake.stop();
+            } else {
+                intake.deploy();
+                intake.intake();
+            }
+        }, intake));
+
+        // Power cell regurgitate button
+        new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
     }
 
     public Command getAutonomousCommand() {

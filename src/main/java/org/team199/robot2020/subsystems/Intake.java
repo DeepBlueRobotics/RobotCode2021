@@ -14,37 +14,42 @@ public class Intake extends SubsystemBase {
     private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kIntakeRoller);
     private final DoubleSolenoid intakePistons = new DoubleSolenoid(Constants.Drive.kIntakePistons[0], Constants.Drive.kIntakePistons[1]);
 
-    public Intake(){
+    private boolean deployed = false;
+
+    /**
+     * Vectored intake that rolls balls through the bumper gap and into feeder.
+     */
+    public Intake() {
     }
 
-    public void intake()
-    {
+    public void intake() {
         rollerMotor.set(kIntakeSpeed);
     }
 
-    public void outtake()
-    {
+    public void outtake() {
         rollerMotor.set(-kIntakeSpeed);
     }
-    
-    public void stop()
-    {
+
+    public void stop() {
         rollerMotor.set(0);
     }
 
     public void deploy() {
         intakePistons.set(DoubleSolenoid.Value.kForward);
+        deployed = true;
     }
 
     public void retract() {
         intakePistons.set(DoubleSolenoid.Value.kReverse);
+        deployed = false;
     }
 
+    // for if we want to try making our intake less rigid
     public void doTheFlop() {
         intakePistons.set(DoubleSolenoid.Value.kOff);
     }
 
-    public boolean isNotRunning() {
-        return rollerMotor.get() == 0;
+    public boolean isDeployed() {
+        return deployed;
     }
 }

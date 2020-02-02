@@ -19,8 +19,10 @@ package org.team199.robot2020;
  */
 public final class Constants {
     /**
-     * Constants for motor ports and IDs, solenoid ports, sensor numbers, etc. Put
-     * other constants (like motor speed and characterization constants) in the
+     * Constants for motor ports and IDs, solenoid ports, sensor numbers, etc.
+     * Analagous to RobotMap.java in previous years.
+     * 
+     * Put other constants (like motor speed and characterization constants) in the
      * subsystems themselves.
      */
     public static final class Drive {
@@ -42,7 +44,8 @@ public final class Constants {
     }
 
     /**
-     * Constants for controllers and joysticks. Used to go in OI.java
+     * Constants for controllers and joysticks. Analagous to OI.java in previous
+     * years.
      */
     public static final class OI {
         public static final class LeftJoy {
@@ -64,6 +67,7 @@ public final class Constants {
 
             public static final int kIntakeButton = 1; // TODO: change to correct button
             public static final int kOuttakeButton = 1; // TODO: change to correct button
+            public static final int kRegurgitateButton = 3; // TODO: change to correct button
         }
     }
 }
