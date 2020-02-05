@@ -19,7 +19,7 @@ public class Feeder extends SubsystemBase {
   private static final double kBeltIntakeSpeed = .8;
   private static final double kBeltEjectSpeed = 1;
   private static final double kRollerEjectSpeed = 1;
-  private static final double kIndexerDistance = 127; // 5 inches in millimeters
+  private static final double kIndexerDistance = 5 * 25.4; // 5 inches in millimeters
 
   private final WPI_VictorSPX beltMotor = MotorControllerFactory.createVictor(Constants.Drive.kFeederBelt);
   private final WPI_VictorSPX ejectMotor = MotorControllerFactory.createVictor(Constants.Drive.kFeederEjector);
