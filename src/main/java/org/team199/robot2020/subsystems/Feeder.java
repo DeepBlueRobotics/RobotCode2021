@@ -13,13 +13,15 @@ import com.playingwithfusion.TimeOfFlight;
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
-  private static final double kBeltIntakeSpeed = .8;
-  private static final double kBeltEjectSpeed = 1;
-  private static final double kRollerEjectSpeed = 1;
-  private static final double kIndexerDistance = 5 * 25.4; // 5 inches in millimeters
+  // TODO: find good values and then set to final
+  private static double kBeltIntakeSpeed = .8;
+  private static double kBeltEjectSpeed = 1;
+  private static double kRollerEjectSpeed = 1;
+  private static double kIndexerDistance = 5 * 25.4; // 5 inches in millimeters
 
   private final WPI_VictorSPX beltMotor = MotorControllerFactory.createVictor(Constants.Drive.kFeederBelt);
   private final WPI_VictorSPX ejectMotor = MotorControllerFactory.createVictor(Constants.Drive.kFeederEjector);
@@ -30,6 +32,17 @@ public class Feeder extends SubsystemBase {
    * Takes and stores five balls from intake to give to shooter
    */
   public Feeder() {
+    SmartDashboard.putNumber("Feeder.kBeltIntakeSpeed", kBeltIntakeSpeed);
+    SmartDashboard.putNumber("Feeder.kBeltEjectSpeed", kBeltEjectSpeed);
+    SmartDashboard.putNumber("Feeder.kRollerEjectSpeed", kRollerEjectSpeed);
+    SmartDashboard.putNumber("Feeder.kIndexerDistance", kIndexerDistance);
+  }
+
+  public void periodic() {
+    kBeltIntakeSpeed = SmartDashboard.getNumber("Feeder.kBeltIntakeSpeed", kBeltIntakeSpeed);
+    kBeltEjectSpeed = SmartDashboard.getNumber("Feeder.kBeltEjectSpeed", kBeltEjectSpeed);
+    kRollerEjectSpeed = SmartDashboard.getNumber("Feeder.kRollerEjectSpeed", kRollerEjectSpeed);
+    kIndexerDistance = SmartDashboard.getNumber("Feeder.kIndexerDistance", kIndexerDistance);
   }
 
   public void runForward() {

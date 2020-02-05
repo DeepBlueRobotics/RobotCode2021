@@ -6,10 +6,12 @@ import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-    private static final double kIntakeSpeed = 1;
+    // TODO: find good values and then set to final
+    private static double kIntakeSpeed = 1;
 
     private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kIntakeRoller);
     private final DoubleSolenoid intakePistons = new DoubleSolenoid(Constants.Drive.kIntakePistons[0], Constants.Drive.kIntakePistons[1]);
@@ -20,6 +22,11 @@ public class Intake extends SubsystemBase {
      * Vectored intake that rolls balls through the bumper gap and into feeder.
      */
     public Intake() {
+        SmartDashboard.putNumber("Intake.kIntakeSpeed", kIntakeSpeed);
+    }
+
+    public void periodic() {
+        kIntakeSpeed = SmartDashboard.getNumber("Intake.kIntakeSpeed", kIntakeSpeed);
     }
 
     public void intake() {
