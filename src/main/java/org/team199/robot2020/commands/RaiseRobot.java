@@ -26,8 +26,8 @@ public class RaiseRobot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.runLift(Constants.Climber.LIFT_RETRACT_SPEED);
-    climber.runWinch(Constants.Climber.WINCH_RETRACT_SPEED);
+    climber.runLift(Climber.kLiftRetractSpeed);
+    climber.runWinch(Climber.kWinchRetractSpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,6 +48,6 @@ public class RaiseRobot extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return climber.getWinchHeight() >= Constants.Climber.WINCH_END_HEIGHT;
+    return climber.getWinchHeight() >= Climber.kWinchEndHeight;
   }
 }

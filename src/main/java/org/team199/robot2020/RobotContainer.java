@@ -87,13 +87,15 @@ public class RobotContainer {
 
         // Power cell regurgitate button
         new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
-        new JoystickButton(controller, Constants.OI.Controller.DEPLOY_CLIMBER_BUTTON)
-                .whenPressed(new SequentialCommandGroup(
-                    new DeployClimber(climber),
-                    new AdjustClimber(climber, controller)
-                ));
-        new JoystickButton(controller, Constants.OI.Controller.RAISE_ROBOT_BUTTON)
-                .whenPressed(new RaiseRobot(climber));
+
+        // Deploy climber button and allow for adjustment
+        new JoystickButton(controller, Constants.OI.Controller.kDeployClimberButton).whenPressed(new SequentialCommandGroup(
+            new DeployClimber(climber),
+            new AdjustClimber(climber, controller)
+        ));
+
+        // climb button
+        new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
 
     }
 

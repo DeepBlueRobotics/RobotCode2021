@@ -7,7 +7,6 @@
 
 package org.team199.robot2020.commands;
 
-import org.team199.robot2020.Constants;
 import org.team199.robot2020.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -25,8 +24,8 @@ public class DeployClimber extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.runLift(Constants.Climber.LIFT_DEPLOY_SPEED);
-    climber.runWinch(Constants.Climber.WINCH_DEPLOY_SPEED);
+    climber.runLift(Climber.kLiftDeploySpeed);
+    climber.runWinch(Climber.kWinchDeploySpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -40,13 +39,13 @@ public class DeployClimber extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.runLift(Constants.Climber.LIFT_KEEP_SPEED);
+    climber.runLift(Climber.kLiftKeepSpeed);
     climber.runWinch(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return climber.getLiftHeight() >= Constants.Climber.LIFT_HEIGHT;
+    return climber.getLiftHeight() >= Climber.kLiftHeight;
   }
 }
