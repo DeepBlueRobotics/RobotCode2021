@@ -19,88 +19,83 @@ package org.team199.robot2020;
  */
 public final class Constants {
     /**
-     * Constants for things on our robot. Used to go in RobotMap.java
+     * Constants for motor ports and IDs, solenoid ports, sensor numbers, etc.
+     * Analagous to RobotMap.java in previous years.
+     * 
+     * Put other constants (like motor speed and characterization constants) in the
+     * subsystems themselves.
      */
     public static final class Drive {
-        public static final int LEFT_MOTOR_1 = 3;
-        public static final int LEFT_MOTOR_2 = 4;
-        public static final int RIGHT_MOTOR_1 = 5;
-        public static final int RIGHT_MOTOR_2 = 6;
+        // CAN IDs
+        public static final int kDtLeftMaster = 3;
+        public static final int kDtLeftSlave = 4;
+        public static final int kDtRightMaster = 5;
+        public static final int kDtRightSlave = 6;
+        public static final int kIntakeRoller = 0;
+        public static final int kFeederBelt = 1;
+        public static final int kFeederEjector = 2;
+        public static final int kClimberWinch = 0; //TODO: Find Ports
+        public static final int kClimberLift = 1; //TODO: Find Ports
 
-        public static final int[] LEFT_ENCODER = { 0, 1 };
-        public static final int[] RIGHT_ENCODER = { 2, 3 };
+        // solenoids
+        public static final int[] kIntakePistons = { 0, 1 };
+
+        // other
+        public static final int kFeederInSensor = 0;
+        public static final int kFeederOutSensor = 1;
     }
 
     /**
-     * Constants for controllers and joysticks. Used to go in OI.java
+     * Constants for controllers and joysticks. Analagous to OI.java in previous
+     * years.
      */
     public static final class OI {
         public static final class LeftJoy {
-            public static final int PORT = 0;
+            public static final int kPort = 0;
 
-            public static final int ARCADETANK_DRIVE_BUTTON = 4;
-            public static final int CHARACTERIZED_DRIVE_BUTTON = 5;
-            public static final int SLOW_DRIVE_BUTTON = 2;
+            public static final int kToggleDriveModeButton = 4;
+            public static final int kCharacterizedDriveButton = 5;
+            public static final int kSlowDriveButton = 2;
         }
 
         public static final class RightJoy {
-            public static final int PORT = 1;
+            public static final int kPort = 1;
 
-            public static final int SLOW_DRIVE_BUTTON = 5;
+            public static final int kSlowDriveButton = 5;
         }
 
         public static final class Controller {
-            public static final int PORT = 2;
-            public static final int DEPLOY_CLIMBER_BUTTON = 3; //TODO: Find Ports
-            public static final int RAISE_ROBOT_BUTTON = 5; //TODO: Find Ports
+            public static final int kPort = 2;
 
-            public static final int ADJUST_CLIMBER_UP_BUTTON = 0; // TODO: change button
-            public static final int ADJUST_CLIMBER_DOWN_BUTTON = 0; // TODO: change button    
+            // climber
+            public static final int kDeployClimberButton = 3; //TODO: Find Ports
+            public static final int kRaiseRobotButton = 5; //TODO: Find Ports
+            public static final int kAdjustClimberUpButton = 0; // TODO: change button
+            public static final int kAdjustClimberDownButton = 0; // TODO: change button    
+
+            // intake/feeder
+            public static final int kIntakeButton = 1; // TODO: change to correct button
+            public static final int kOuttakeButton = 1; // TODO: change to correct button
+            public static final int kRegurgitateButton = 3; // TODO: change to correct button
         }
     }
 
-    /**
-     * Drivetrain constants used in characterization
-     */
-    public static final class Drivetrain {
-        public static final double TRACKWIDTH = 0.6223;
-        // 0.183
-        public static final double[] kPIDLEFT = {5.45, 0.0, 0.0};
-        // 0.278
-        public static final double[] kPIDRIGHT = {6.02, 0.0, 0.0};
+    // public static final class Climber {
 
-        // 0.232, 0.194, 0.229, 0.198
-        public static final double[] kVOLTS = {0.228, 0.208, 0.213, 0.199};  // Volts
-        // 0.0545, 0.0529, 0.0545, 0.0528
-        public static final double[] kVELS = {1.42, 1.35, 1.41, 1.36};  // Volt * seconds / inch
-        // 0.00475, 0.00597, 0.00318, 0.00616
-        public static final double[] kACCELS = {0.0985, 0.133, 0.144, 0.146};  // Volt * seconds^2 / inch
-        public static final double MAX_ACCEL = 200.0;  // Inches / seconds^2
-        public static final double MAX_SPEED = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
-        public static final double MAX_ANGULAR_SPEED = 4 * Math.PI; // Radians / second
-        public static final double LOOP_TIME = 0.02;
-    }
+    //     public static final double LIFT_DEPLOY_SPEED = 0.9; // TODO: set correct speed
+    //     public static final double WINCH_DEPLOY_SPEED = 0.5; // TODO: set correct speed
+    //     public static final double LIFT_KEEP_SPEED = 0.2; // TODO: set correct speed
+    //     public static final double LIFT_RETRACT_SPEED = -0.5; // TODO: set correct speed
+    //     public static final double WINCH_RETRACT_SPEED = 0.8; // TODO: set correct speed
+    //     public static final double LIFT_ADJUST_SPEED = 0.1; // TODO: set correct speed
 
-    public static final class Climber {
-        public static final int WINCH_MOTOR = 0; //TODO: Find Ports
-        public static final int LIFT_MOTOR = 1; //TODO: Find Ports
+    //     public static final double LIFT_HEIGHT = 18.8;
+    //     public static final double WINCH_END_HEIGHT = 76.2;
 
-        public static final double LIFT_DEPLOY_SPEED = 0.9; // TODO: set correct speed
-        public static final double WINCH_DEPLOY_SPEED = 0.5; // TODO: set correct speed
-        public static final double LIFT_KEEP_SPEED = 0.2; // TODO: set correct speed
-        public static final double LIFT_RETRACT_SPEED = -0.5; // TODO: set correct speed
-        public static final double WINCH_RETRACT_SPEED = 0.8; // TODO: set correct speed
-        public static final double LIFT_ADJUST_SPEED = 0.1; // TODO: set correct speed
 
-        public static final double LIFT_HEIGHT = 18.8;
-        public static final double WINCH_START_HEIGHT = -90;
-        public static final double WINCH_END_HEIGHT = 76.2;
-
-        public static final double LIFT_CONVERSION_FACTOR = 43.98 / 256; // TODO: confirm numbers (inches)
-        public static final double WINCH_CONVERSION_FACTOR = 26.39 / 256; // TODO: confirm numbers (inches)
-
-    }
+    // }
 
     public static final double SLOW_DRIVE_SPEED = 0.6;
     public static final double SLOW_DRIVE_ROTATION = 0.6;
+
 }

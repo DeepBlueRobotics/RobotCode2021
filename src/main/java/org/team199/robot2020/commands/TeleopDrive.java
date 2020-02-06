@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class TeleopDrive extends CommandBase {
+  private static final double kSlowDriveSpeed = 0.6;
+  private static final double kSlowDriveRotation = 0.6;
+
+
   private Drivetrain drivetrain;
   private Joystick leftJoy, rightJoy;
 
@@ -36,19 +40,17 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    boolean slowLeft = leftJoy.getRawButton(Constants.OI.LeftJoy.kSlowDriveButton);
+    boolean slowRight = rightJoy.getRawButton(Constants.OI.RightJoy.kSlowDriveButton);
+
     if (SmartDashboard.getBoolean("Arcade Drive", true)) {
       double speed = -leftJoy.getY();
       double rotation = rightJoy.getX();
       if (Math.abs(speed) < 0.001) { speed = 0.0; }
       if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
 
-      if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
-        speed *= Constants.SLOW_DRIVE_SPEED;
-      }
-
-      if (rightJoy.getRawButton(Constants.OI.RightJoy.SLOW_DRIVE_BUTTON)) {
-        rotation *= Constants.SLOW_DRIVE_ROTATION;
-      }
+      if (slowLeft) speed *= kSlowDriveSpeed;
+      if (slowRight) rotation *= kSlowDriveRotation;
 
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
         drivetrain.charDriveArcade(speed, rotation);
@@ -56,10 +58,16 @@ public class TeleopDrive extends CommandBase {
         drivetrain.arcadeDrive(speed, rotation);
       }
     } else {
+      double left = -leftJoy.getY();
+      double right = -rightJoy.getX();
+
+      if (slowLeft) left *= kSlowDriveSpeed;
+      if (slowRight) right *= kSlowDriveRotation;
+
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-        drivetrain.charDriveTank(-leftJoy.getY(), -rightJoy.getY());
+        drivetrain.charDriveTank(left, right);
       } else {
-        drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY());
+        drivetrain.tankDrive(left, right);
       }
     }
 
