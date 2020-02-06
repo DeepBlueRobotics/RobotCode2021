@@ -20,6 +20,17 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public class Shooter extends PIDSubsystem {
 
+    public static final double KP = 0.959;
+    public static final double KI = 0.0;
+    public static final double KD = 0.0;
+    public static final double KV = 0.129;
+    public static final double KS = 0.0098;
+    public static final double SPARK_KP = 0.407;
+    public static final double SPARK_KI = 0.0;
+    public static final double SPARK_KD = 0.0;
+    public static final double SPARK_KV = 0.125;
+    public static final double SPARK_KS = 0.0845;
+    //TODO create subclass and move PID values there
     private boolean sparkMax = false;
     private final WPI_VictorSPX victorFlywheel = MotorControllerFactory.createVictor(Constants.Shooter.VICTOR_FLYWHEEL);
     //uses port 3
@@ -31,26 +42,25 @@ public class Shooter extends PIDSubsystem {
     private final Encoder encoder = new Encoder(4, 5, false, EncodingType.k1X);
     private final CANEncoder sparkenconder1 = sparkFlywheel1.getEncoder();
     private final CANEncoder sparkenconder2 = sparkFlywheel2.getEncoder();
-    private SimpleMotorFeedforward victorFF = new SimpleMotorFeedforward(Constants.Shooter.KS, Constants.Shooter.KV);
-    private SimpleMotorFeedforward sparkFF = new SimpleMotorFeedforward(Constants.Shooter.SPARK_KS, Constants.Shooter.SPARK_KV);
+    private SimpleMotorFeedforward victorFF = new SimpleMotorFeedforward(KS, KV);
+    private SimpleMotorFeedforward sparkFF = new SimpleMotorFeedforward(SPARK_KS, SPARK_KV);
     private double targetSpeed;
 
     public Shooter() {
-        super(new PIDController(Constants.Shooter.KP, Constants.Shooter.KI, Constants.Shooter.KD));
+        super(new PIDController(KP, KI, KD));
         enable();
         setTargetSpeed(0);
         SmartDashboard.putNumber("Shooter Target Speed", 0);
-        SmartDashboard.putNumber("Victor kP", Constants.Shooter.KP);
         SmartDashboard.putNumber("Victor kI", 0);
         SmartDashboard.putNumber("Victor kD", 0);
-        SmartDashboard.putNumber("Victor kV", Constants.Shooter.KV);
-        SmartDashboard.putNumber("Victor kS", Constants.Shooter.KS);
-        SmartDashboard.putNumber("Victor kP", Constants.Shooter.KP);
-        SmartDashboard.putNumber("Spark kP", Constants.Shooter.SPARK_KP);
+        SmartDashboard.putNumber("Victor kV", KV);
+        SmartDashboard.putNumber("Victor kS", KS);
+        SmartDashboard.putNumber("Victor kP", KP);
+        SmartDashboard.putNumber("Spark kP", SPARK_KP);
         SmartDashboard.putNumber("Spark kI", 0);
         SmartDashboard.putNumber("Spark kD", 0);
-        SmartDashboard.putNumber("Spark kV", Constants.Shooter.SPARK_KV);
-        SmartDashboard.putNumber("Spark kS", Constants.Shooter.SPARK_KS);
+        SmartDashboard.putNumber("Spark kV", SPARK_KV);
+        SmartDashboard.putNumber("Spark kS", SPARK_KS);
         victorFlywheel.enableVoltageCompensation(true);
         sparkFlywheel2.follow(sparkFlywheel1, true);
         //True makes the second one inverted, otherwise follow will override any inversions and break spark maxes

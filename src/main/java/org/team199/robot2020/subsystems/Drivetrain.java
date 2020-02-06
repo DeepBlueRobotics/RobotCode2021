@@ -14,6 +14,8 @@ import com.revrobotics.CANSparkMax;
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -238,5 +240,5 @@ public class Drivetrain extends SubsystemBase {
 
     diffDrive.tankDrive(newLeft, newRight, false);
   }
-  */
 }
+

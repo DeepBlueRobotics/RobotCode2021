@@ -7,6 +7,7 @@
 
 package org.team199.robot2020.commands;
 
+import org.team199.lib.Limelight;
 import org.team199.robot2020.Constants;
 import org.team199.robot2020.subsystems.Drivetrain;
 
@@ -17,15 +18,19 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class TeleopDrive extends CommandBase {
   private Drivetrain drivetrain;
   private Joystick leftJoy, rightJoy;
+  Limelight lime;
+  private Limelight.Mode limelightMode = Limelight.Mode.STEER;
+  private double minError = 0.05; // currently only used for steer and distance combo
 
   /**
    * Creates a new TeleopDrive.
    */
-  public TeleopDrive(Drivetrain drivetrain, Joystick leftJoy, Joystick rightJoy) {
+  public TeleopDrive(Drivetrain drivetrain, Joystick leftJoy, Joystick rightJoy, Limelight lime) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(this.drivetrain = drivetrain);
     this.leftJoy = leftJoy;
     this.rightJoy = rightJoy;
+    this.lime = lime;
   }
 
   // Called when the command is initially scheduled.
@@ -36,37 +41,62 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (SmartDashboard.getBoolean("Arcade Drive", true)) {
-      double speed = -leftJoy.getY();
-      double rotation = rightJoy.getX();
-      if (Math.abs(speed) < 0.001) { speed = 0.0; }
-      if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
-
-      if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
-        speed *= Constants.SLOW_DRIVE_SPEED;
-      }
-
-      if (rightJoy.getRawButton(Constants.OI.RightJoy.SLOW_DRIVE_BUTTON)) {
-        rotation *= Constants.SLOW_DRIVE_ROTATION;
-      }
-
-      if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-        drivetrain.charDriveArcade(speed, rotation);
-      } else {
-        drivetrain.arcadeDrive(speed, rotation);
-      }
+    if (SmartDashboard.getBoolean("Using Limelight", false)) {
+      autoAlign();
     } else {
-      if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-        drivetrain.charDriveTank(-leftJoy.getY(), -rightJoy.getY());
+      if (SmartDashboard.getBoolean("Arcade Drive", true)) {
+        double speed = -leftJoy.getY();
+        double rotation = rightJoy.getX();
+        if (Math.abs(speed) < 0.001) { speed = 0.0; }
+        if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
+
+        if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
+          speed *= Constants.SLOW_DRIVE_SPEED;
+        }
+
+        if (rightJoy.getRawButton(Constants.OI.RightJoy.SLOW_DRIVE_BUTTON)) {
+          rotation *= Constants.SLOW_DRIVE_ROTATION;
+        }
+
+        if (SmartDashboard.getBoolean("Characterized Drive", false)) {
+          drivetrain.charDriveArcade(speed, rotation);
+        } else {
+          drivetrain.arcadeDrive(speed, rotation);
+        }
       } else {
-        drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY());
+        if (SmartDashboard.getBoolean("Characterized Drive", false)) {
+          drivetrain.charDriveTank(-leftJoy.getY(), -rightJoy.getY());
+        } else {
+          drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY());
+        }
       }
     }
+  }
 
-    SmartDashboard.putNumber("Left Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.LEFT));
-    SmartDashboard.putNumber("Right Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.RIGHT));
-    SmartDashboard.putNumber("Left Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.LEFT));
-    SmartDashboard.putNumber("Right Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.RIGHT));
+  private void autoAlign() {
+    double adjustment;
+    if (limelightMode == Limelight.Mode.DIST) {
+        adjustment = lime.distanceAssist();
+        drivetrain.tankDrive(adjustment, adjustment);
+        if (lime.isAligned())  {
+          SmartDashboard.putBoolean("Finished Aligning", true);
+        }
+      }
+      else if (limelightMode == Limelight.Mode.STEER) {
+        adjustment = lime.steeringAssist();
+        //final double[] charParams = drivetrain.characterizedDrive(adjustment, -adjustment);
+        drivetrain.tankDrive(adjustment, -adjustment);
+        if (lime.isAligned())  {
+          SmartDashboard.putBoolean("Finished Aligning", true);
+        }
+      } else {
+        final double[] params = lime.autoTarget();
+        drivetrain.tankDrive(params[0], params[1]);
+        final double maxInput = Math.max(Math.abs(params[0]), Math.abs(params[1]));
+        if (maxInput < minError)  {
+          SmartDashboard.putBoolean("Finished Aligning", true);
+        }
+      }
   }
 
   // Called once the command ends or is interrupted.
