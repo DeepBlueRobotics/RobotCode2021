@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import java.io.IOException;
@@ -19,9 +20,13 @@ import java.io.IOException;
 import org.team199.lib.RobotPath;
 import org.team199.robot2020.commands.Regurgitate;
 import org.team199.robot2020.commands.TeleopDrive;
+import org.team199.robot2020.commands.AdjustClimber;
+import org.team199.robot2020.commands.DeployClimber;
+import org.team199.robot2020.commands.RaiseRobot;
 import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Feeder;
 import org.team199.robot2020.subsystems.Intake;
+import org.team199.robot2020.subsystems.Climber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -37,6 +42,8 @@ public class RobotContainer {
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.kPort);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.kPort);
     private final Joystick controller = new Joystick(Constants.OI.Controller.kPort);
+    private final Climber climber = new Climber();
+
 
     private RobotPath path;
 
@@ -80,6 +87,14 @@ public class RobotContainer {
 
         // Power cell regurgitate button
         new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
+        new JoystickButton(controller, Constants.OI.Controller.DEPLOY_CLIMBER_BUTTON)
+                .whenPressed(new SequentialCommandGroup(
+                    new DeployClimber(climber),
+                    new AdjustClimber(climber, controller)
+                ));
+        new JoystickButton(controller, Constants.OI.Controller.RAISE_ROBOT_BUTTON)
+                .whenPressed(new RaiseRobot(climber));
+
     }
 
     public Command getAutonomousCommand() {

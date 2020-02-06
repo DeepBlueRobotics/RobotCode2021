@@ -63,11 +63,55 @@ public final class Constants {
         }
 
         public static final class Controller {
+
             public static final int kPort = 2;
+            public static final int DEPLOY_CLIMBER_BUTTON = 3; //TODO: Find Ports
+            public static final int RAISE_ROBOT_BUTTON = 5; //TODO: Find Ports
+
+            public static final int ADJUST_CLIMBER_UP_BUTTON = 0; // TODO: change button
+            public static final int ADJUST_CLIMBER_DOWN_BUTTON = 0; // TODO: change button    
+        }
+    }
+
+    /**
+     * Drivetrain constants used in characterization
+     */
+    public static final class Drivetrain {
+        public static final double TRACKWIDTH = 0.6223;
+        // 0.183
+        public static final double[] kPIDLEFT = {5.45, 0.0, 0.0};
+        // 0.278
+        public static final double[] kPIDRIGHT = {6.02, 0.0, 0.0};
 
             public static final int kIntakeButton = 1; // TODO: change to correct button
             public static final int kOuttakeButton = 1; // TODO: change to correct button
             public static final int kRegurgitateButton = 3; // TODO: change to correct button
         }
     }
+
+
+
+    public static final class Climber {
+        public static final int WINCH_MOTOR = 0; //TODO: Find Ports
+        public static final int LIFT_MOTOR = 1; //TODO: Find Ports
+
+        public static final double LIFT_DEPLOY_SPEED = 0.9; // TODO: set correct speed
+        public static final double WINCH_DEPLOY_SPEED = 0.5; // TODO: set correct speed
+        public static final double LIFT_KEEP_SPEED = 0.2; // TODO: set correct speed
+        public static final double LIFT_RETRACT_SPEED = -0.5; // TODO: set correct speed
+        public static final double WINCH_RETRACT_SPEED = 0.8; // TODO: set correct speed
+        public static final double LIFT_ADJUST_SPEED = 0.1; // TODO: set correct speed
+
+        public static final double LIFT_HEIGHT = 18.8;
+        public static final double WINCH_START_HEIGHT = -90;
+        public static final double WINCH_END_HEIGHT = 76.2;
+
+        public static final double LIFT_CONVERSION_FACTOR = 43.98 / 256; // TODO: confirm numbers (inches)
+        public static final double WINCH_CONVERSION_FACTOR = 26.39 / 256; // TODO: confirm numbers (inches)
+
+    }
+
+    public static final double SLOW_DRIVE_SPEED = 0.6;
+    public static final double SLOW_DRIVE_ROTATION = 0.6;
+
 }
