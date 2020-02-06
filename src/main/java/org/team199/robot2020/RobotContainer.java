@@ -7,18 +7,22 @@
 
 package org.team199.robot2020;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command;
 
 import java.io.IOException;
 
 import org.team199.lib.RobotPath;
 import org.team199.robot2020.commands.TeleopDrive;
+import org.team199.robot2020.commands.AdjustClimber;
+import org.team199.robot2020.commands.DeployClimber;
+import org.team199.robot2020.commands.RaiseRobot;
 import org.team199.robot2020.subsystems.Drivetrain;
+import org.team199.robot2020.subsystems.Climber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -29,8 +33,11 @@ import org.team199.robot2020.subsystems.Drivetrain;
  */
 public class RobotContainer {
     private final Drivetrain drivetrain = new Drivetrain();
+    private final Climber climber = new Climber();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.PORT);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.PORT);
+    private final Joystick controller = new Joystick(Constants.OI.Controller.PORT);
+
     private RobotPath path;
 
     public RobotContainer() {
@@ -54,6 +61,13 @@ public class RobotContainer {
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.CHARACTERIZED_DRIVE_BUTTON)
                 .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
                         !SmartDashboard.getBoolean("Characterized Drive", false))));
+        new JoystickButton(controller, Constants.OI.Controller.DEPLOY_CLIMBER_BUTTON)
+                .whenPressed(new SequentialCommandGroup(
+                    new DeployClimber(climber),
+                    new AdjustClimber(climber, controller)
+                ));
+        new JoystickButton(controller, Constants.OI.Controller.RAISE_ROBOT_BUTTON)
+                .whenPressed(new RaiseRobot(climber));
     }
 
     public Command getAutonomousCommand() {
