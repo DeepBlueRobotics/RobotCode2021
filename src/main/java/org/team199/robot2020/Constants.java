@@ -82,11 +82,11 @@ public final class Constants {
         public static final double[] kPIDLEFT = {5.45, 0.0, 0.0};
         // 0.278
         public static final double[] kPIDRIGHT = {6.02, 0.0, 0.0};
-
+    }
+    public static final class Intake {
             public static final int kIntakeButton = 1; // TODO: change to correct button
             public static final int kOuttakeButton = 1; // TODO: change to correct button
             public static final int kRegurgitateButton = 3; // TODO: change to correct button
-        }
     }
 
 
