@@ -16,6 +16,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class TeleopDrive extends CommandBase {
+  private static final double kSlowDriveSpeed = 0.6;
+  private static final double kSlowDriveRotation = 0.6;
+
+
   private Drivetrain drivetrain;
   private Joystick leftJoy, rightJoy;
   Limelight lime;
@@ -41,34 +45,34 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (SmartDashboard.getBoolean("Using Limelight", false)) {
-      autoAlign();
-    } else {
-      if (SmartDashboard.getBoolean("Arcade Drive", true)) {
-        double speed = -leftJoy.getY();
-        double rotation = rightJoy.getX();
-        if (Math.abs(speed) < 0.001) { speed = 0.0; }
-        if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
+    boolean slowLeft = leftJoy.getRawButton(Constants.OI.LeftJoy.kSlowDriveButton);
+    boolean slowRight = rightJoy.getRawButton(Constants.OI.RightJoy.kSlowDriveButton);
 
-        if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
-          speed *= Constants.SLOW_DRIVE_SPEED;
-        }
+    if (SmartDashboard.getBoolean("Arcade Drive", true)) {
+      double speed = -leftJoy.getY();
+      double rotation = rightJoy.getX();
+      if (Math.abs(speed) < 0.001) { speed = 0.0; }
+      if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
 
-        if (rightJoy.getRawButton(Constants.OI.RightJoy.SLOW_DRIVE_BUTTON)) {
-          rotation *= Constants.SLOW_DRIVE_ROTATION;
-        }
+      if (slowLeft) speed *= kSlowDriveSpeed;
+      if (slowRight) rotation *= kSlowDriveRotation;
 
-        if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-          drivetrain.charDriveArcade(speed, rotation);
-        } else {
-          drivetrain.arcadeDrive(speed, rotation);
-        }
+      if (SmartDashboard.getBoolean("Characterized Drive", false)) {
+        drivetrain.charDriveArcade(speed, rotation);
       } else {
-        if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-          drivetrain.charDriveTank(-leftJoy.getY(), -rightJoy.getY());
-        } else {
-          drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY());
-        }
+        drivetrain.arcadeDrive(speed, rotation);
+      }
+    } else {
+      double left = -leftJoy.getY();
+      double right = -rightJoy.getX();
+
+      if (slowLeft) left *= kSlowDriveSpeed;
+      if (slowRight) right *= kSlowDriveRotation;
+
+      if (SmartDashboard.getBoolean("Characterized Drive", false)) {
+        drivetrain.charDriveTank(left, right);
+      } else {
+        drivetrain.tankDrive(left, right);
       }
     }
   }
@@ -97,6 +101,10 @@ public class TeleopDrive extends CommandBase {
           SmartDashboard.putBoolean("Finished Aligning", true);
         }
       }
+    SmartDashboard.putNumber("Left Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.LEFT));
+    SmartDashboard.putNumber("Right Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.RIGHT));
+    SmartDashboard.putNumber("Left Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.LEFT));
+    SmartDashboard.putNumber("Right Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.RIGHT));
   }
 
   // Called once the command ends or is interrupted.
