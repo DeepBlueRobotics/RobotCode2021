@@ -73,13 +73,13 @@ public class RobotContainer {
             path = new RobotPath("Test");
         } catch (IOException e) {
             path = null;
+        }
         feeder.setDefaultCommand(new RunCommand(() -> {
             if (feeder.isBallEntering()) 
                 feeder.runForward();
             else 
                 feeder.stop();
         }));
-        }
         
         try {
             path = new RobotPath("Test2");
