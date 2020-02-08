@@ -71,6 +71,20 @@ public class RobotContainer {
         }
     }
 
+    /**
+     * DIO Port 0 = Switch 1
+     * DIO Port 1 = Switch 2
+     * on = jumper in
+     * off= jumper out
+     * connect jumpers between 5V and S NOT 5V and GND
+     * Red/Blue determined by DS
+     * Switch states
+     * 1    2
+     * off off = off
+     * on off = 1
+     * off on = 2
+     * on on = 3
+     */
     public Path getPath() {
         Path outPath = Path.OFF;
         if(autoSwitch1.get()) {
