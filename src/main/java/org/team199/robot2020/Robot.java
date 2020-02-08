@@ -7,6 +7,8 @@
 
 package org.team199.robot2020;
 
+import org.team199.lib.logging.Log;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -29,12 +31,14 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     SmartDashboard.putBoolean("Arcade Drive", true);
     SmartDashboard.putBoolean("Characterized Drive", false);
+    Log.init();
     robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    Log.logData();
   }
 
   /**
