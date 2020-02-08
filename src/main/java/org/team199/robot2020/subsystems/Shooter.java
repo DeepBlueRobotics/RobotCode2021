@@ -50,6 +50,8 @@ public class Shooter extends PIDSubsystem {
         super(new PIDController(KP, KI, KD));
         enable();
         setTargetSpeed(0);
+        sparkFlywheel1.setSmartCurrentLimit(40);
+        sparkFlywheel2.setSmartCurrentLimit(40);
         SmartDashboard.putNumber("Shooter Target Speed", 0);
         SmartDashboard.putNumber("Victor kI", 0);
         SmartDashboard.putNumber("Victor kD", 0);
@@ -93,6 +95,14 @@ public class Shooter extends PIDSubsystem {
 
     public double tempSpark2() {
         return sparkFlywheel2.getMotorTemperature();
+    }
+
+    public double currentSpark1() {
+        return sparkFlywheel1.getOutputCurrent();
+    }
+
+    public double currentSpark2() {
+        return sparkFlywheel2.getOutputCurrent();
     }
 
     public double getCurrentDistance() {
