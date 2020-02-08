@@ -30,8 +30,8 @@ import java.io.IOException;
 import org.team199.lib.RobotPath;
 import org.team199.robot2020.commands.Regurgitate;
 import org.team199.robot2020.commands.TeleopDrive;
-import org.team199.robot2020.commands.InitializeShoot;
-import org.team199.robot2020.commands.ShooterTargetSpeed;
+import org.team199.robot2020.commands.Shoot;
+import org.team199.robot2020.commands.ShooterSpeedControl;
 import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Shooter;
 import org.team199.robot2020.commands.AdjustClimber;
@@ -67,7 +67,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureButtonBindings();
-        shooter.setDefaultCommand(new ShooterTargetSpeed(shooter));
+        shooter.setDefaultCommand(new ShooterSpeedControl(shooter));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
         try {
             path = new RobotPath("Test");
@@ -103,7 +103,7 @@ public class RobotContainer {
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kLimelightButton)
             .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Using Limelight",
                 !SmartDashboard.getBoolean("Using Limelight", false))));
-        new JoystickButton(rightJoy, Constants.OI.Controller.kShootButton).whenPressed(new InitializeShoot(shooter));
+        new JoystickButton(rightJoy, Constants.OI.Controller.kShootButton).whenPressed(new Shoot(shooter));
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
                 () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
 

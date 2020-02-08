@@ -6,12 +6,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import org.team199.lib.Limelight;
 
-public class ShooterTargetSpeed extends CommandBase {
+public class ShooterSpeedControl extends CommandBase {
   Shooter shooter;
   Timer timer;
   Limelight limelight;
 
-  public ShooterTargetSpeed(Shooter shooter) {
+  public ShooterSpeedControl(Shooter shooter) {
     this.shooter = shooter;
     addRequirements(shooter);
     timer = new Timer();

@@ -6,10 +6,10 @@ import org.team199.robot2020.subsystems.Shooter;
 import org.team199.robot2020.commands.EjectOneCell;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class InitializeShoot extends CommandBase {
+public class Shoot extends CommandBase {
     Shooter shooter;
 
-    public InitializeShoot(Shooter shooter) {
+    public Shoot(Shooter shooter) {
         this.shooter = shooter;
     }
 
