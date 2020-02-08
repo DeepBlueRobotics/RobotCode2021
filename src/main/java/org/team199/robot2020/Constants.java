@@ -58,6 +58,8 @@ public final class Constants {
      * Drivetrain constants used in characterization
      */
     public static final class Drivetrain {
+        public static final int AUTO_PATH_SWITCH_1_PORT = 0;
+        public static final int AUTO_PATH_SWITCH_2_PORT = 1;
         public static final double TRACKWIDTH = 0.6223;
         // 0.183
         public static final double[] kPIDLEFT = {5.45, 0.0, 0.0};
