@@ -32,12 +32,9 @@ public class Shooter extends PIDSubsystem {
     public static final double SPARK_KS = 0.0845;
     //TODO create subclass and move PID values there
     private boolean sparkMax = false;
-    private final WPI_VictorSPX victorFlywheel = MotorControllerFactory.createVictor(Constants.Shooter.VICTOR_FLYWHEEL);
-    //uses port 3
-    private final CANSparkMax sparkFlywheel1 = MotorControllerFactory.createSparkMax(Constants.Shooter.SPARK_FLYWHEEL_1);
-    //uses port 2
-    private final CANSparkMax sparkFlywheel2 = MotorControllerFactory.createSparkMax(Constants.Shooter.SPARK_FLYWHEEL_2);
-    //uses port 4
+    private final WPI_VictorSPX victorFlywheel = MotorControllerFactory.createVictor(Constants.Drive.kShooterVictor);
+    private final CANSparkMax sparkFlywheel1 = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterSparkMaster);
+    private final CANSparkMax sparkFlywheel2 = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterSparkSlave);
     private final CANPIDController sparkPID = sparkFlywheel1.getPIDController();
     private final Encoder encoder = new Encoder(4, 5, false, EncodingType.k1X);
     private final CANEncoder sparkenconder1 = sparkFlywheel1.getEncoder();
