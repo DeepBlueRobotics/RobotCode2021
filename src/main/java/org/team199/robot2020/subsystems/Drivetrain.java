@@ -87,6 +87,8 @@ public class Drivetrain extends SubsystemBase {
     rightEnc.setVelocityConversionFactor(conversion / 60);
     //rightEnc.setInverted(true);
     timey.start();
+    setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading())));
+    gyro.reset();
   }
 
   @Override
@@ -100,6 +102,9 @@ public class Drivetrain extends SubsystemBase {
     }
     SmartDashboard.putNumber("Left Encoder Distance", getEncPos(Drivetrain.Side.LEFT));
     SmartDashboard.putNumber("Right Encoder Distance", getEncPos(Drivetrain.Side.RIGHT));
+    SmartDashboard.putNumber("Left Encoder CPR", leftEnc.getCountsPerRevolution());
+    SmartDashboard.putNumber("Right Encoder CPR", rightEnc.getCountsPerRevolution());
+    SmartDashboard.putNumber("Gyro Heading", getHeading());
   }
 
   public void setOdometry(DifferentialDriveOdometry odometry) {
@@ -157,6 +162,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void tankDrive(double left, double right, boolean squareInputs) {
     diffDrive.tankDrive(left, right, squareInputs);
+    diffDrive.feed();
   }
 
   public void charDriveArcade(double speed, double rotation) {
@@ -164,16 +170,22 @@ public class Drivetrain extends SubsystemBase {
     rotation = Math.copySign(rotation * rotation, rotation) * Constants.Drivetrain.MAX_ANGULAR_SPEED;
 
     DifferentialDriveWheelSpeeds wheelspeeds = kinematics.toWheelSpeeds(new ChassisSpeeds(speed, 0.0, -rotation));
+    //double left = Math.signum(wheelspeeds.leftMetersPerSecond) * Math.min(wheelspeeds.leftMetersPerSecond, 1.27);
+    //double right = Math.signum(wheelspeeds.rightMetersPerSecond) * Math.min(wheelspeeds.rightMetersPerSecond, 1.27);
     //SmartDashboard.putNumber("WheelSpeedLeft", wheelspeeds.leftMetersPerSecond);
     //SmartDashboard.putNumber("WheelSpeedRight", wheelspeeds.rightMetersPerSecond);
     charDrive(wheelspeeds);
   }
 
   public void charDriveTank(double left, double right) {
-    charDrive(new DifferentialDriveWheelSpeeds(left * Units.inchesToMeters(Constants.Drivetrain.MAX_SPEED), right * Units.inchesToMeters(Constants.Drivetrain.MAX_SPEED)));
+    left = left * Units.inchesToMeters(Constants.Drivetrain.MAX_SPEED);
+    right = right * Units.inchesToMeters(Constants.Drivetrain.MAX_SPEED);
+    charDriveDirect(left, right);
   }
 
   public void charDriveDirect(double left, double right) {
+    left = Math.signum(left) * Math.min(Math.abs(left), 1.27);
+    right = Math.signum(right) * Math.min(Math.abs(right), 1.27);
     charDrive(new DifferentialDriveWheelSpeeds(left, right));
   }
 

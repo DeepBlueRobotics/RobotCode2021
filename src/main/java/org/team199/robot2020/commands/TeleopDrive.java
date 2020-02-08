@@ -62,6 +62,11 @@ public class TeleopDrive extends CommandBase {
         drivetrain.tankDrive(-leftJoy.getY(), -rightJoy.getY(), true);
       }
     }
+    if (drivetrain.getKinematics() == null) { System.out.println("1"); }
+    /*if (drivetrain.getOdometry() == null) { System.out.println("1"); }
+    else if (drivetrain.getOdometry().getPoseMeters() == null) { System.out.println("2"); }
+    else if (drivetrain.getOdometry().getPoseMeters().getTranslation() == null) { System.out.println("3"); }
+    SmartDashboard.putNumber("PoseMeters", drivetrain.getOdometry().getPoseMeters().getTranslation().getX());*/
 
     SmartDashboard.putNumber("Left Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.LEFT));
     SmartDashboard.putNumber("Right Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.RIGHT));

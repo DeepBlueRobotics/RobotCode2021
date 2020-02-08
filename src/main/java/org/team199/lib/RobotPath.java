@@ -20,31 +20,26 @@ public class RobotPath {
 
     private Trajectory trajectory;
     private Drivetrain dt;
-    private boolean isInit;
 
-    public RobotPath(String pathName) throws IOException {
+    public RobotPath(String pathName, Drivetrain dt) throws IOException {
         trajectory = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve(Paths.get("/home/lvuser/deploy/output/" + pathName + ".wpilib.json")));
-        isInit = false;
-    }
-
-    public void init(Drivetrain dt) {
-        if (isInit) {
-            return;
-        }
         this.dt = dt;
-        isInit = true;
     }
 
     public Command getPathCommand() {
-        if(!isInit) {
-            return new RunCommand(() -> {});
-        }
-        if(dt.getOdometry() == null) {
-            dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
-        }
+        dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
+        /*return new RamseteCommand(trajectory, 
+                                  pose, 
+                                  controller, 
+                                  feedforward, 
+                                  kinematics, 
+                                  wheelSpeeds, 
+                                  leftController, 
+                                  rightController, 
+                                  outputVolts, requirements);*/
+
         return new RamseteCommand(trajectory, () -> dt.getOdometry().getPoseMeters(),
-        new RamseteController(), dt.getKinematics(), dt::charDriveDirect, dt)
-        .andThen(() -> dt.charDriveTank(0, 0), dt); //TODO: Configure Ramsete Controller Values
+        new RamseteController(), dt.getKinematics(), dt::charDriveDirect, dt).andThen(() -> dt.charDriveTank(0, 0), dt); //TODO: Configure Ramsete Controller Values
     }
 
 }
