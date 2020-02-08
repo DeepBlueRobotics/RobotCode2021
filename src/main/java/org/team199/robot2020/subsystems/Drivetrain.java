@@ -66,6 +66,7 @@ public class Drivetrain extends SubsystemBase {
                                Constants.Drivetrain.kACCELS[3]);
   
   private DifferentialDriveOdometry odometry = null;
+  private boolean isOdometryInit = false;
   private static final boolean isGyroReversed = true;
   private Timer timey = new Timer();
 
@@ -87,19 +88,17 @@ public class Drivetrain extends SubsystemBase {
     rightEnc.setVelocityConversionFactor(conversion / 60);
     //rightEnc.setInverted(true);
     timey.start();
-    setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading())));
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
     gyro.reset();
   }
 
   @Override
   public void periodic() {
-    if (odometry != null) {
-      odometry.update(Rotation2d.fromDegrees(getHeading()), 
-                      Units.inchesToMeters(-getEncPos(Side.LEFT)), 
-                      Units.inchesToMeters(-getEncPos(Side.RIGHT)));
-                    SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
-                    SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());
-    }
+    odometry.update(Rotation2d.fromDegrees(getHeading()), 
+                    Units.inchesToMeters(-getEncPos(Side.LEFT)), 
+                    Units.inchesToMeters(-getEncPos(Side.RIGHT)));
+                  SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
+                  SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());
     SmartDashboard.putNumber("Left Encoder Distance", getEncPos(Drivetrain.Side.LEFT));
     SmartDashboard.putNumber("Right Encoder Distance", getEncPos(Drivetrain.Side.RIGHT));
     SmartDashboard.putNumber("Left Encoder CPR", leftEnc.getCountsPerRevolution());
@@ -108,7 +107,10 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void setOdometry(DifferentialDriveOdometry odometry) {
-    this.odometry = odometry;
+    if(!isOdometryInit) {
+      this.odometry = odometry;
+      isOdometryInit = true;
+    }
   }
 
   public DifferentialDriveOdometry getOdometry() {
@@ -116,9 +118,9 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetOdometry() {
-    if (odometry != null) {
-      odometry.resetPosition(odometry.getPoseMeters(), Rotation2d.fromDegrees(getHeading()));
-    }
+    odometry.resetPosition(odometry.getPoseMeters(), Rotation2d.fromDegrees(getHeading()));
+    resetEncoders();
+    isOdometryInit = false;
   }
 
   public double getHeading() {
