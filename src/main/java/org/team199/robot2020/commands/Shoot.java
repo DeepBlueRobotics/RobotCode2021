@@ -14,7 +14,7 @@ public class Shoot extends CommandBase {
     }
 
     public void initialize() {
-        shooter.setTargetSpeed(SmartDashboard.getNumber("Shooter Target Speed", 0));
+        shooter.setSpeed(SmartDashboard.getNumber("Shooter Target Speed", 0));
     }
 
     public boolean isFinished() {

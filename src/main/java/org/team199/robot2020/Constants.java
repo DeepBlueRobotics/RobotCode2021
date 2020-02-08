@@ -35,8 +35,8 @@ public final class Constants {
         public static final int kFeederBelt = 1;
         public static final int kFeederEjector = 2;
         public static final int kShooterVictor = 3;
-        public static final int kShooterSparkMaster = 2;
-        public static final int kShooterSparkSlave = 4;
+        public static final int kShooterMaster = 2;
+        public static final int kShooterSlave = 4;
         public static final int kClimberWinch = 0; //TODO: Find Ports
         public static final int kClimberLift = 1; //TODO: Find Ports
 
@@ -86,23 +86,4 @@ public final class Constants {
             public static final int kShootButton = 4; // TODO: change to correct button
         }
     }
-
-    // public static final class Climber {
-
-    //     public static final double LIFT_DEPLOY_SPEED = 0.9; // TODO: set correct speed
-    //     public static final double WINCH_DEPLOY_SPEED = 0.5; // TODO: set correct speed
-    //     public static final double LIFT_KEEP_SPEED = 0.2; // TODO: set correct speed
-    //     public static final double LIFT_RETRACT_SPEED = -0.5; // TODO: set correct speed
-    //     public static final double WINCH_RETRACT_SPEED = 0.8; // TODO: set correct speed
-    //     public static final double LIFT_ADJUST_SPEED = 0.1; // TODO: set correct speed
-
-    //     public static final double LIFT_HEIGHT = 18.8;
-    //     public static final double WINCH_END_HEIGHT = 76.2;
-
-
-    // }
-
-    public static final double SLOW_DRIVE_SPEED = 0.6;
-    public static final double SLOW_DRIVE_ROTATION = 0.6;
-
 }
