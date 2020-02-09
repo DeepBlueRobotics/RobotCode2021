@@ -23,7 +23,7 @@ final class LogFiles {
     
     private static int logId;
     private static ArrayList<Integer> existingLogIds;
-    private static String dirString = System.getProperty("user.home") + "/logs";
+    private static String dirString = System.getProperty("user.home") + "/riologs";
     private static File dirFile, infoFile, infoBackupFile;
 
     /**
