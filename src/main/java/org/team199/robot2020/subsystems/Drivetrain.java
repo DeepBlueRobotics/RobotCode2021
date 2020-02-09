@@ -187,8 +187,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void charDriveDirect(double left, double right) {
-    left = Math.signum(left) * Math.min(Math.abs(left), 1.27);
-    right = Math.signum(right) * Math.min(Math.abs(right), 1.27);
+    //left = Math.signum(left) * Math.min(Math.abs(left), 1.27);
+    //right = Math.signum(right) * Math.min(Math.abs(right), 1.27);
     charDrive(new DifferentialDriveWheelSpeeds(left, right));
   }
 

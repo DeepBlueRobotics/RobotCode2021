@@ -69,10 +69,14 @@ public final class Constants {
         public static final double[] kVOLTS = {0.146, 0.129, 0.154, 0.134};  // Volts
         public static final double[] kVELS = {2.11, 2.04, 2.1, 2.04};  // Volt * seconds / meter
         public static final double[] kACCELS = {0.222, 0.299, 0.195, 0.275};  // Volt * seconds^2 / meter
-        public static final double MAX_ACCEL = 200.0;  // Inches / seconds^2
+        // 1.27
+        public static final double kAUTOMAXSPEED = 2.54;  // Meters / second
+        public static final double kAUTOMAXACCEL = 0.847;  // Meters / seconds^2
+        public static final double MAX_ACCEL = 200;  // Inches / seconds^2
         public static final double MAX_SPEED = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
         public static final double MAX_ANGULAR_SPEED = 4 * Math.PI; // Radians / second
         public static final double LOOP_TIME = 0.02;
+        public static final double kAUTOMAXVOLT = 10.0;
     }
 
     public static final double SLOW_DRIVE_SPEED = 0.6;
