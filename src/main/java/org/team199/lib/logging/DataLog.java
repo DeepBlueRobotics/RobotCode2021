@@ -27,7 +27,11 @@ final class DataLog {
     static {
         refLocalDateTime = LocalDateTime.now();
         refFGATime = RobotController.getFPGATime();
-        registerVar(VarType.STRING, "Timestamp", () -> refLocalDateTime.plusNanos(1000*(RobotController.getFPGATime()-refFGATime)).format(GlobalLogInfo.dateTimeFormat));
+        try{
+            registerVar(VarType.STRING, "Timestamp", () -> refLocalDateTime.plusNanos(1000*(RobotController.getFPGATime()-refFGATime)).format(GlobalLogInfo.dateTimeFormat));
+        } catch(IllegalStateException e) {
+            LogUtils.handleIllegalState(e);
+        }
     }
 
     /**
