@@ -1,6 +1,6 @@
-package frc.robot.lib.logging;
+package org.team199.lib.logging;
 
-import static frc.robot.lib.logging.GlobalLogInfo.*;
+import static org.team199.lib.logging.GlobalLogInfo.*;
 
 /**
  * Various utility methods utilized by the logging code
