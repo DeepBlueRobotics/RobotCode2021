@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -39,14 +38,14 @@ public class RobotContainer {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
         drivetrain.resetEncoders();
-        //paths = new RobotPath[6];
+        paths = new RobotPath[6];
         //paths[0] = new RobotPath("Blue1");
-        /*loadPath(Path.BLUE1, "Blue1");
-        loadPath(Path.BLUE2, "Blue2");
-        loadPath(Path.BLUE3, "Blue3");
-        loadPath(Path.RED1, "Red1");
-        loadPath(Path.RED2, "Red2");
-        loadPath(Path.RED3, "Red3");*/
+        loadPath(Path.BLUE1, "Blue1", true);
+        loadPath(Path.BLUE2, "Blue2", true);
+        loadPath(Path.BLUE3, "Blue3", true);
+        loadPath(Path.RED1, "Red1", true);
+        loadPath(Path.RED2, "Red2", true);
+        loadPath(Path.RED3, "Red3", true);
     }
 
     private void configureButtonBindings() {
@@ -63,8 +62,8 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         try {
-            //RobotPath path = paths[getPath().idx];
-            RobotPath path = new RobotPath("Blue2", drivetrain, false);
+            RobotPath path = paths[getPath().idx];
+            //RobotPath path = new RobotPath("Blue2", drivetrain, false);
             if(path == null) {
                 throw new Exception();
             }
@@ -104,9 +103,9 @@ public class RobotContainer {
         return outPath.toSide(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue);
     }
 
-    private void loadPath(Path path, String pathName) {
+    private void loadPath(Path path, String pathName, boolean isInverted) {
         try {
-            paths[path.idx] = new RobotPath(pathName, drivetrain, false);
+            paths[path.idx] = new RobotPath(pathName, drivetrain, isInverted);
         } catch(Exception e) {
             System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
             e.printStackTrace(System.err);
