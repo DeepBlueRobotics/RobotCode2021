@@ -35,12 +35,7 @@ final class LogFiles {
             return;
         }
         dirFile = new File(dirString);
-        try {
-            dirFile.createNewFile();
-        } catch(IOException e) {
-            LogUtils.handleLoggingApiDisableError("creating log directory", e);
-            return;
-        }
+        dirFile.mkdir();
         infoFile = new File(dirString + "/info.txt");
         infoBackupFile = new File(dirString + "/infobkup.txt");
         try {
