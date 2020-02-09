@@ -61,18 +61,14 @@ public final class Constants {
         public static final int AUTO_PATH_SWITCH_1_PORT = 0;
         public static final int AUTO_PATH_SWITCH_2_PORT = 1;
         public static final double TRACKWIDTH = 0.635;
-        // 5.45, 7.8
-        public static final double[] kPIDLEFT = {1.95, 0.0, 0.0};
-        // 6.02, 6.59
-        public static final double[] kPIDRIGHT = {1.6475, 0.0, 0.0};
+        // 8.71
+        public static final double[] kPIDLEFT = {2.1775, 0.0, 0.0};
+        // 11.5
+        public static final double[] kPIDRIGHT = {2.875, 0.0, 0.0};
 
-        // 0.228, 0.208, 0.213, 0.199
-        public static final double[] kVOLTS = {0.24, 0.245, 0.234, 0.209};  // Volts
-        // 1.42, 1.35, 1.41, 1.36
-        public static final double[] kVELS = {1.36, 1.34, 1.4, 1.36};  // Volt * seconds / meter
-        // 0.0985, 0.133, 0.144, 0.146
-        // 0.172, 0.141, 0.189, 0.161
-        public static final double[] kACCELS = {0.172, 0.141, 0.189, 0.161};  // Volt * seconds^2 / meter
+        public static final double[] kVOLTS = {0.146, 0.129, 0.154, 0.134};  // Volts
+        public static final double[] kVELS = {2.11, 2.04, 2.1, 2.04};  // Volt * seconds / meter
+        public static final double[] kACCELS = {0.222, 0.299, 0.195, 0.275};  // Volt * seconds^2 / meter
         public static final double MAX_ACCEL = 200.0;  // Inches / seconds^2
         public static final double MAX_SPEED = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
         public static final double MAX_ANGULAR_SPEED = 4 * Math.PI; // Radians / second

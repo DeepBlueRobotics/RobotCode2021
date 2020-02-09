@@ -57,7 +57,7 @@ public class MotorControllerFactory {
   public static CANSparkMax createSparkMax(int id) {
     CANSparkMax spark = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
     spark.restoreFactoryDefaults();
-    spark.setIdleMode(IdleMode.kCoast);
+    spark.setIdleMode(IdleMode.kBrake);
     spark.enableVoltageCompensation(12);
     spark.setSmartCurrentLimit(50);
 

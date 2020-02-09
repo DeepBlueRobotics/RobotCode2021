@@ -95,8 +95,8 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     odometry.update(Rotation2d.fromDegrees(getHeading()), 
-                    Units.inchesToMeters(-getEncPos(Side.LEFT)), 
-                    Units.inchesToMeters(-getEncPos(Side.RIGHT)));
+                    Units.inchesToMeters(getEncPos(Side.LEFT)), 
+                    Units.inchesToMeters(getEncPos(Side.RIGHT)));
                   SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
                   SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());
     SmartDashboard.putNumber("Left Encoder Distance", getEncPos(Drivetrain.Side.LEFT));
@@ -168,6 +168,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void charDriveArcade(double speed, double rotation) {
+    //charDrive(kinematics.toWheelSpeeds(new ChassisSpeeds(1.0, 0.0, 0.0)));
     speed = Math.copySign(speed * speed, speed) * Units.inchesToMeters(Constants.Drivetrain.MAX_SPEED);
     rotation = Math.copySign(rotation * rotation, rotation) * Constants.Drivetrain.MAX_ANGULAR_SPEED;
 
@@ -203,11 +204,20 @@ public class Drivetrain extends SubsystemBase {
     double actualRightVel = Units.inchesToMeters(getEncRate(Side.RIGHT));
     double rightAccel = (desiredRightVel - prevRightVel) / (currentTime - prevTime);
 
+    SmartDashboard.putNumber("DesiredLeftVel", desiredLeftVel);
+    SmartDashboard.putNumber("DesiredRightVel", desiredRightVel);
+    SmartDashboard.putNumber("ActualLeftVel", actualLeftVel);
+    SmartDashboard.putNumber("ActualRightVel", actualRightVel);
+    SmartDashboard.putNumber("LeftAppliedVolts", leftMaster.getAppliedOutput());
+    SmartDashboard.putNumber("RightAppliedVolts", rightMaster.getAppliedOutput());
+
     final double fwdLeftFF = forwardLeftFF.calculate(desiredLeftVel, leftAccel);
     //System.out.println(desiredLeftVel + ", " + leftAccel + ", " + fwdLeftFF);
     final double backLeftFF = backwardLeftFF.calculate(desiredLeftVel, leftAccel);
     final double fwdRightFF = forwardRightFF.calculate(desiredRightVel, rightAccel);
     final double backRightFF = backwardRightFF.calculate(desiredRightVel, rightAccel);
+
+    SmartDashboard.putNumber("fwdLeftFF", fwdLeftFF);
 
     final double leftOutput = leftPIDController.calculate(actualLeftVel, desiredLeftVel);
     final double rightOutput = rightPIDController.calculate(actualRightVel, desiredRightVel);

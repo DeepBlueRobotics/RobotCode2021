@@ -64,7 +64,7 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         try {
             //RobotPath path = paths[getPath().idx];
-            RobotPath path = new RobotPath("Blue1", drivetrain);
+            RobotPath path = new RobotPath("Blue2", drivetrain, false);
             if(path == null) {
                 throw new Exception();
             }
@@ -106,7 +106,7 @@ public class RobotContainer {
 
     private void loadPath(Path path, String pathName) {
         try {
-            paths[path.idx] = new RobotPath(pathName, drivetrain);
+            paths[path.idx] = new RobotPath(pathName, drivetrain, false);
         } catch(Exception e) {
             System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
             e.printStackTrace(System.err);
