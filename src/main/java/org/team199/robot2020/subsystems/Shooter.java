@@ -23,7 +23,7 @@ public class Shooter extends SubsystemBase {
     private static final double kI = 0.0;
     private static final double kD = 0.0;
 
-    private double targetSpeed = 0;
+    private static double kTargetSpeed = 0;
 
     private final CANSparkMax master = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterMaster);
     private final CANSparkMax slave = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterSlave);
@@ -32,7 +32,7 @@ public class Shooter extends SubsystemBase {
     public Shooter() {
         master.setSmartCurrentLimit(40);
         slave.setSmartCurrentLimit(40);
-        SmartDashboard.putNumber("Shooter Target Speed", 0);
+        SmartDashboard.putNumber("Shooter.kTargetSpeed", kTargetSpeed);
         SmartDashboard.putNumber("Shooter.kP", kP);
         SmartDashboard.putNumber("Shooter.kI", kI);
         SmartDashboard.putNumber("Shooter.kD", kD);
@@ -54,6 +54,7 @@ public class Shooter extends SubsystemBase {
 
         kV = SmartDashboard.getNumber("Shooter.kV", kV);
         kS = SmartDashboard.getNumber("Shooter.kS", kS);
+        kTargetSpeed = SmartDashboard.getNumber("Shooter.kTargetSpeed", kTargetSpeed);
 
         if (p != pidController.getP()) pidController.setP(p);
         if (i != pidController.getI()) pidController.setI(i);
@@ -71,12 +72,12 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setSpeed(double speed) {
-        targetSpeed = speed;
+        kTargetSpeed = speed;
         pidController.setReference(speed, ControlType.kVelocity, 0, calculateFeedForward(speed));
     }
 
     public double getTargetSpeed() {
-        return targetSpeed;
+        return kTargetSpeed;
     }
 
     public double calculateFeedForward(double velocity) {

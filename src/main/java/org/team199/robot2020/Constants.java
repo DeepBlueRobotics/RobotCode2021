@@ -64,7 +64,7 @@ public final class Constants {
         public static final class RightJoy {
             public static final int kPort = 1;
 
-            public static final int kLimelightButton = 2;
+            public static final int kAlignAndShootButton = 2;
             public static final int kSlowDriveButton = 5;
         }
 
@@ -81,9 +81,6 @@ public final class Constants {
             public static final int kIntakeButton = 1; // TODO: change to correct button
             public static final int kOuttakeButton = 1; // TODO: change to correct button
             public static final int kRegurgitateButton = 3; // TODO: change to correct button
-
-            // shooter
-            public static final int kShootButton = 4; // TODO: change to correct button
         }
     }
 }
