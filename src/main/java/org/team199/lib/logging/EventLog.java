@@ -110,6 +110,13 @@ final class EventLog {
         LogUtils.handleLoggingError(true, message, ex);
     }
 
+    /**
+     * Flushes the event log
+     */
+    static void flush() {
+        handler.flush();
+    }
+
     private EventLog() {}
 
     private static final class LogFormatter extends SimpleFormatter {
