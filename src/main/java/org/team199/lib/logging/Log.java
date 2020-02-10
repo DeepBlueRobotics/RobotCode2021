@@ -1,11 +1,14 @@
 package org.team199.lib.logging;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
 import org.apache.commons.csv.CSVFormat;
+
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * Provides an interface through which to access the logging code
@@ -30,10 +33,11 @@ public final class Log {
      */
     public static void init(CSVFormat dataFormat) throws IllegalStateException {
         try {
+            LocalDateTime time = LocalDateTime.now();
             LogUtils.checkNotInit();
-            LogFiles.init(dataFormat);
+            LogFiles.init(dataFormat, time);
             EventLog.init();
-            DataLog.init();
+            DataLog.init(time, RobotController.getFPGATime());
         } catch(IllegalStateException e) {
             LogUtils.handleIllegalState(e);
         }
@@ -352,6 +356,19 @@ public final class Log {
             }
             step++;
             step = step >= interval ? 0 : step;
+        } catch(IllegalStateException e) {
+            LogUtils.handleIllegalState(e);
+        }
+    }
+
+    /**
+     * Flushes data to the log files
+     */
+    public static void flush() {
+        try {
+            LogUtils.checkInit();
+            EventLog.flush();
+            DataLog.flush();
         } catch(IllegalStateException e) {
             LogUtils.handleIllegalState(e);
         }
