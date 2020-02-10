@@ -19,9 +19,9 @@ public class Shooter extends SubsystemBase {
     // private static final double kD = 0.0;
     private static double kV = 0.129 / 60;
     private static double kS = 0.105;
-    private static final double kP = 0.0003;
+    private static final double kP = 0.0001;
     private static final double kI = 0.0;
-    private static final double kD = 0.0;
+    private static final double kD = 0.005;
 
     private static double kTargetSpeed = 0;
 
