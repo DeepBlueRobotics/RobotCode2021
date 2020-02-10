@@ -32,17 +32,15 @@ public final class Constants {
         public static final int kDtRightMaster = 5;
         public static final int kDtRightSlave = 6;
         public static final int kIntakeRoller = 0;
-        public static final int kFeederBelt = 1;
-        public static final int kFeederEjector = 2;
+        public static final int kFeederBelt = 7;
+        public static final int kFeederEjector = 8;
         public static final int kClimberWinch = 0; //TODO: Find Ports
         public static final int kClimberLift = 1; //TODO: Find Ports
+        public static final int kFeederInSensor = 9;
+        public static final int kFeederOutSensor = 10;
 
         // solenoids
         public static final int[] kIntakePistons = { 0, 1 };
-
-        // other
-        public static final int kFeederInSensor = 0;
-        public static final int kFeederOutSensor = 1;
     }
 
     /**

@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
   // TODO: find good values and then set to final
-  private static double kBeltIntakeSpeed = .8;
+  private static double kBeltIntakeSpeed = .5;
+  private static double kRollerIntakeSpeed = .3;
   private static double kBeltEjectSpeed = 1;
   private static double kRollerEjectSpeed = 1;
   private static double kInSensorDistance = Units.inchesToMeters(5) * 1000; // 5 inches in millimeters
@@ -35,6 +36,7 @@ public class Feeder extends SubsystemBase {
    */
   public Feeder() {
     SmartDashboard.putNumber("Feeder.kBeltIntakeSpeed", kBeltIntakeSpeed);
+    SmartDashboard.putNumber("Feeder.kRollerIntakeSpeed", kRollerIntakeSpeed);
     SmartDashboard.putNumber("Feeder.kBeltEjectSpeed", kBeltEjectSpeed);
     SmartDashboard.putNumber("Feeder.kRollerEjectSpeed", kRollerEjectSpeed);
     SmartDashboard.putNumber("Feeder.kInSensorDistance", kInSensorDistance);
@@ -43,6 +45,7 @@ public class Feeder extends SubsystemBase {
 
   public void periodic() {
     kBeltIntakeSpeed = SmartDashboard.getNumber("Feeder.kBeltIntakeSpeed", kBeltIntakeSpeed);
+    kRollerIntakeSpeed = SmartDashboard.getNumber("Feeder.kRollerIntakeSpeed", kRollerIntakeSpeed);
     kBeltEjectSpeed = SmartDashboard.getNumber("Feeder.kBeltEjectSpeed", kBeltEjectSpeed);
     kRollerEjectSpeed = SmartDashboard.getNumber("Feeder.kRollerEjectSpeed", kRollerEjectSpeed);
     kInSensorDistance = SmartDashboard.getNumber("Feeder.kInSensorDistance", kInSensorDistance);
@@ -51,14 +54,18 @@ public class Feeder extends SubsystemBase {
 
   public void runForward() {
     beltMotor.set(kBeltIntakeSpeed);
+    // ejectMotor.set(kRollerIntakeSpeed);
+
   }
 
   public void runBackward() {
     beltMotor.set(-kBeltIntakeSpeed);
+    ejectMotor.set(-kRollerIntakeSpeed);
   }
 
   public void stop() {
     beltMotor.set(0);
+    ejectMotor.set(0);
   }
 
   public void eject() {
