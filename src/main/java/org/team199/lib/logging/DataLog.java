@@ -22,6 +22,7 @@ final class DataLog {
     private static HashMap<String, Object> data = new HashMap<>();
     private static HashMap<String, Supplier<Object>> dataSuppliers = new HashMap<>();
     private static long refFGATime;
+    private static boolean isDisabled = false;
 
     /**
      * Initializes the data logging code and prints variable ids to the csv file or returns if it has already been initialized
@@ -72,15 +73,17 @@ final class DataLog {
      */
     static void logData() throws IllegalStateException {
         LogUtils.checkInit();
-        fetchData();
-        TimeLog.startDataLogCycle();
-        try {
-            CSVPrinter printer = GlobalLogInfo.getDataPrinter();
-            printer.printRecord((Object[])exportData());
-        } catch(IOException e) {
-            LogUtils.handleLoggingError(false, "writing data", e);
+        if(!isDisabled) {
+            fetchData();
+            TimeLog.startDataLogCycle();
+            try {
+                CSVPrinter printer = GlobalLogInfo.getDataPrinter();
+                printer.printRecord((Object[])exportData());
+            } catch(IOException e) {
+                LogUtils.handleLoggingError(false, "writing data", e);
+            }
+            TimeLog.endDataLogCycle();
         }
-        TimeLog.endDataLogCycle();
         putSmartDashboardData();
     }
 
@@ -167,6 +170,23 @@ final class DataLog {
             System.err.println("Full stack trace:");
             e.printStackTrace(System.err);
         }
+    }
+
+    /**
+     * @return Whether data logging has been disabled by the user
+     * @see #setDisabled(boolean)
+     */
+    static boolean getDisabled() {
+        return isDisabled;
+    }
+
+    /**
+     * Sets whether data logging should be disabled
+     * @param disabled The current disabled state
+     * @see #getDisabled()
+     */
+    static void setDisabled(boolean disabled) {
+        isDisabled = disabled;
     }
 
     private DataLog() {}
