@@ -35,7 +35,6 @@ final class DataLog {
         try {
             CSVPrinter printer = GlobalLogInfo.getDataPrinter();
             printer.printRecord(varIds.toArray());
-            printer.flush();
         } catch(IOException e) {
             LogUtils.handleLoggingError(false, "printing csv headers", e);
         }
@@ -155,6 +154,19 @@ final class DataLog {
      */
     static HashMap<String, Object> getData() {
         return new HashMap<>(data);
+    }
+
+    /**
+     * Flushes the data log
+     */
+    static void flush() {
+        try {
+            GlobalLogInfo.getDataPrinter().flush();
+        } catch(IOException e) {
+            System.err.println("Error flushing data file.");
+            System.err.println("Full stack trace:");
+            e.printStackTrace(System.err);
+        }
     }
 
     private DataLog() {}
