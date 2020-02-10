@@ -68,8 +68,8 @@ public class RobotContainer {
                 feeder.runForward();
             else 
                 feeder.stop();
-        }));
-        
+        }, feeder));
+
         try {
             path = new RobotPath("Test2");
         } catch (IOException e) {
