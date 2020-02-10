@@ -354,6 +354,23 @@ public final class Log {
     }
 
     /**
+     * @return Whether data logging has been disabled by the user
+     * @see #setDataLoggingDisabled(boolean)
+     */
+    public static boolean getDataLoggingDisabled() {
+        return DataLog.getDisabled();
+    }
+
+    /**
+     * Sets whether data logging should be disabled
+     * @param disabled The current disabled state
+     * @see #getDataLoggingDisabled()
+     */
+    public static void setDataLoggingDisabled(boolean disabled) {
+        DataLog.setDisabled(disabled);
+    }
+
+    /**
      * Flushes data to the log files
      */
     public static void flush() {
