@@ -60,7 +60,7 @@ final class DataLog {
 
     private static void registerVarBypassErrors(VarType type, String id, Supplier<Object> supplier) {
         if(!varIds.contains(id)) {
-            varIds.add(id);
+            varIds.add(0, id);
         }
         types.put(id, type);
         dataSuppliers.put(id, supplier);
