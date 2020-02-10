@@ -75,7 +75,7 @@ public class RobotContainer {
             path = null;
         }
         feeder.setDefaultCommand(new RunCommand(() -> {
-            if (feeder.isBallEntering()) 
+            if (feeder.isCellEntering() && !feeder.isCellAtShooter()) 
                 feeder.runForward();
             else 
                 feeder.stop();
