@@ -25,7 +25,6 @@ import org.team199.robot2020.commands.Regurgitate;
 import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.commands.Shoot;
 import org.team199.robot2020.commands.ShooterHorizontalAim;
-import org.team199.robot2020.commands.ShooterSpeedControl;
 import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Shooter;
 import org.team199.robot2020.commands.AdjustClimber;
