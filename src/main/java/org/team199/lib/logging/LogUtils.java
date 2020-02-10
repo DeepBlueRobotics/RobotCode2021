@@ -40,15 +40,16 @@ final class LogUtils {
         if(sector) {
             System.err.println("Error occured while " + task + ". Logging will continue to run with event logging disabled.");
             if(error != null) {
+                System.err.println("Full stack trace:");
                 error.printStackTrace(System.err);
             }
             disableEvents();
         } else {
             System.err.println("Error occured while " + task + " logging will continue to run with data logging disabled.");
             if(error != null) {
+                System.err.println("Full stack trace:");
                 error.printStackTrace(System.err);
             }
-            error.printStackTrace(System.err);
             disableData();
         }
     }
@@ -62,6 +63,7 @@ final class LogUtils {
     static void handleLoggingApiDisableError(String task, Exception error) {
         System.err.println("Error occured while " + task + ". Logging will be disabled.");
         if(error != null) {
+            System.err.println("Full stack trace:");
             error.printStackTrace(System.err);
         }
         disableEvents();
@@ -73,12 +75,46 @@ final class LogUtils {
      * @param e The {@link IllegalStateException} to handle
      */
 	static void handleIllegalState(IllegalStateException e) {
+        System.err.print("An IllegalStateException occurred in logging code");
         if(e == null) {
-            System.err.println("IllegalStateException occurred in logging code. IsInit=" + GlobalLogInfo.isInit());
+            System.err.println(". No relevent information regarding the error could be obtained. "
+                + "IsInit=" + GlobalLogInfo.isInit() + " " + getStateMessage());
+                return;
         }
-        StackTraceElement error = e.getStackTrace()[0];
-        System.err.println(e.getMessage() + "! Caused by: " + error.getClassName() + "." + error.getMethodName() + ":" + error.getLineNumber());
-	}
+        StackTraceElement thrower = e.getStackTrace()[0];
+        StackTraceElement caller = findCaller(e.getStackTrace());
+        System.err.print(": " + e.getMessage() + ". The error originated in: " + formatElement(thrower) + ". ");
+        if(caller == null) {
+            System.err.print("No infornmation could be obtained about the caller that caused this error.");
+        } else {
+            System.err.print("Which was called by: " + formatElement(caller) + ". ");
+        }
+        System.err.println(getStateMessage());
+        System.err.println("Full stack trace:");
+        e.printStackTrace(System.err);
+    }
+    
+    private static StackTraceElement findCaller(StackTraceElement[] stack) {
+        for(StackTraceElement e: stack) {
+            if(!e.getClass().getPackageName().equals(LogUtils.class.getPackageName())) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    private static String formatElement(StackTraceElement e) {
+        return e.getClassName() + " on line: " + e.getLineNumber();
+    }
+
+    private static String getStateMessage() {
+        if(isInit()) {
+            return "You should try moving the offending method to before Log.init(). ";
+        } else {
+            
+            return "You should try moving the offending method to after Log.init(). ";
+        }
+    }
 
     private LogUtils() {}
 
