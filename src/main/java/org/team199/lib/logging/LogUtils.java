@@ -96,7 +96,7 @@ final class LogUtils {
     
     private static StackTraceElement findCaller(StackTraceElement[] stack) {
         for(StackTraceElement e: stack) {
-            if(!e.getClass().getPackageName().equals(LogUtils.class.getPackageName())) {
+            if(!e.getClassName().substring(0, e.getClassName().lastIndexOf(".") == -1 ? 0 : e.getClassName().lastIndexOf(".")).equals(LogUtils.class.getPackageName())) {
                 return e;
             }
         }
