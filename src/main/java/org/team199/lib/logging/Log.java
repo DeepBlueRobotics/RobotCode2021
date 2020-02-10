@@ -39,7 +39,7 @@ public final class Log {
             EventLog.init();
             DataLog.init(time, RobotController.getFPGATime());
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 
@@ -57,7 +57,7 @@ public final class Log {
             LogUtils.checkInit();
             logException(null, cause);
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 
@@ -75,7 +75,7 @@ public final class Log {
             LogUtils.checkInit();
             EventLog.logException(message, cause);
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 
@@ -94,7 +94,7 @@ public final class Log {
             LogUtils.checkInit();
             EventLog.log(message, Level.SEVERE);
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 
@@ -113,7 +113,7 @@ public final class Log {
             LogUtils.checkInit();
             EventLog.log(message, Level.WARNING);
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 
@@ -132,7 +132,7 @@ public final class Log {
             LogUtils.checkInit();
             EventLog.log(message, Level.INFO);
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 
@@ -151,7 +151,7 @@ public final class Log {
             LogUtils.checkInit();
             EventLog.log(message, Level.CONFIG);
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 
@@ -196,10 +196,8 @@ public final class Log {
         try {
             LogUtils.checkNotInit();
             DataLog.registerVar(VarType.BOOLEAN, id, createSupplier(supplier));
-        } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
-        } catch(IllegalArgumentException e) {
-            DataLog.handleIllegalArgumentException(e);
+        } catch(IllegalArgumentException | IllegalStateException e) {
+            LogUtils.handleException(e);
         }
     }
 
@@ -218,10 +216,8 @@ public final class Log {
         try {
             LogUtils.checkNotInit();
             DataLog.registerVar(VarType.INTEGER, id, createSupplier(supplier));
-        } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
-        } catch(IllegalArgumentException e) {
-            DataLog.handleIllegalArgumentException(e);
+        } catch(IllegalArgumentException | IllegalStateException e) {
+            LogUtils.handleException(e);
         }
     }
 
@@ -240,10 +236,8 @@ public final class Log {
         try {
             LogUtils.checkNotInit();
             DataLog.registerVar(VarType.DOUBLE, id, createSupplier(supplier));
-        } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
-        } catch(IllegalArgumentException e) {
-            DataLog.handleIllegalArgumentException(e);
+        } catch(IllegalArgumentException | IllegalStateException e) {
+            LogUtils.handleException(e);
         }
     }
 
@@ -262,10 +256,8 @@ public final class Log {
         try {
             LogUtils.checkNotInit();
             DataLog.registerVar(VarType.STRING, id, createSupplier(supplier));
-        } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
-        } catch(IllegalArgumentException e) {
-            DataLog.handleIllegalArgumentException(e);
+        } catch(IllegalArgumentException | IllegalStateException e) {
+            LogUtils.handleException(e);
         }
     }
 
@@ -281,7 +273,7 @@ public final class Log {
             LogUtils.checkInit();
             DataLog.fetchData();
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 
@@ -317,7 +309,7 @@ public final class Log {
             LogUtils.checkInit();
             DataLog.putSmartDashboardData();
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 
@@ -357,7 +349,7 @@ public final class Log {
             step++;
             step = step >= interval ? 0 : step;
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 
@@ -370,7 +362,7 @@ public final class Log {
             EventLog.flush();
             DataLog.flush();
         } catch(IllegalStateException e) {
-            LogUtils.handleIllegalState(e);
+            LogUtils.handleException(e);
         }
     }
 

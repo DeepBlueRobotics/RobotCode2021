@@ -71,11 +71,11 @@ final class LogUtils {
     }
 
     /**
-     * Handles an {@link IllegalStateException} caused by an illegal state of the logging code by notifying the user
-     * @param e The {@link IllegalStateException} to handle
+     * Handles an {@link Exception} caused by an illegal operation by the user by notifying the user
+     * @param e The {@link Exception} to handle
      */
-	static void handleIllegalState(IllegalStateException e) {
-        System.err.print("An IllegalStateException occurred in logging code");
+	static void handleException(Exception e) {
+        System.err.print("An Exception occurred in logging code");
         if(e == null) {
             System.err.println(". No relevent information regarding the error could be obtained. "
                 + "IsInit=" + GlobalLogInfo.isInit() + " " + getStateMessage());
@@ -83,7 +83,7 @@ final class LogUtils {
         }
         StackTraceElement thrower = e.getStackTrace()[0];
         StackTraceElement caller = findCaller(e.getStackTrace());
-        System.err.print(": " + e.getMessage() + ". The error originated in: " + formatElement(thrower) + ". ");
+        System.err.print(": " + e.getClass().getName() + ": " + e.getMessage() + ". The error originated in: " + formatElement(thrower) + ". ");
         if(caller == null) {
             System.err.print("No infornmation could be obtained about the caller that caused this error.");
         } else {
