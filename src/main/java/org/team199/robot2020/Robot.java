@@ -31,8 +31,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     SmartDashboard.putBoolean("Arcade Drive", true);
     SmartDashboard.putBoolean("Characterized Drive", false);
-    Log.init();
     robotContainer = new RobotContainer();
+    Log.init();
   }
 
   @Override

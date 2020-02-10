@@ -30,8 +30,8 @@ public class ShooterSpeedControl extends CommandBase {
     double speed = SmartDashboard.getNumber("Shooter Target Speed", 0); //makes Kevin #4 feel better
     if (shooter.getTargetSpeed() != speed) shooter.setSpeed(speed);
 
-    SmartDashboard.putNumber("Limelight Distance Adjustment", limelight.distanceAssist());
-    SmartDashboard.putNumber("Limelight Angle Adjustment", limelight.steeringAssist());
+    //SmartDashboard.putNumber("Limelight Distance Adjustment", limelight.distanceAssist());
+    //SmartDashboard.putNumber("Limelight Angle Adjustment", limelight.steeringAssist());
     //Limelight.java already puts horizontal and vertical offset numbers to Smartdashboard
   }
 
