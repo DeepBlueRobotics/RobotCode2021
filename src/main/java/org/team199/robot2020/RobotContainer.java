@@ -21,6 +21,7 @@ import org.team199.lib.RobotPath;
 import org.team199.robot2020.commands.Regurgitate;
 import org.team199.robot2020.commands.TeleopDrive;
 import org.team199.robot2020.commands.AdjustClimber;
+import org.team199.robot2020.commands.AutoShootAndDrive;
 import org.team199.robot2020.commands.DeployClimber;
 import org.team199.robot2020.commands.RaiseRobot;
 import org.team199.robot2020.subsystems.Drivetrain;
@@ -45,7 +46,7 @@ public class RobotContainer {
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.kPort);
     private final Joystick controller = new Joystick(Constants.OI.Controller.kPort);
     private final Climber climber = new Climber();
-    private RobotPath[] paths;
+    private final RobotPath[] paths;
 
     public RobotContainer() {
         configureButtonBindings();
@@ -103,13 +104,12 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         try {
-            RobotPath path = paths[getPath().idx];
-            //RobotPath path = new RobotPath("Blue2", drivetrain, false);
+            final RobotPath path = paths[getPath().idx];
             if(path == null) {
                 throw new Exception();
             }
-            return path.getPathCommand();
-        } catch(Exception e) {
+            return new AutoShootAndDrive(intake, path);
+        } catch(final Exception e) {
             return new InstantCommand();
         }
     }
@@ -144,10 +144,10 @@ public class RobotContainer {
         return outPath.toSide(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue);
     }
 
-    private void loadPath(Path path, String pathName, boolean isInverted) {
+    private void loadPath(final Path path, final String pathName, final boolean isInverted) {
         try {
             paths[path.idx] = new RobotPath(pathName, drivetrain, isInverted);
-        } catch(Exception e) {
+        } catch(final Exception e) {
             System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
             e.printStackTrace(System.err);
         }
@@ -156,11 +156,11 @@ public class RobotContainer {
 
         public final int idx;
 
-        private Path(int idx) {
+        private Path(final int idx) {
             this.idx = idx;
         }
 
-        public Path toSide(boolean isBlue) {
+        public Path toSide(final boolean isBlue) {
             switch(this) {
                 case BLUE1:
                 case RED1:
