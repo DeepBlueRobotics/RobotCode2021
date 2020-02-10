@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -23,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 
-import org.team199.robot2020.Constants;
 import org.team199.robot2020.subsystems.Drivetrain;
 
 //Findd Me
@@ -34,15 +32,15 @@ public class RobotPath {
     private boolean isInverted;
 
     public RobotPath(String filename, Drivetrain dt, boolean isInverted) throws IOException {
-        TrajectoryConfig config = new TrajectoryConfig(Constants.Drivetrain.kAUTOMAXSPEED, 
-                                                       Constants.Drivetrain.kAUTOMAXACCEL);
+        TrajectoryConfig config = new TrajectoryConfig(dt.kAutoMaxSpeed, 
+                                                       dt.kAutoMaxAccel);
         config.setKinematics(dt.getKinematics());
 
-        double kVoltAVG = 0.25 * (Constants.Drivetrain.kVOLTS[0] + Constants.Drivetrain.kVOLTS[1] + Constants.Drivetrain.kVOLTS[2] + Constants.Drivetrain.kVOLTS[3]);
-        double kVelsAVG = 0.25 * (Constants.Drivetrain.kVELS[0] + Constants.Drivetrain.kVELS[1] + Constants.Drivetrain.kVELS[2] + Constants.Drivetrain.kVELS[3]);
-        double kAccelAVG = 0.25 * (Constants.Drivetrain.kACCELS[0] + Constants.Drivetrain.kACCELS[1] + Constants.Drivetrain.kACCELS[2] + Constants.Drivetrain.kACCELS[3]);
+        double kVoltAVG = 0.25 * (dt.kVolts[0] + dt.kVolts[1] + dt.kVolts[2] + dt.kVolts[3]);
+        double kVelsAVG = 0.25 * (dt.kVels[0] + dt.kVels[1] + dt.kVels[2] + dt.kVels[3]);
+        double kAccelAVG = 0.25 * (dt.kAccels[0] + dt.kAccels[1] + dt.kAccels[2] + dt.kAccels[3]);
         DifferentialDriveVoltageConstraint voltConstraint = new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), dt.getKinematics(), Constants.Drivetrain.kAUTOMAXVOLT);
+            new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), dt.getKinematics(), dt.kAutoMaxVolt);
         config.addConstraint(voltConstraint);
         if (isInverted) { config.setReversed(true); }
         ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
@@ -51,8 +49,7 @@ public class RobotPath {
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader("/home/lvuser/deploy/paths/" + filename + ".path"));
             double x, y, tanx, tany;
             Rotation2d rot;
-            //if (csvParser == null) {System.out.println("1");}
-            //System.out.println("1");
+            
             int count = 0;
             for (CSVRecord record : csvParser) {
                 if (count > 0) {
@@ -71,18 +68,15 @@ public class RobotPath {
                 }
                 count++;
             }
-            //System.out.println("2");
             csvParser.close();
         } catch (FileNotFoundException e) {
             System.out.println("File named /home/lvuser/deploy/paths/" + filename + ".path not found.");
             e.printStackTrace();
         }
 
-        //System.out.println("3");
         trajectory = TrajectoryGenerator.generateTrajectory(poses, config);
         this.dt = dt;
         this.isInverted = isInverted;
-        //System.out.println("4");
     }
 
     public Command getPathCommand() {
