@@ -23,7 +23,7 @@ final class LogFiles {
     
     private static int logId;
     private static ArrayList<Integer> existingLogIds;
-    private static String dirString = System.getProperty("user.home") + "/logs";
+    private static String dirString = System.getProperty("user.home") + "/riologs";
     private static File dirFile, infoFile, infoBackupFile;
 
     /**
@@ -35,12 +35,7 @@ final class LogFiles {
             return;
         }
         dirFile = new File(dirString);
-        try {
-            dirFile.createNewFile();
-        } catch(IOException e) {
-            LogUtils.handleLoggingApiDisableError("creating log directory", e);
-            return;
-        }
+        dirFile.mkdir();
         infoFile = new File(dirString + "/info.txt");
         infoBackupFile = new File(dirString + "/infobkup.txt");
         try {
