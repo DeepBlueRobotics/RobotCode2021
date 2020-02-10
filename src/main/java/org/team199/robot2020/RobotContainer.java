@@ -51,7 +51,7 @@ public class RobotContainer {
         configureButtonBindings();
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
         feeder.setDefaultCommand(new RunCommand(() -> {
-            if (feeder.isBallEntering()) 
+            if (feeder.isCellEntering() && !feeder.isCellAtShooter()) 
                 feeder.runForward();
             else 
                 feeder.stop();
