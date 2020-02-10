@@ -7,13 +7,14 @@
 
 package org.team199.robot2020.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.playingwithfusion.TimeOfFlight;
 
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
@@ -21,10 +22,11 @@ public class Feeder extends SubsystemBase {
   private static double kBeltIntakeSpeed = .8;
   private static double kBeltEjectSpeed = 1;
   private static double kRollerEjectSpeed = 1;
-  private static double kIndexerDistance = 5 * 25.4; // 5 inches in millimeters
+  private static double kInSensorDistance = Units.inchesToMeters(5) * 1000; // 5 inches in millimeters
+  private static double kOutSensorDistance = Units.inchesToMeters(2.5) * 1000; // 5 inches in millimeters
 
-  private final WPI_VictorSPX beltMotor = MotorControllerFactory.createVictor(Constants.Drive.kFeederBelt);
-  private final WPI_VictorSPX ejectMotor = MotorControllerFactory.createVictor(Constants.Drive.kFeederEjector);
+  private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederBelt);
+  private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederEjector);
   private final TimeOfFlight inSensor = new TimeOfFlight(Constants.Drive.kFeederInSensor);
   private final TimeOfFlight outSensor = new TimeOfFlight(Constants.Drive.kFeederOutSensor);
 
@@ -35,14 +37,16 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder.kBeltIntakeSpeed", kBeltIntakeSpeed);
     SmartDashboard.putNumber("Feeder.kBeltEjectSpeed", kBeltEjectSpeed);
     SmartDashboard.putNumber("Feeder.kRollerEjectSpeed", kRollerEjectSpeed);
-    SmartDashboard.putNumber("Feeder.kIndexerDistance", kIndexerDistance);
+    SmartDashboard.putNumber("Feeder.kInSensorDistance", kInSensorDistance);
+    SmartDashboard.putNumber("Feeder.kOutSensorDistance", kOutSensorDistance);
   }
 
   public void periodic() {
     kBeltIntakeSpeed = SmartDashboard.getNumber("Feeder.kBeltIntakeSpeed", kBeltIntakeSpeed);
     kBeltEjectSpeed = SmartDashboard.getNumber("Feeder.kBeltEjectSpeed", kBeltEjectSpeed);
     kRollerEjectSpeed = SmartDashboard.getNumber("Feeder.kRollerEjectSpeed", kRollerEjectSpeed);
-    kIndexerDistance = SmartDashboard.getNumber("Feeder.kIndexerDistance", kIndexerDistance);
+    kInSensorDistance = SmartDashboard.getNumber("Feeder.kInSensorDistance", kInSensorDistance);
+    kOutSensorDistance = SmartDashboard.getNumber("Feeder.kOutSensorDistance", kOutSensorDistance);
   }
 
   public void runForward() {
@@ -62,7 +66,11 @@ public class Feeder extends SubsystemBase {
     beltMotor.set(kBeltEjectSpeed);
   }
 
-  public boolean isBallEntering() {
-    return inSensor.getRange() < kIndexerDistance;
+  public boolean isCellEntering() {
+    return inSensor.getRange() < kInSensorDistance;
+  }
+
+  public boolean isCellAtShooter() {
+    return outSensor.getRange() < kOutSensorDistance;
   }
 }
