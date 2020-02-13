@@ -19,12 +19,11 @@ public class TeleopDrive extends CommandBase {
   private static final double kSlowDriveSpeed = 0.6;
   private static final double kSlowDriveRotation = 0.6;
 
-
-  private Drivetrain drivetrain;
-  private Joystick leftJoy, rightJoy;
-  Limelight lime;
+  private final Drivetrain drivetrain;
+  private final Joystick leftJoy, rightJoy;
+  private final Limelight lime;
   private Limelight.Mode limelightMode = Limelight.Mode.STEER;
-  private double minError = 0.05; // currently only used for steer and distance combo
+  private final double minError = 0.05; // currently only used for steer and distance combo
 
   /**
    * Creates a new TeleopDrive.

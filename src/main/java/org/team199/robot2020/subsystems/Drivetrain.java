@@ -84,7 +84,7 @@ public class Drivetrain extends SubsystemBase {
   private DifferentialDriveOdometry odometry = null;
   private boolean isOdometryInit = false;
   private static final boolean isGyroReversed = true;
-  private Timer timey = new Timer();
+  private final Timer timey = new Timer();
 
   // For drivetrain characterization.
   private double currentTime;

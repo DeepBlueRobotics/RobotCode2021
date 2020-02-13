@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.team199.robot2020.subsystems.Shooter;
 
 public class EjectOneCell extends CommandBase {
-    Shooter shooter;
+    private final Shooter shooter;
 
     public EjectOneCell(Shooter shooter) {
         this.shooter = shooter;
