@@ -27,6 +27,7 @@ public final class Constants {
      */
     public static final class Drive {
         // CAN IDs
+        //TODO: Change to correct ports
         public static final int kDtLeftMaster = 3;
         public static final int kDtLeftSlave = 4;
         public static final int kDtRightMaster = 5;
@@ -34,9 +35,9 @@ public final class Constants {
         public static final int kIntakeRoller = 0;
         public static final int kFeederBelt = 1;
         public static final int kFeederEjector = 2;
-        public static final int kShooterVictor = 3;
+        public static final int kShooterVictor = 9;
         public static final int kShooterMaster = 2;
-        public static final int kShooterSlave = 4;
+        public static final int kShooterSlave = 11;
         public static final int kClimberWinch = 0; //TODO: Find Ports
         public static final int kClimberLift = 1; //TODO: Find Ports
 
