@@ -32,15 +32,15 @@ public class RobotPath {
     private boolean isInverted;
 
     public RobotPath(String filename, Drivetrain dt, boolean isInverted) throws IOException {
-        TrajectoryConfig config = new TrajectoryConfig(dt.kAutoMaxSpeed, 
-                                                       dt.kAutoMaxAccel);
+        TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
+                                                       Drivetrain.kAutoMaxAccel);
         config.setKinematics(dt.getKinematics());
 
-        double kVoltAVG = 0.25 * (dt.kVolts[0] + dt.kVolts[1] + dt.kVolts[2] + dt.kVolts[3]);
-        double kVelsAVG = 0.25 * (dt.kVels[0] + dt.kVels[1] + dt.kVels[2] + dt.kVels[3]);
-        double kAccelAVG = 0.25 * (dt.kAccels[0] + dt.kAccels[1] + dt.kAccels[2] + dt.kAccels[3]);
+        double kVoltAVG = 0.25 * (Drivetrain.kVolts[0] + Drivetrain.kVolts[1] + Drivetrain.kVolts[2] + Drivetrain.kVolts[3]);
+        double kVelsAVG = 0.25 * (Drivetrain.kVels[0] + Drivetrain.kVels[1] + Drivetrain.kVels[2] + Drivetrain.kVels[3]);
+        double kAccelAVG = 0.25 * (Drivetrain.kAccels[0] + Drivetrain.kAccels[1] + Drivetrain.kAccels[2] + Drivetrain.kAccels[3]);
         DifferentialDriveVoltageConstraint voltConstraint = new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), dt.getKinematics(), dt.kAutoMaxVolt);
+            new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), dt.getKinematics(), Drivetrain.kAutoMaxVolt);
         config.addConstraint(voltConstraint);
         if (isInverted) { config.setReversed(true); }
         ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
