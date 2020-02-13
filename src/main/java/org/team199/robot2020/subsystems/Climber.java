@@ -24,13 +24,13 @@ public class Climber extends SubsystemBase {
     public static final double kWinchEndHeight = 76.2;
     public static final double kWinchStartHeight = -90;
 
-    private final CANSparkMax liftMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberLift);
-    private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch);
+    // private final CANSparkMax liftMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberLift);
+    // private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch);
 
     public Climber(){
-        liftMotor.getEncoder().setPositionConversionFactor(kLiftConversionFactor);
-        winchMotor.getEncoder().setPositionConversionFactor(kWinchConversionFactor);
-        winchMotor.getEncoder().setPosition(kWinchStartHeight);
+        // liftMotor.getEncoder().setPositionConversionFactor(kLiftConversionFactor);
+        // winchMotor.getEncoder().setPositionConversionFactor(kWinchConversionFactor);
+        // winchMotor.getEncoder().setPosition(kWinchStartHeight);
 
         SmartDashboard.putNumber("Climber.kLiftDeploySpeed", kLiftDeploySpeed);
         SmartDashboard.putNumber("Climber.kWinchDeploySpeed", kWinchDeploySpeed);
@@ -50,18 +50,18 @@ public class Climber extends SubsystemBase {
     }
 
     public void runLift(double speed) {
-        liftMotor.set(speed);
+        // liftMotor.set(speed);
     }
 
     public void runWinch(double speed) {
-        winchMotor.set(Math.abs(speed));
+        // winchMotor.set(Math.abs(speed));
     }
 
     public double getLiftHeight() {
-        return liftMotor.getEncoder().getPosition();
+        return /*liftMotor.getEncoder().getPosition()*/0;
     }
 
     public double getWinchHeight() {
-        return winchMotor.getEncoder().getPosition();
+        return /*winchMotor.getEncoder().getPosition()*/0;
     }
 }

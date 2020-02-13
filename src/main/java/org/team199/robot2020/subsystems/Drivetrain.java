@@ -14,6 +14,8 @@ import com.revrobotics.CANSparkMax;
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -48,17 +50,17 @@ public class Drivetrain extends SubsystemBase {
   private static final double kLoopTime = 0.02;
 
   
-  private final CANSparkMax leftMaster = MotorControllerFactory.createSparkMax(Constants.Drive.kDtLeftMaster);
-  private final CANSparkMax leftSlave = MotorControllerFactory.createSparkMax(Constants.Drive.kDtLeftSlave);
-  private final CANSparkMax rightMaster = MotorControllerFactory.createSparkMax(Constants.Drive.kDtRightMaster);
-  private final CANSparkMax rightSlave = MotorControllerFactory.createSparkMax(Constants.Drive.kDtRightSlave);
+  // private final CANSparkMax leftMaster = MotorControllerFactory.createSparkMax(Constants.Drive.kDtLeftMaster);
+  // private final CANSparkMax leftSlave = MotorControllerFactory.createSparkMax(Constants.Drive.kDtLeftSlave);
+  // private final CANSparkMax rightMaster = MotorControllerFactory.createSparkMax(Constants.Drive.kDtRightMaster);
+  // private final CANSparkMax rightSlave = MotorControllerFactory.createSparkMax(Constants.Drive.kDtRightSlave);
 
-  private final CANEncoder leftEnc = leftMaster.getEncoder();
-  private final CANEncoder rightEnc = rightMaster.getEncoder();
+  // private final CANEncoder leftEnc = leftMaster.getEncoder();
+  // private final CANEncoder rightEnc = rightMaster.getEncoder();
 
   private final AHRS gyro = new AHRS();
 
-  private final DifferentialDrive diffDrive = new DifferentialDrive(leftMaster, rightMaster);
+  // private final DifferentialDrive diffDrive = new DifferentialDrive(leftMaster, rightMaster);
 
   private final PIDController leftPIDController = new PIDController(kPidLeft[0], kPidLeft[1], kPidLeft[2]);
   private final PIDController rightPIDController = new PIDController(kPidRight[0], kPidRight[1], kPidRight[2]);
@@ -73,17 +75,17 @@ public class Drivetrain extends SubsystemBase {
   private static final boolean isGyroReversed = true;
 
   public Drivetrain() {
-    leftSlave.follow(leftMaster);
-    rightSlave.follow(rightMaster);
-    leftMaster.setInverted(true);
-    rightMaster.setInverted(true);
+    // leftSlave.follow(leftMaster);
+    // rightSlave.follow(rightMaster);
+    // leftMaster.setInverted(true);
+    // rightMaster.setInverted(true);
     //rightSlave.setInverted(true);
 
     double conversion = (Math.PI * 5.0) / 6.8;
-    leftEnc.setPositionConversionFactor(conversion);
-    leftEnc.setVelocityConversionFactor(conversion / 60);
-    rightEnc.setPositionConversionFactor(conversion);
-    rightEnc.setVelocityConversionFactor(conversion / 60);
+    // leftEnc.setPositionConversionFactor(conversion);
+    // leftEnc.setVelocityConversionFactor(conversion / 60);
+    // rightEnc.setPositionConversionFactor(conversion);
+    // rightEnc.setVelocityConversionFactor(conversion / 60);
     //rightEnc.setInverted(true);
   }
 
@@ -120,41 +122,41 @@ public class Drivetrain extends SubsystemBase {
 
   public double getEncPos(Side s) {
     if (s == Side.LEFT) {
-      return leftEnc.getPosition();
+      return /*leftEnc.getPosition()*/0;
     } else {
-      return -rightEnc.getPosition();
+      return /*-rightEnc.getPosition()*/0;
     }
   }
 
   public double getEncRate(Side s) {
     if (s == Side.LEFT) {
-      return leftEnc.getVelocity();
+      return /*leftEnc.getVelocity()*/0;
     } else {
-      return -rightEnc.getVelocity();
+      return /*-rightEnc.getVelocity()*/0;
     }
   }
 
-  public CANEncoder getEncoder(Side s) {
-    if (s == Side.LEFT) {
-      return leftEnc;
-    } else {
-      return rightEnc;
-    }
-  }
+  // public CANEncoder getEncoder(Side s) {
+  //   if (s == Side.LEFT) {
+  //     return leftEnc;
+  //   } else {
+  //     return rightEnc;
+  //   }
+  // }
 
   public void resetEncoders() {
-    leftEnc.setPosition(0);
-    rightEnc.setPosition(0);
+    // leftEnc.setPosition(0);
+    // rightEnc.setPosition(0);
   }
 
   public DifferentialDriveKinematics getKinematics() { return kinematics; }
 
   public void arcadeDrive(double speed, double rotation) {
-    diffDrive.arcadeDrive(speed, rotation);
+    // diffDrive.arcadeDrive(speed, rotation);
   }
 
   public void tankDrive(double left, double right) {
-    diffDrive.tankDrive(left, right);
+    // diffDrive.tankDrive(left, right);
   }
 
   public void charDriveArcade(double speed, double rotation) {
@@ -253,6 +255,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("newLeft", newLeft);
     SmartDashboard.putNumber("newRight", newRight);
 
-    diffDrive.tankDrive(newLeft, newRight, false);
+    // diffDrive.tankDrive(newLeft, newRight, false);
   }
 }
+
