@@ -44,8 +44,8 @@ import org.team199.robot2020.subsystems.Climber;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drivetrain.AUTO_PATH_SWITCH_1_PORT);
-    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drivetrain.AUTO_PATH_SWITCH_2_PORT);
+    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drive.kAutoPathSwitch1Port);
+    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
     private final Drivetrain drivetrain = new Drivetrain();
     private final Shooter shooter = new Shooter();
     private final Intake intake = new Intake();

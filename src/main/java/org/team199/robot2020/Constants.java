@@ -46,6 +46,9 @@ public final class Constants {
         // other
         public static final int kFeederInSensor = 0;
         public static final int kFeederOutSensor = 1;
+
+        public static final int kAutoPathSwitch1Port = 0;
+        public static final int kAutoPathSwitch2Port = 1;
     }
 
     /**
@@ -82,10 +85,5 @@ public final class Constants {
             public static final int kOuttakeButton = 1; // TODO: change to correct button
             public static final int kRegurgitateButton = 3; // TODO: change to correct button
         }
-    }
-
-    public static final class Drivetrain {
-        public static final int AUTO_PATH_SWITCH_1_PORT = 0;
-        public static final int AUTO_PATH_SWITCH_2_PORT = 1;
     }
 }
