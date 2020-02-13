@@ -82,7 +82,7 @@ public final class Constants {
 
             // intake/feeder
             public static final int kIntakeButton = 1; // TODO: change to correct button
-            public static final int kOuttakeButton = 1; // TODO: change to correct button
+            public static final int kOuttakeButton = 2; // TODO: change to correct button
             public static final int kRegurgitateButton = 3; // TODO: change to correct button
         }
     }
