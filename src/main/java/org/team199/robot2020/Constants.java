@@ -27,7 +27,7 @@ public final class Constants {
      */
     public static final class Drive {
         // CAN IDs
-        public static final int kDtLeftMaster = 3; // TODO: set all to correct ports 
+        public static final int kDtLeftMaster = 3;
         public static final int kDtLeftSlave = 4;
         public static final int kDtRightMaster = 5;
         public static final int kDtRightSlave = 6;
@@ -82,5 +82,10 @@ public final class Constants {
             public static final int kOuttakeButton = 1; // TODO: change to correct button
             public static final int kRegurgitateButton = 3; // TODO: change to correct button
         }
+    }
+
+    public static final class Drivetrain {
+        public static final int AUTO_PATH_SWITCH_1_PORT = 0;
+        public static final int AUTO_PATH_SWITCH_2_PORT = 1;
     }
 }
