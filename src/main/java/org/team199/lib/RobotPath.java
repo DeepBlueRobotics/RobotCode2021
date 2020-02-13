@@ -29,7 +29,6 @@ public class RobotPath {
 
     private Trajectory trajectory;
     private Drivetrain dt;
-    private boolean isInverted;
 
     public RobotPath(String filename, Drivetrain dt, boolean isInverted) throws IOException {
         TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
@@ -76,7 +75,6 @@ public class RobotPath {
 
         trajectory = TrajectoryGenerator.generateTrajectory(poses, config);
         this.dt = dt;
-        this.isInverted = isInverted;
     }
 
     public Command getPathCommand() {
