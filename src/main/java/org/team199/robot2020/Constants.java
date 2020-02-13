@@ -32,14 +32,14 @@ public final class Constants {
         public static final int kDtLeftSlave = 4;
         public static final int kDtRightMaster = 5;
         public static final int kDtRightSlave = 6;
-        public static final int kIntakeRoller = 0;
-        public static final int kFeederBelt = 1;
-        public static final int kFeederEjector = 2;
-        public static final int kShooterVictor = 9;
-        public static final int kShooterMaster = 2;
-        public static final int kShooterSlave = 11;
-        public static final int kClimberWinch = 0; //TODO: Find Ports
-        public static final int kClimberLift = 1; //TODO: Find Ports
+        public static final int kIntakeRoller = 1;
+        public static final int kFeederBelt = 7;
+        public static final int kFeederEjector = 8;
+        public static final int kShooterVictor = 2;
+        public static final int kShooterMaster = 9;
+        public static final int kShooterSlave = 10;
+        public static final int kClimberWinch = 11; //TODO: Find Ports
+        public static final int kClimberLift = 12; //TODO: Find Ports
 
         // solenoids
         public static final int[] kIntakePistons = { 0, 1 };
