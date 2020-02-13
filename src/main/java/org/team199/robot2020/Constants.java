@@ -34,6 +34,9 @@ public final class Constants {
         public static final int kIntakeRoller = 0;
         public static final int kFeederBelt = 1;
         public static final int kFeederEjector = 2;
+        public static final int kShooterVictor = 3;
+        public static final int kShooterMaster = 2;
+        public static final int kShooterSlave = 4;
         public static final int kClimberWinch = 0; //TODO: Find Ports
         public static final int kClimberLift = 1; //TODO: Find Ports
 
@@ -61,6 +64,7 @@ public final class Constants {
         public static final class RightJoy {
             public static final int kPort = 1;
 
+            public static final int kAlignAndShootButton = 2;
             public static final int kSlowDriveButton = 5;
         }
 

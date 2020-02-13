@@ -7,6 +7,7 @@
 
 package org.team199.robot2020.commands;
 
+import org.team199.lib.Limelight;
 import org.team199.robot2020.Constants;
 import org.team199.robot2020.subsystems.Drivetrain;
 
@@ -21,15 +22,19 @@ public class TeleopDrive extends CommandBase {
 
   private Drivetrain drivetrain;
   private Joystick leftJoy, rightJoy;
+  Limelight lime;
+  private Limelight.Mode limelightMode = Limelight.Mode.STEER;
+  private double minError = 0.05; // currently only used for steer and distance combo
 
   /**
    * Creates a new TeleopDrive.
    */
-  public TeleopDrive(Drivetrain drivetrain, Joystick leftJoy, Joystick rightJoy) {
+  public TeleopDrive(Drivetrain drivetrain, Joystick leftJoy, Joystick rightJoy, Limelight lime) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(this.drivetrain = drivetrain);
     this.leftJoy = leftJoy;
     this.rightJoy = rightJoy;
+    this.lime = lime;
   }
 
   // Called when the command is initially scheduled.
@@ -70,12 +75,32 @@ public class TeleopDrive extends CommandBase {
         drivetrain.tankDrive(left, right, true);
       }
     }
-    if (drivetrain.getKinematics() == null) { System.out.println("1"); }
-    /*if (drivetrain.getOdometry() == null) { System.out.println("1"); }
-    else if (drivetrain.getOdometry().getPoseMeters() == null) { System.out.println("2"); }
-    else if (drivetrain.getOdometry().getPoseMeters().getTranslation() == null) { System.out.println("3"); }
-    SmartDashboard.putNumber("PoseMeters", drivetrain.getOdometry().getPoseMeters().getTranslation().getX());*/
+  }
 
+  private void autoAlign() {
+    double adjustment;
+    if (limelightMode == Limelight.Mode.DIST) {
+        adjustment = lime.distanceAssist();
+        drivetrain.tankDrive(adjustment, adjustment, false);
+        if (lime.isAligned())  {
+          SmartDashboard.putBoolean("Finished Aligning", true);
+        }
+      }
+      else if (limelightMode == Limelight.Mode.STEER) {
+        adjustment = lime.steeringAssist();
+        //final double[] charParams = drivetrain.characterizedDrive(adjustment, -adjustment);
+        drivetrain.tankDrive(adjustment, -adjustment, false);
+        if (lime.isAligned())  {
+          SmartDashboard.putBoolean("Finished Aligning", true);
+        }
+      } else {
+        final double[] params = lime.autoTarget();
+        drivetrain.tankDrive(params[0], params[1], false);
+        final double maxInput = Math.max(Math.abs(params[0]), Math.abs(params[1]));
+        if (maxInput < minError)  {
+          SmartDashboard.putBoolean("Finished Aligning", true);
+        }
+      }
     SmartDashboard.putNumber("Left Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.LEFT));
     SmartDashboard.putNumber("Right Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.RIGHT));
     SmartDashboard.putNumber("Left Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.LEFT));

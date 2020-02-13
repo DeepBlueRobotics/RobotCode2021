@@ -21,26 +21,21 @@ final class DataLog {
     private static HashMap<String, VarType> types = new HashMap<>();
     private static HashMap<String, Object> data = new HashMap<>();
     private static HashMap<String, Supplier<Object>> dataSuppliers = new HashMap<>();
-    private static LocalDateTime refLocalDateTime;
     private static long refFGATime;
-
-    static {
-        refLocalDateTime = LocalDateTime.now();
-        refFGATime = RobotController.getFPGATime();
-        registerVar(VarType.STRING, "Timestamp", () -> refLocalDateTime.plusNanos(1000*(RobotController.getFPGATime()-refFGATime)).format(GlobalLogInfo.dateTimeFormat));
-    }
+    private static boolean isDisabled = false;
 
     /**
      * Initializes the data logging code and prints variable ids to the csv file or returns if it has already been initialized
      */
-    static void init() {
+    static void init(LocalDateTime time, long refFGATime) {
         if(!GlobalLogInfo.isInit()) {
             return;
         }
+        DataLog.refFGATime = refFGATime;
+        registerVarBypassErrors(VarType.DOUBLE, "Seconds Since: " + time.format(GlobalLogInfo.dateTimeFormat), () -> ((double)((RobotController.getFPGATime()-DataLog.refFGATime)/1000))/1000);
         try {
             CSVPrinter printer = GlobalLogInfo.getDataPrinter();
             printer.printRecord(varIds.toArray());
-            printer.flush();
         } catch(IOException e) {
             LogUtils.handleLoggingError(false, "printing csv headers", e);
         }
@@ -64,21 +59,31 @@ final class DataLog {
         dataSuppliers.put(id, supplier);
     }
 
+    private static void registerVarBypassErrors(VarType type, String id, Supplier<Object> supplier) {
+        if(!varIds.contains(id)) {
+            varIds.add(0, id);
+        }
+        types.put(id, type);
+        dataSuppliers.put(id, supplier);
+    }
+
     /**
      * Fetches variable data and then prints it to the csv file and {@link SmartDashboard}
      * @throws IllegalStateException If the data logging code is not initialized
      */
     static void logData() throws IllegalStateException {
         LogUtils.checkInit();
-        fetchData();
-        TimeLog.startDataLogCycle();
-        try {
-            CSVPrinter printer = GlobalLogInfo.getDataPrinter();
-            printer.printRecord((Object[])exportData());
-        } catch(IOException e) {
-            LogUtils.handleLoggingError(false, "writing data", e);
+        if(!isDisabled) {
+            fetchData();
+            TimeLog.startDataLogCycle();
+            try {
+                CSVPrinter printer = GlobalLogInfo.getDataPrinter();
+                printer.printRecord((Object[])exportData());
+            } catch(IOException e) {
+                LogUtils.handleLoggingError(false, "writing data", e);
+            }
+            TimeLog.endDataLogCycle();
         }
-        TimeLog.endDataLogCycle();
         putSmartDashboardData();
     }
 
@@ -154,12 +159,34 @@ final class DataLog {
         return new HashMap<>(data);
     }
 
-    static void handleIllegalArgumentException(IllegalArgumentException e) {
-        if(e == null) {
-            System.err.println("IllegalArgumentException occured in logging code.");
+    /**
+     * Flushes the data log
+     */
+    static void flush() {
+        try {
+            GlobalLogInfo.getDataPrinter().flush();
+        } catch(IOException e) {
+            System.err.println("Error flushing data file.");
+            System.err.println("Full stack trace:");
+            e.printStackTrace(System.err);
         }
-        StackTraceElement error = e.getStackTrace()[0];
-        System.err.println(e.getMessage() + "! Caused by: " + error.getClassName() + "." + error.getMethodName() + ":" + error.getLineNumber());
+    }
+
+    /**
+     * @return Whether data logging has been disabled by the user
+     * @see #setDisabled(boolean)
+     */
+    static boolean getDisabled() {
+        return isDisabled;
+    }
+
+    /**
+     * Sets whether data logging should be disabled
+     * @param disabled The current disabled state
+     * @see #getDisabled()
+     */
+    static void setDisabled(boolean disabled) {
+        isDisabled = disabled;
     }
 
     private DataLog() {}

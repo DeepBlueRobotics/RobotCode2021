@@ -23,24 +23,19 @@ final class LogFiles {
     
     private static int logId;
     private static ArrayList<Integer> existingLogIds;
-    private static String dirString = System.getProperty("user.home") + "/logs";
+    private static String dirString = System.getProperty("user.home") + "/riologs";
     private static File dirFile, infoFile, infoBackupFile;
 
     /**
      * Initializes the logging code or returns if it is already initialized
      * @param dataFormat The {@link CSVFormat} to use when logging data
      */
-    static void init(CSVFormat dataFormat) {
+    static void init(CSVFormat dataFormat, LocalDateTime time) {
         if(GlobalLogInfo.isInit()) {
             return;
         }
         dirFile = new File(dirString);
-        try {
-            dirFile.createNewFile();
-        } catch(IOException e) {
-            LogUtils.handleLoggingApiDisableError("creating log directory", e);
-            return;
-        }
+        dirFile.mkdir();
         infoFile = new File(dirString + "/info.txt");
         infoBackupFile = new File(dirString + "/infobkup.txt");
         try {
@@ -56,7 +51,7 @@ final class LogFiles {
             findExistingLogIds();
             clearOldLogs();
             findLogId();
-            createLogFiles(dataFormat);
+            createLogFiles(dataFormat, time);
         } catch(AbortException e) {
             LogUtils.handleLoggingApiDisableError(e.getMessage(), (Exception)e.getCause());
             return;
@@ -140,7 +135,7 @@ final class LogFiles {
         throw new IllegalStateException("No avaliable log id. If this error occures please verify your instalation as this should not be possible.");
     }
 
-    private static void createLogFiles(CSVFormat dataFormat) throws AbortException {
+    private static void createLogFiles(CSVFormat dataFormat, LocalDateTime time) throws AbortException {
         try {
             File txtFile = new File(dirString + "/" + logId + ".txt");
             File csvFile = new File(dirString + "/" + logId + ".csv");
@@ -148,7 +143,7 @@ final class LogFiles {
             csvFile.createNewFile();
             try(BufferedWriter bw = new BufferedWriter(new FileWriter(infoFile, true))) {
                 bw.append(logId + " ");
-                bw.append(getLogTitle());
+                bw.append(getLogTitle(time));
                 bw.newLine();
             }
             GlobalLogInfo.init(txtFile, csvFile, new CSVPrinter(new FileWriter(csvFile), dataFormat));
@@ -157,10 +152,10 @@ final class LogFiles {
         }
     }
 
-    private static String getLogTitle() {
+    private static String getLogTitle(LocalDateTime currentTime) {
         DriverStation ds = DriverStation.getInstance();
         DriverStation.MatchType type = ds.getMatchType();
-        String time = LocalDateTime.now().format(GlobalLogInfo.dateTimeFormat);
+        String time = currentTime.format(GlobalLogInfo.dateTimeFormat);
         if(type == DriverStation.MatchType.None) {
             return time;
         }

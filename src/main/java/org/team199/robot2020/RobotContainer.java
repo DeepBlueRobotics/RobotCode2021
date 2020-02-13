@@ -1,3 +1,4 @@
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -13,18 +14,24 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command;
 
+import org.team199.lib.Limelight;
+
 import org.team199.lib.RobotPath;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
 import org.team199.robot2020.commands.Regurgitate;
 import org.team199.robot2020.commands.TeleopDrive;
+import org.team199.robot2020.commands.Shoot;
+import org.team199.robot2020.commands.ShooterHorizontalAim;
+import org.team199.robot2020.subsystems.Drivetrain;
+import org.team199.robot2020.subsystems.Shooter;
 import org.team199.robot2020.commands.AdjustClimber;
 import org.team199.robot2020.commands.AutoShootAndDrive;
 import org.team199.robot2020.commands.DeployClimber;
 import org.team199.robot2020.commands.RaiseRobot;
-import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Feeder;
 import org.team199.robot2020.subsystems.Intake;
 import org.team199.robot2020.subsystems.Climber;
@@ -40,6 +47,7 @@ public class RobotContainer {
     private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drivetrain.AUTO_PATH_SWITCH_1_PORT);
     private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drivetrain.AUTO_PATH_SWITCH_2_PORT);
     private final Drivetrain drivetrain = new Drivetrain();
+    private final Shooter shooter = new Shooter();
     private final Intake intake = new Intake();
     private final Feeder feeder = new Feeder();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.kPort);
@@ -48,16 +56,19 @@ public class RobotContainer {
     private final Climber climber = new Climber();
     private final RobotPath[] paths;
 
+    private final Limelight lime = new Limelight();
+
     public RobotContainer() {
         configureButtonBindings();
-        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy));
-        drivetrain.resetEncoders();
+        shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
+        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
+        
         feeder.setDefaultCommand(new RunCommand(() -> {
-            if (feeder.isBallEntering()) 
+            if (feeder.isCellEntering() && !feeder.isCellAtShooter()) 
                 feeder.runForward();
             else 
                 feeder.stop();
-        }));
+        }, feeder));
 
         paths = new RobotPath[6];
         loadPath(Path.BLUE1, "Blue1", true);
@@ -74,6 +85,11 @@ public class RobotContainer {
                 () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
 
         // characterize drive button
+        new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton)
+                .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
+                        !SmartDashboard.getBoolean("Characterized Drive", false))));
+        
+        // Toggle Characterize Drive                
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
                 () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
 
@@ -96,6 +112,9 @@ public class RobotContainer {
             new DeployClimber(climber),
             new AdjustClimber(climber, controller)
         ));
+
+        // Align the robot and then shoots
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
 
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));

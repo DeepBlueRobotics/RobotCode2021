@@ -15,6 +15,7 @@ import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
 import edu.wpi.first.wpilibj.Timer;
+
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -96,7 +97,6 @@ public class Drivetrain extends SubsystemBase {
     rightSlave.follow(rightMaster);
     leftMaster.setInverted(true);
     rightMaster.setInverted(true);
-    //rightSlave.setInverted(true);
 
     // Conversion factor = Circumference / Gearing.
     double conversion = (Math.PI * 5.0) / 6.8;
@@ -104,7 +104,7 @@ public class Drivetrain extends SubsystemBase {
     leftEnc.setVelocityConversionFactor(conversion / 60);   // By default, encoder velocity is reported in rpm.
     rightEnc.setPositionConversionFactor(conversion);
     rightEnc.setVelocityConversionFactor(conversion / 60);
-    //rightEnc.setInverted(true);
+
     timey.start();
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
     gyro.reset();
@@ -162,11 +162,11 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public CANEncoder getEncoder(Side s) {
-    if (s == Side.LEFT) {
-      return leftEnc;
-    } else {
-      return rightEnc;
-    }
+     if (s == Side.LEFT) {
+       return leftEnc;
+     } else {
+       return rightEnc;
+     }
   }
 
   public void resetEncoders() {
