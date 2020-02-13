@@ -47,6 +47,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.getAutonomousCommand().schedule();
+    Log.setDataLoggingDisabled(false);
   }
 
   /**
@@ -61,6 +62,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
+    Log.setDataLoggingDisabled(false);
   }
 
   /**
@@ -75,5 +77,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+  }
+  @Override
+  public void disabledInit() {
+    Log.flush();
+    Log.setDataLoggingDisabled(true);
   }
 }
