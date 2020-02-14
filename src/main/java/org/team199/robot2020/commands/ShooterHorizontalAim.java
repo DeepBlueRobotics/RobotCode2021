@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.team199.lib.Limelight;
 import org.team199.robot2020.subsystems.Drivetrain;
 public class ShooterHorizontalAim extends CommandBase {
-    private Limelight limelight;
-    private Drivetrain drivetrain;
+    private final Limelight limelight;
+    private final Drivetrain drivetrain;
     /*
     get horizonal adjustment by rotating drivetrain from limelight 
     tell drivetrain to rotate 

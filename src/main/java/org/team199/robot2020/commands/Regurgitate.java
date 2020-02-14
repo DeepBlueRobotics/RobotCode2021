@@ -13,8 +13,8 @@ import org.team199.robot2020.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class Regurgitate extends CommandBase {
-  private Intake intake;
-  private Feeder feeder;
+  private final Intake intake;
+  private final Feeder feeder;
   
   /**
    * Regurgitates the balls out of the feeder (and intake if it's deployed)

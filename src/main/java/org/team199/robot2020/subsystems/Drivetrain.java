@@ -16,6 +16,7 @@ import org.team199.robot2020.Constants;
 
 import edu.wpi.first.wpilibj.Timer;
 
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -57,7 +58,7 @@ public class Drivetrain extends SubsystemBase {
   private final CANEncoder leftEnc = leftMaster.getEncoder();
   private final CANEncoder rightEnc = rightMaster.getEncoder();
 
-  private final AHRS gyro = new AHRS();
+  private final AHRS gyro = new AHRS(SerialPort.Port.kUSB1); //Also try kUSB and kUSB2
 
   private final DifferentialDrive diffDrive = new DifferentialDrive(leftMaster, rightMaster);
 
@@ -84,7 +85,7 @@ public class Drivetrain extends SubsystemBase {
   private DifferentialDriveOdometry odometry = null;
   private boolean isOdometryInit = false;
   private static final boolean isGyroReversed = true;
-  private Timer timey = new Timer();
+  private final Timer timey = new Timer();
 
   // For drivetrain characterization.
   private double currentTime;
