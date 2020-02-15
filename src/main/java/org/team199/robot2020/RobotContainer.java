@@ -118,7 +118,6 @@ public class RobotContainer {
 
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
-
     }
 
     public Command getAutonomousCommand() {
