@@ -54,19 +54,6 @@ public class Shooter extends SubsystemBase {
         double i = SmartDashboard.getNumber("Shooter.kI", kI);
         double d = SmartDashboard.getNumber("Shooter.kD", kD);
 
-        if (master.getFaults() != 0) {
-            System.out.println("ERROR : Error with master (2) spark max (fault)");
-        }
-        if (master.getStickyFaults() != 0) {
-            System.out.println("ERROR : Error with master (2) spark max (sticky fault)");
-        }
-        if (slave.getFaults() != 0) {
-            System.out.println("ERROR : Error with slave (4) spark max (fault)");
-        }
-        if (slave.getStickyFaults() != 0) {
-            System.out.println("ERROR : Error with slave (4) spark max (sticky fault)");
-        }
-
         kV = SmartDashboard.getNumber("Shooter.kV", kV);
         kS = SmartDashboard.getNumber("Shooter.kS", kS);
         setSpeed(SmartDashboard.getNumber("Shooter.kTargetSpeed", kTargetSpeed));
