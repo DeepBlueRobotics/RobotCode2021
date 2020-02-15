@@ -56,12 +56,13 @@ public class RobotContainer {
     private RobotPath path;
 
     public RobotContainer() {
-        if(DriverStation.getInstance().getJoystickName(0) != "" && DriverStation.getInstance().getJoystickName(1) != ""){
+        
+        if(DriverStation.getInstance().getJoystickName(0).length() != 0 && DriverStation.getInstance().getJoystickName(1).length() != 0 && DriverStation.getInstance().getJoystickName(2).length() != 0) {
             configureButtonBindings();
         } else{
-            System.out.println("No joysticks attached.");
+            System.out.println("Missing joysticks.");
         }
-        
+
         shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
         try {
