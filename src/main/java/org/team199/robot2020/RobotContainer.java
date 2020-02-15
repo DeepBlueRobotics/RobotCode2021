@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import org.team199.lib.Limelight;
 import java.io.IOException;
@@ -55,7 +56,12 @@ public class RobotContainer {
     private RobotPath path;
 
     public RobotContainer() {
-        configureButtonBindings();
+        if(DriverStation.getInstance().getJoystickName(0) != "" && DriverStation.getInstance().getJoystickName(1) != ""){
+            configureButtonBindings();
+        } else{
+            System.out.println("No joysticks attached.");
+        }
+        
         shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
         try {
