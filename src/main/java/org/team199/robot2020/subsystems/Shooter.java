@@ -36,7 +36,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter.kS", kS);
         
         slave.follow(master, true);
-        master.setInverted(false);
+        master.setInverted(true);
 
         Log.registerDoubleVar("Spark Max Port 2 Speed", () -> master.getEncoder().getVelocity());
         Log.registerDoubleVar("Spark Max Port 4 Speed", () -> slave.getEncoder().getVelocity());

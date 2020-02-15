@@ -10,6 +10,7 @@ package org.team199.robot2020;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,6 +60,12 @@ public class RobotContainer {
     private final Limelight lime = new Limelight();
 
     public RobotContainer() {
+        //1,6 2,5
+        //DoubleSolenoid sol1 = new DoubleSolenoid(1,6);
+        //DoubleSolenoid sol2 = new DoubleSolenoid(2,5);
+        //sol1.set(DoubleSolenoid.Value.kOff);
+        //sol2.set(DoubleSolenoid.Value.kOff);
+
         configureButtonBindings();
         shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));

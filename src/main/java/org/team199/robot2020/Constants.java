@@ -27,26 +27,28 @@ public final class Constants {
      */
     public static final class Drive {
         // CAN IDs
-        //TODO: Change to correct ports
         public static final int kDtLeftMaster = 3;
         public static final int kDtLeftSlave = 4;
         public static final int kDtRightMaster = 5;
         public static final int kDtRightSlave = 6;
-        public static final int kIntakeRoller = 1;
-        public static final int kFeederBelt = 7;
-        public static final int kFeederEjector = 8;
-        public static final int kShooterVictor = 2;
-        public static final int kShooterMaster = 9;
-        public static final int kShooterSlave = 10;
-        public static final int kClimberWinch = 11; //TODO: Find Ports
-        public static final int kClimberLift = 12; //TODO: Find Ports
+
+        public static final int kIntakeRoller = 2;
+
+        public static final int kFeederEjector = 7;
+        public static final int kFeederBelt = 8;
+
+        public static final int kShooterMaster = 1;     // Left
+        public static final int kShooterSlave = 14;     // Right
+
+        public static final int kClimberWinch = 9;
+        public static final int kClimberLift = 13;
 
         // solenoids
-        public static final int[] kIntakePistons = { 0, 1 };
+        public static final int[] kIntakePistons = {0, 1};
 
         // other
-        public static final int kFeederInSensor = 0;
-        public static final int kFeederOutSensor = 1;
+        public static final int kFeederInSensor = 11;
+        public static final int kFeederOutSensor = 10;
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
@@ -75,16 +77,28 @@ public final class Constants {
         public static final class Controller {
             public static final int kPort = 2;
 
+            // Buttons and triggers
+            public static final int X = 1;
+            public static final int A = 2;
+            public static final int B = 3;
+            public static final int Y = 4;
+            public static final int LB = 5;
+            public static final int RB = 6;
+            public static final int LT = 7;
+            public static final int RT = 8;
+            public static final int BACK = 9;
+            public static final int START = 10;
+
             // climber
-            public static final int kDeployClimberButton = 3; //TODO: Find Ports
-            public static final int kRaiseRobotButton = 5; //TODO: Find Ports
+            public static final int kDeployClimberButton = Y;
+            public static final int kRaiseRobotButton = LB;
             public static final int kAdjustClimberUpButton = 0; // TODO: change button
             public static final int kAdjustClimberDownButton = 0; // TODO: change button    
 
             // intake/feeder
-            public static final int kIntakeButton = 1; // TODO: change to correct button
-            public static final int kOuttakeButton = 2; // TODO: change to correct button
-            public static final int kRegurgitateButton = 3; // TODO: change to correct button
+            public static final int kIntakeButton = X;
+            public static final int kOuttakeButton = A;
+            public static final int kRegurgitateButton = B;
         }
     }
 }
