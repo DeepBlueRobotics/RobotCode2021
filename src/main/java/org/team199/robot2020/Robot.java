@@ -7,7 +7,10 @@
 
 package org.team199.robot2020;
 
+import org.team199.lib.logging.Log;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
@@ -18,20 +21,24 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * directory.
  */
 public class Robot extends TimedRobot {
+  
   private RobotContainer robotContainer;
-
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
    */
   @Override
   public void robotInit() {
+    SmartDashboard.putBoolean("Arcade Drive", true);
+    SmartDashboard.putBoolean("Characterized Drive", false);
     robotContainer = new RobotContainer();
+    Log.init();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    Log.logData();
   }
 
   /**
@@ -39,6 +46,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    robotContainer.getAutonomousCommand().schedule();
   }
 
   /**

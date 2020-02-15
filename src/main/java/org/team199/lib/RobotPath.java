@@ -1,83 +1,93 @@
 package org.team199.lib;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
-import edu.wpi.first.wpilibj.AnalogGyro;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+
 import org.team199.robot2020.subsystems.Drivetrain;
-import jaci.pathfinder.Pathfinder;
-import jaci.pathfinder.PathfinderFRC;
-import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.followers.EncoderFollower;
 
+//Findd Me
 public class RobotPath {
 
-    private Trajectory leftTrajectory, rightTrajectory;
-    private Drivetrain drivetrain;
-    private Encoder leftEncoder, rightEncoder;
-    private AnalogGyro gyro;
-    private EncoderFollower leftEncoderFollower, rightEncoderFollower;
-    private Notifier notifier;
-    private boolean isInit;
+    private Trajectory trajectory;
+    private Drivetrain dt;
 
-    public RobotPath(String pathName) throws IOException {
-        leftTrajectory = PathfinderFRC.getTrajectory(pathName + ".left");
-        leftTrajectory = PathfinderFRC.getTrajectory(pathName + ".right");
-        isInit = false;
-    }
+    public RobotPath(String filename, Drivetrain dt, boolean isInverted) throws IOException {
+        TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
+                                                       Drivetrain.kAutoMaxAccel);
+        config.setKinematics(dt.getKinematics());
 
-    public void init(Drivetrain drivetrain, Encoder leftEncoder, Encoder rightEncoder, AnalogGyro gyro, int ticksPerRev,
-            double wheelDiameter, double maxVelocity) {
-        if (isInit) {
-            return;
-        }
-        this.drivetrain = drivetrain;
-        this.leftEncoder = leftEncoder;
-        this.rightEncoder = rightEncoder;
-        this.gyro = gyro;
-        leftEncoderFollower = new EncoderFollower(leftTrajectory);
-        leftEncoderFollower.configureEncoder(leftEncoder.get(), ticksPerRev, wheelDiameter);
-        leftEncoderFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / maxVelocity, 0);
-        rightEncoderFollower = new EncoderFollower(rightTrajectory);
-        rightEncoderFollower.configureEncoder(rightEncoder.get(), ticksPerRev, wheelDiameter);
-        rightEncoderFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / maxVelocity, 0);
-        isInit = true;
-    }
-
-    public void start() {
-        if (!isInit) {
-            return;
-        }
-        notifier = new Notifier(this::followPath);
-        notifier.startPeriodic(leftTrajectory.get(0).dt);
-    }
-
-    public void stop() {
-        if (!isInit) {
-            return;
-        }
-        notifier.stop();
-    }
-
-    private void followPath() {
-        if (leftEncoderFollower.isFinished() || rightEncoderFollower.isFinished()) {
-            notifier.stop();
-        } else {
-            double leftSpeed = leftEncoderFollower.calculate(leftEncoder.get());
-            double rightSpeed = rightEncoderFollower.calculate(rightEncoder.get());
-            double heading = gyro.getAngle();
-            double desiredHeading = Pathfinder.r2d(leftEncoderFollower.getHeading());
-            double headingDifference = Pathfinder.boundHalfDegrees(desiredHeading - heading);
-            double turn = 0.8 * (-1.0 / 80.0) * headingDifference;
-            if (!SmartDashboard.getBoolean("Characterized Drive", false)) {
-                drivetrain.tankDrive(leftSpeed + turn, rightSpeed - turn);
-            } else {
-                double[] charParams = drivetrain.characterizedDrive(leftSpeed + turn, rightSpeed - turn);
-                drivetrain.tankDrive(charParams[0], charParams[1]);
+        double kVoltAVG = 0.25 * (Drivetrain.kVolts[0] + Drivetrain.kVolts[1] + Drivetrain.kVolts[2] + Drivetrain.kVolts[3]);
+        double kVelsAVG = 0.25 * (Drivetrain.kVels[0] + Drivetrain.kVels[1] + Drivetrain.kVels[2] + Drivetrain.kVels[3]);
+        double kAccelAVG = 0.25 * (Drivetrain.kAccels[0] + Drivetrain.kAccels[1] + Drivetrain.kAccels[2] + Drivetrain.kAccels[3]);
+        DifferentialDriveVoltageConstraint voltConstraint = new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), dt.getKinematics(), Drivetrain.kAutoMaxVolt);
+        config.addConstraint(voltConstraint);
+        if (isInverted) { config.setReversed(true); }
+        ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
+        
+        try {
+            CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader("/home/lvuser/deploy/paths/" + filename + ".path"));
+            double x, y, tanx, tany;
+            Rotation2d rot;
+            
+            int count = 0;
+            for (CSVRecord record : csvParser) {
+                if (count > 0) {
+                    x = Double.parseDouble(record.get(0));
+                    y = Double.parseDouble(record.get(1));
+                    if (isInverted) {
+                        x *= -1;
+                        y *= -1;
+                    }
+                    tanx = Double.parseDouble(record.get(2));
+                    tany = Double.parseDouble(record.get(3));
+                    rot = new Rotation2d(tanx, tany);
+                    if (isInverted) { rot.rotateBy(new Rotation2d(Math.PI)); }
+                    System.out.println("x: " + x + ", y: " + y + ", tanx: " + tanx + ", tany: " + tany);
+                    poses.add(new Pose2d(x, y, rot));
+                }
+                count++;
             }
+            csvParser.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File named /home/lvuser/deploy/paths/" + filename + ".path not found.");
+            e.printStackTrace();
         }
+
+        trajectory = TrajectoryGenerator.generateTrajectory(poses, config);
+        this.dt = dt;
     }
 
+    public Command getPathCommand() {
+        RamseteCommand ram = new RamseteCommand(trajectory, 
+                                                () -> dt.getOdometry().getPoseMeters(), 
+                                                new RamseteController(), 
+                                                dt.getKinematics(),
+                                                dt::charDriveDirect,
+                                                dt);
+        return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.charDriveTank(0, 0), dt)); //TODO: Configure Ramsete Controller Values
+    }
+
+    public void loadOdometry() {
+        dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
+    }
 }

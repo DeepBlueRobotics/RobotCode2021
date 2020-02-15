@@ -16,11 +16,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class TeleopDrive extends CommandBase {
-  private Drivetrain drivetrain;
-  private Joystick leftJoy, rightJoy;
-  Limelight lime;
+  private static final double kSlowDriveSpeed = 0.6;
+  private static final double kSlowDriveRotation = 0.6;
+
+  private final Drivetrain drivetrain;
+  private final Joystick leftJoy, rightJoy;
+  private final Limelight lime;
   private Limelight.Mode limelightMode = Limelight.Mode.STEER;
-  private double minError = 0.05; // currently only used for steer and distance combo
+  private final double minError = 0.05; // currently only used for steer and distance combo
 
   /**
    * Creates a new TeleopDrive.
@@ -41,19 +44,35 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (SmartDashboard.getBoolean("Using Limelight", false)) {
-      autoAlign();
-    } else {
+    boolean slowLeft = leftJoy.getRawButton(Constants.OI.LeftJoy.kSlowDriveButton);
+    boolean slowRight = rightJoy.getRawButton(Constants.OI.RightJoy.kSlowDriveButton);
+
+    if (SmartDashboard.getBoolean("Arcade Drive", true)) {
       double speed = -leftJoy.getY();
       double rotation = rightJoy.getX();
-      if (leftJoy.getRawButton(Constants.OI.LeftJoy.SLOW_DRIVE_BUTTON)) {
-        speed *= Constants.SLOW_DRIVE_SPEED;
-      }
+      if (Math.abs(speed) < 0.001) { speed = 0.0; }
+      if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
 
-      if (rightJoy.getRawButton(Constants.OI.RightJoy.SLOW_DRIVE_BUTTON)) {
-        rotation *= Constants.SLOW_DRIVE_ROTATION;
+      if (slowLeft) speed *= kSlowDriveSpeed;
+      if (slowRight) rotation *= kSlowDriveRotation;
+
+      if (SmartDashboard.getBoolean("Characterized Drive", false)) {
+        drivetrain.charDriveArcade(speed, rotation);
+      } else {
+        drivetrain.arcadeDrive(speed, rotation);
       }
-      drivetrain.arcadeDrive(speed, rotation);
+    } else {
+      double left = -leftJoy.getY();
+      double right = -rightJoy.getX();
+
+      if (slowLeft) left *= kSlowDriveSpeed;
+      if (slowRight) right *= kSlowDriveRotation;
+
+      if (SmartDashboard.getBoolean("Characterized Drive", false)) {
+        drivetrain.charDriveTank(left, right);
+      } else {
+        drivetrain.tankDrive(left, right, true);
+      }
     }
   }
 
@@ -61,32 +80,36 @@ public class TeleopDrive extends CommandBase {
     double adjustment;
     if (limelightMode == Limelight.Mode.DIST) {
         adjustment = lime.distanceAssist();
-        drivetrain.tankDrive(adjustment, adjustment);
+        drivetrain.tankDrive(adjustment, adjustment, false);
         if (lime.isAligned())  {
           SmartDashboard.putBoolean("Finished Aligning", true);
         }
       }
       else if (limelightMode == Limelight.Mode.STEER) {
         adjustment = lime.steeringAssist();
-        final double[] charParams = drivetrain.characterizedDrive(adjustment, -adjustment);
-        drivetrain.tankDrive(charParams[0], -charParams[1]);
+        //final double[] charParams = drivetrain.characterizedDrive(adjustment, -adjustment);
+        drivetrain.tankDrive(adjustment, -adjustment, false);
         if (lime.isAligned())  {
           SmartDashboard.putBoolean("Finished Aligning", true);
         }
       } else {
         final double[] params = lime.autoTarget();
-        drivetrain.tankDrive(params[0], params[1]);
+        drivetrain.tankDrive(params[0], params[1], false);
         final double maxInput = Math.max(Math.abs(params[0]), Math.abs(params[1]));
         if (maxInput < minError)  {
           SmartDashboard.putBoolean("Finished Aligning", true);
         }
       }
+    SmartDashboard.putNumber("Left Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.LEFT));
+    SmartDashboard.putNumber("Right Encoder Rate", drivetrain.getEncRate(Drivetrain.Side.RIGHT));
+    SmartDashboard.putNumber("Left Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.LEFT));
+    SmartDashboard.putNumber("Right Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.RIGHT));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.arcadeDrive(0, 0);
+    drivetrain.tankDrive(0, 0, true);
   }
 
   // Returns true when the command should end.
