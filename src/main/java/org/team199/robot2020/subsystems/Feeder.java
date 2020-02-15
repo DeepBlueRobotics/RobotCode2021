@@ -20,9 +20,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
   // TODO: find good values and then set to final
-  private static double kBeltIntakeSpeed = .5;
-  private static double kRollerIntakeSpeed = 1;
-  private static double kBeltEjectSpeed = .5;
+  private static double kBeltIntakeSpeed = .8;
+  private static double kRollerIntakeSpeed = .8;
+  private static double kBeltEjectSpeed = 1;
+
   private static double kRollerEjectSpeed = 1;
   private static double kInSensorDistance = Units.inchesToMeters(5) * 1000; // 5 inches in millimeters
   private static double kOutSensorDistance = Units.inchesToMeters(2.5) * 1000; // 5 inches in millimeters
@@ -66,7 +67,6 @@ public class Feeder extends SubsystemBase {
   public void runForward() {
     beltMotor.set(kBeltIntakeSpeed);
     ejectMotor.set(kRollerIntakeSpeed);
-
   }
 
   public void runBackward() {

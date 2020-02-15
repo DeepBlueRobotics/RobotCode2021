@@ -21,8 +21,8 @@ public class Shooter extends SubsystemBase {
     private static final double kI = 0.0;
     private static final double kD = 0.005;
 
-    private double kTargetSpeed = 100;
-    
+    private double kTargetSpeed = 4200;
+
     private final CANSparkMax master = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterMaster);
     private final CANSparkMax slave = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterSlave);
     private final CANPIDController pidController = master.getPIDController();
@@ -38,8 +38,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter.kS", kS);
         
         slave.follow(master, true);
-        master.setInverted(false);
-        
+        master.setInverted(true);
         Log.registerDoubleVar("Spark Max Port 2 Speed", () -> master.getEncoder().getVelocity());
         Log.registerDoubleVar("Spark Max Port 4 Speed", () -> slave.getEncoder().getVelocity());
     }
