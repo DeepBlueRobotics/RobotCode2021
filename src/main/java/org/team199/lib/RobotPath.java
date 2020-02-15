@@ -3,12 +3,14 @@ package org.team199.lib;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -45,7 +47,7 @@ public class RobotPath {
         ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
         
         try {
-            CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader("/home/lvuser/deploy/paths/" + filename + ".path"));
+            CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(Filesystem.getDeployDirectory().toPath().resolve(Paths.get("/paths/" + filename + ".path")).toFile()));
             double x, y, tanx, tany;
             Rotation2d rot;
             
@@ -62,7 +64,6 @@ public class RobotPath {
                     tany = Double.parseDouble(record.get(3));
                     rot = new Rotation2d(tanx, tany);
                     if (isInverted) { rot.rotateBy(new Rotation2d(Math.PI)); }
-                    System.out.println("x: " + x + ", y: " + y + ", tanx: " + tanx + ", tany: " + tany);
                     poses.add(new Pose2d(x, y, rot));
                 }
                 count++;
