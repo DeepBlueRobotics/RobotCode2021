@@ -62,7 +62,6 @@ public class RobotPath {
                     tany = Double.parseDouble(record.get(3));
                     rot = new Rotation2d(tanx, tany);
                     if (isInverted) { rot.rotateBy(new Rotation2d(Math.PI)); }
-                    System.out.println("x: " + x + ", y: " + y + ", tanx: " + tanx + ", tany: " + tany);
                     poses.add(new Pose2d(x, y, rot));
                 }
                 count++;

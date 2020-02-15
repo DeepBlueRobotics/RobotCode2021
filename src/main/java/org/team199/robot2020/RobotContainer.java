@@ -138,7 +138,6 @@ public class RobotContainer {
      * DIO Port 1 = Switch 2
      * on = jumper in
      * off= jumper out
-     * connect jumpers between 5V and S NOT 5V and GND
      * Red/Blue determined by DS
      * Switch states
      * 1    2
@@ -149,16 +148,21 @@ public class RobotContainer {
      */
     public Path getPath() {
         Path outPath = Path.OFF;
-        if(autoSwitch1.get()) {
-            if(autoSwitch2.get()) {
+        // get() returns true if the circuit is open.
+        if(!autoSwitch1.get()) {
+            if(!autoSwitch2.get()) {
                 outPath = Path.BLUE3;
+                System.out.println("Blue3 loaded.");
             } else {
                 outPath = Path.BLUE1;
+                System.out.println("Blue1 loaded.");
             }
-        } else if(autoSwitch2.get()) {
+        } else if(!autoSwitch2.get()) {
             outPath = Path.BLUE2;
+            System.out.println("Blue2 loaded.");
         } else {
             outPath = Path.OFF;
+            System.out.println("No path loaded.");
         }
         return outPath.toSide(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue);
     }
