@@ -37,7 +37,7 @@ public final class Constants {
         public static final int kFeederEjector = 7;
         public static final int kFeederBelt = 8;
 
-        public static final int kShooterMaster = 1;     // Left
+        public static final int kShooterMaster = 15;     // Left
         public static final int kShooterSlave = 14;     // Right
 
         public static final int kClimberWinch = 9;
