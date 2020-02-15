@@ -7,6 +7,8 @@
 
 package org.team199.lib;
 
+import java.util.HashMap;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -19,7 +21,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
  * Add your docs here.
  */
 public class MotorControllerFactory {
-
+  private static final HashMap<CANSparkMax, Short> flags = new HashMap<>();
+  private static final HashMap<CANSparkMax, Short> stickyFlags = new HashMap<>();
   public static WPI_VictorSPX createVictor(int port) {
     WPI_VictorSPX victor = new WPI_VictorSPX(port);
 
@@ -54,6 +57,29 @@ public class MotorControllerFactory {
     return talon;
   }
 
+  //checks for spark max errors
+  public static void checkSparkMaxErrors(CANSparkMax spark) {     
+    //Purposely obivously impersonal to differentiate from actual computer generated errors
+    short faults = spark.getFaults();
+    short stickyFaults = spark.getStickyFaults();
+    short prevFaults = flags.containsKey(spark)?flags.get(spark) : 0;
+    short prevStickyFaults = stickyFlags.containsKey(spark)?stickyFlags.get(spark) : 0;
+
+    if (spark.getFaults() != 0 && prevFaults != faults) {
+      System.err.println("Whoops, big oopsie : fault error with spark max id : " + spark.getDeviceId() + ", ooF!");
+    }
+    if (spark.getStickyFaults() != 0 && prevStickyFaults != stickyFaults) {
+      System.err.println("Bruh, you did an Error : sticky fault error with spark max id : " + spark.getDeviceId() + ", Ouch!");
+    }
+    spark.clearFaults();
+    flags.put(spark, faults);
+    stickyFlags.put(spark, stickyFaults);
+  }
+
+  public static void printMessages() {
+    flags.keySet().forEach((spark) -> checkSparkMaxErrors(spark));
+  }
+
   public static CANSparkMax createSparkMax(int id) {
     CANSparkMax spark = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
     spark.restoreFactoryDefaults();
@@ -61,13 +87,7 @@ public class MotorControllerFactory {
     spark.enableVoltageCompensation(12);
     spark.setSmartCurrentLimit(50);
 
-    //Purposely obivously impersonal to differentiate from
-    if (spark.getFaults() !=0) {
-      System.out.println("Whoops, big oopsie : fault error with spark max id : " + spark.getDeviceId() + ", ooF!");
-    }
-    if (spark.getStickyFaults() != 0) {
-      System.out.println("Bruh, you did an Error : sticky fault error with spark max id : " + spark.getDeviceId() + ", Ouch!");
-    }
+    checkSparkMaxErrors(spark);
 
     CANPIDController controller = spark.getPIDController();
     controller.setOutputRange(-1, 1);
