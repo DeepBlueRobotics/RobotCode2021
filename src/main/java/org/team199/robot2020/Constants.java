@@ -27,20 +27,29 @@ public final class Constants {
      */
     public static final class Drive {
         // CAN IDs
+        //TODO: Change to correct ports
         public static final int kDtLeftMaster = 3;
         public static final int kDtLeftSlave = 4;
         public static final int kDtRightMaster = 5;
         public static final int kDtRightSlave = 6;
-        public static final int kIntakeRoller = 0;
+        public static final int kIntakeRoller = 1;
         public static final int kFeederBelt = 7;
         public static final int kFeederEjector = 8;
-        public static final int kClimberWinch = 0; //TODO: Find Ports
-        public static final int kClimberLift = 1; //TODO: Find Ports
-        public static final int kFeederInSensor = 9;
-        public static final int kFeederOutSensor = 10;
+        public static final int kShooterVictor = 2;
+        public static final int kShooterMaster = 9;
+        public static final int kShooterSlave = 10;
+        public static final int kClimberWinch = 11; //TODO: Find Ports
+        public static final int kClimberLift = 12; //TODO: Find Ports
 
         // solenoids
         public static final int[] kIntakePistons = { 0, 1 };
+
+        // other
+        public static final int kFeederInSensor = 0;
+        public static final int kFeederOutSensor = 1;
+
+        public static final int kAutoPathSwitch1Port = 0;
+        public static final int kAutoPathSwitch2Port = 1;
     }
 
     /**
@@ -59,6 +68,7 @@ public final class Constants {
         public static final class RightJoy {
             public static final int kPort = 1;
 
+            public static final int kAlignAndShootButton = 2;
             public static final int kSlowDriveButton = 5;
         }
 
@@ -73,27 +83,8 @@ public final class Constants {
 
             // intake/feeder
             public static final int kIntakeButton = 1; // TODO: change to correct button
-            public static final int kOuttakeButton = 1; // TODO: change to correct button
+            public static final int kOuttakeButton = 2; // TODO: change to correct button
             public static final int kRegurgitateButton = 3; // TODO: change to correct button
         }
     }
-
-    // public static final class Climber {
-
-    //     public static final double LIFT_DEPLOY_SPEED = 0.9; // TODO: set correct speed
-    //     public static final double WINCH_DEPLOY_SPEED = 0.5; // TODO: set correct speed
-    //     public static final double LIFT_KEEP_SPEED = 0.2; // TODO: set correct speed
-    //     public static final double LIFT_RETRACT_SPEED = -0.5; // TODO: set correct speed
-    //     public static final double WINCH_RETRACT_SPEED = 0.8; // TODO: set correct speed
-    //     public static final double LIFT_ADJUST_SPEED = 0.1; // TODO: set correct speed
-
-    //     public static final double LIFT_HEIGHT = 18.8;
-    //     public static final double WINCH_END_HEIGHT = 76.2;
-
-
-    // }
-
-    public static final double SLOW_DRIVE_SPEED = 0.6;
-    public static final double SLOW_DRIVE_ROTATION = 0.6;
-
 }

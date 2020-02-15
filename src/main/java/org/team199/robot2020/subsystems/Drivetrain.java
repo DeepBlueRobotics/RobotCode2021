@@ -14,6 +14,9 @@ import com.revrobotics.CANSparkMax;
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
+import edu.wpi.first.wpilibj.Timer;
+
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -31,22 +34,21 @@ public class Drivetrain extends SubsystemBase {
     LEFT, RIGHT;
   }
 
-  private static final double kTrackWidth = 0.6223;
-  // 0.183
-  private static final double[] kPidLeft = { 5.45, 0.0, 0.0 };
-  // 0.278
-  private static final double[] kPidRight = { 6.02, 0.0, 0.0 };
-  // 0.232, 0.194, 0.229, 0.198
-  private static final double[] kVolts = { 0.228, 0.208, 0.213, 0.199 }; // Volts
-  // 0.0545, 0.0529, 0.0545, 0.0528
-  private static final double[] kVels = { 1.42, 1.35, 1.41, 1.36 }; // Volt * seconds / inch
-  // 0.00475, 0.00597, 0.00318, 0.00616
-  private static final double[] kAccels = { 0.0985, 0.133, 0.144, 0.146 }; // Volt * seconds^2 / inch
-  private static final double kMaxAccel = 200.0; // Inches / seconds^2
-  private static final double kMaxSpeed = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
-  private static final double kMaxAngularSpeed = 4 * Math.PI; // Radians / second
-  private static final double kLoopTime = 0.02;
+  private static final double kTrackWidth = 0.635;    // Distance between the centers of the left and right wheels in meters.
+  private static final double[] kPIDLeft = {2.1775, 0.0, 0.0};  // PID values for the left PID Contoller for characterization.
+  private static final double[] kPIDRight = {2.875, 0.0, 0.0};  // PID values for the right PID Contoller for characterization.
 
+  // Order of the entries: {Forward-Left, Forward-Right, Backward-Left, Backward-Right}
+  public static final double[] kVolts = {0.146, 0.129, 0.154, 0.134};  // Volts
+  public static final double[] kVels = {2.11, 2.04, 2.1, 2.04};  // Volt * seconds / meter
+  public static final double[] kAccels = {0.222, 0.299, 0.195, 0.275};  // Volt * seconds^2 / meter
+
+  public static final double kAutoMaxSpeed = 2.54;  // Meters / second
+  public static final double kAutoMaxAccel = 0.847;  // Meters / seconds^2
+  public static final double kMaxAccel = 200;  // Inches / seconds^2
+  public static final double kMaxSpeed = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
+  public static final double kMaxAngularSpeed = 4 * Math.PI; // Radians / second
+  public static final double kAutoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java
   
   private final CANSparkMax leftMaster = MotorControllerFactory.createSparkMax(Constants.Drive.kDtLeftMaster);
   private final CANSparkMax leftSlave = MotorControllerFactory.createSparkMax(Constants.Drive.kDtLeftSlave);
@@ -56,52 +58,78 @@ public class Drivetrain extends SubsystemBase {
   private final CANEncoder leftEnc = leftMaster.getEncoder();
   private final CANEncoder rightEnc = rightMaster.getEncoder();
 
-  private final AHRS gyro = new AHRS();
+  private final AHRS gyro = new AHRS(SerialPort.Port.kUSB1); //Also try kUSB and kUSB2
 
   private final DifferentialDrive diffDrive = new DifferentialDrive(leftMaster, rightMaster);
 
-  private final PIDController leftPIDController = new PIDController(kPidLeft[0], kPidLeft[1], kPidLeft[2]);
-  private final PIDController rightPIDController = new PIDController(kPidRight[0], kPidRight[1], kPidRight[2]);
+  private final PIDController leftPIDController = new PIDController(kPIDLeft[0], kPIDLeft[1], kPIDLeft[2]);
+  private final PIDController rightPIDController = new PIDController(kPIDRight[0], kPIDRight[1], kPIDRight[2]);
   private final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(kTrackWidth);
-  
-  private final SimpleMotorFeedforward forwardLeftFF = new SimpleMotorFeedforward(kVolts[0], Units.metersToInches(kVels[0]));
-  private final SimpleMotorFeedforward backwardLeftFF = new SimpleMotorFeedforward(kVolts[2], Units.metersToInches(kVels[2]));
-  private final SimpleMotorFeedforward forwardRightFF = new SimpleMotorFeedforward(kVolts[1], Units.metersToInches(kVels[1]));
-  private final SimpleMotorFeedforward backwardRightFF = new SimpleMotorFeedforward(kVolts[3], Units.metersToInches(kVels[3]));
+
+  /* Feedforward objects for the left and right sides of the drivetrain.
+     Use the "forward" prefix when the motor controller is moving forward and the "backward" prefix when
+     the motor controller is moving backwards. */
+  private final SimpleMotorFeedforward forwardLeftFF = new SimpleMotorFeedforward(kVolts[0], 
+                                                                                  kVels[0], 
+                                                                                  kAccels[0]);
+  private final SimpleMotorFeedforward forwardRightFF = new SimpleMotorFeedforward(kVolts[1], 
+                                                                                   kVels[1], 
+                                                                                   kAccels[1]);
+  private final SimpleMotorFeedforward backwardLeftFF = new SimpleMotorFeedforward(kVolts[2], 
+                                                                                   kVels[2], 
+                                                                                   kAccels[2]);
+  private final SimpleMotorFeedforward backwardRightFF = new SimpleMotorFeedforward(kVolts[3], 
+                                                                                    kVels[3], 
+                                                                                    kAccels[3]);
   
   private DifferentialDriveOdometry odometry = null;
+  private boolean isOdometryInit = false;
   private static final boolean isGyroReversed = true;
+  private final Timer timey = new Timer();
+
+  // For drivetrain characterization.
+  private double currentTime;
+  private double prevTime = 0;
+  private double prevLeftVel = 0;
+  private double prevRightVel = 0;
 
   public Drivetrain() {
     leftSlave.follow(leftMaster);
     rightSlave.follow(rightMaster);
     leftMaster.setInverted(true);
     rightMaster.setInverted(true);
-    //rightSlave.setInverted(true);
 
+    // Conversion factor = Circumference / Gearing.
     double conversion = (Math.PI * 5.0) / 6.8;
     leftEnc.setPositionConversionFactor(conversion);
-    leftEnc.setVelocityConversionFactor(conversion / 60);
+    leftEnc.setVelocityConversionFactor(conversion / 60);   // By default, encoder velocity is reported in rpm.
     rightEnc.setPositionConversionFactor(conversion);
     rightEnc.setVelocityConversionFactor(conversion / 60);
-    //rightEnc.setInverted(true);
+
+    timey.start();
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
+    gyro.reset();
   }
 
   @Override
   public void periodic() {
-    if (odometry != null) {
-      odometry.update(Rotation2d.fromDegrees(getHeading()), 
-                      Units.inchesToMeters(-getEncPos(Side.LEFT)), 
-                      Units.inchesToMeters(-getEncPos(Side.RIGHT)));
-                    SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
-                    SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());
-    }
+    // Update the odometry with current heading and encoder position
+    odometry.update(Rotation2d.fromDegrees(getHeading()), 
+                    Units.inchesToMeters(getEncPos(Side.LEFT)), 
+                    Units.inchesToMeters(getEncPos(Side.RIGHT)));
+
+    SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
+    SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());
     SmartDashboard.putNumber("Left Encoder Distance", getEncPos(Drivetrain.Side.LEFT));
     SmartDashboard.putNumber("Right Encoder Distance", getEncPos(Drivetrain.Side.RIGHT));
+    SmartDashboard.putNumber("Gyro Heading", getHeading());
   }
 
   public void setOdometry(DifferentialDriveOdometry odometry) {
-    this.odometry = odometry;
+    if(!isOdometryInit) {
+      this.odometry = odometry;
+      isOdometryInit = true;
+    }
   }
 
   public DifferentialDriveOdometry getOdometry() {
@@ -109,9 +137,9 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetOdometry() {
-    if (odometry != null) {
-      odometry.resetPosition(odometry.getPoseMeters(), Rotation2d.fromDegrees(getHeading()));
-    }
+    odometry.resetPosition(odometry.getPoseMeters(), Rotation2d.fromDegrees(getHeading()));
+    resetEncoders();
+    isOdometryInit = false;
   }
 
   public double getHeading() {
@@ -135,11 +163,11 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public CANEncoder getEncoder(Side s) {
-    if (s == Side.LEFT) {
-      return leftEnc;
-    } else {
-      return rightEnc;
-    }
+     if (s == Side.LEFT) {
+       return leftEnc;
+     } else {
+       return rightEnc;
+     }
   }
 
   public void resetEncoders() {
@@ -153,22 +181,24 @@ public class Drivetrain extends SubsystemBase {
     diffDrive.arcadeDrive(speed, rotation);
   }
 
-  public void tankDrive(double left, double right) {
-    diffDrive.tankDrive(left, right);
+  public void tankDrive(double left, double right, boolean squareInputs) {
+    diffDrive.tankDrive(left, right, squareInputs);
+    diffDrive.feed();
   }
 
   public void charDriveArcade(double speed, double rotation) {
+    // The arguments to wheelspeeds are in m/s and radians.
     speed = Math.copySign(speed * speed, speed) * Units.inchesToMeters(kMaxSpeed);
     rotation = Math.copySign(rotation * rotation, rotation) * kMaxAngularSpeed;
 
     DifferentialDriveWheelSpeeds wheelspeeds = kinematics.toWheelSpeeds(new ChassisSpeeds(speed, 0.0, -rotation));
-    //SmartDashboard.putNumber("WheelSpeedLeft", wheelspeeds.leftMetersPerSecond);
-    //SmartDashboard.putNumber("WheelSpeedRight", wheelspeeds.rightMetersPerSecond);
     charDrive(wheelspeeds);
   }
 
   public void charDriveTank(double left, double right) {
-    charDrive(new DifferentialDriveWheelSpeeds(left * Units.inchesToMeters(kMaxSpeed), right * Units.inchesToMeters(kMaxSpeed)));
+    left = left * Units.inchesToMeters(kMaxSpeed);
+    right = right * Units.inchesToMeters(kMaxSpeed);
+    charDriveDirect(left, right);
   }
 
   public void charDriveDirect(double left, double right) {
@@ -176,83 +206,32 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void charDrive(DifferentialDriveWheelSpeeds wheelSpeeds) {
-    double left = wheelSpeeds.leftMetersPerSecond;
-    double right = wheelSpeeds.rightMetersPerSecond;
-    final double fwdLeftFF = forwardLeftFF.calculate(left);
-    final double backLeftFF = backwardLeftFF.calculate(left);
-    final double fwdRightFF = forwardRightFF.calculate(right);
-    final double backRightFF = backwardRightFF.calculate(right);
+    currentTime = timey.get();
 
-    final double leftOutput = leftPIDController.calculate(Units.inchesToMeters(getEncRate(Side.LEFT)), left);
-    final double rightOutput = rightPIDController.calculate(Units.inchesToMeters(getEncRate(Side.RIGHT)), right);
+    final double desiredLeftVel = wheelSpeeds.leftMetersPerSecond;
+    final double actualLeftVel = Units.inchesToMeters(getEncRate(Side.LEFT));
+    final double leftAccel = (desiredLeftVel - prevLeftVel) / (currentTime - prevTime);
 
-    double motorLeftOut = leftOutput + (left >= 0.0 ? fwdLeftFF : backLeftFF);
-    double motorRightOut = -rightOutput - (right >= 0.0 ? fwdRightFF : backRightFF);
-    motorLeftOut = Math.signum(motorLeftOut) * Math.min(Math.abs(motorLeftOut), Math.abs(left) * 12 / (kMaxSpeed * 0.025));
-    motorRightOut = Math.signum(motorRightOut) * Math.min(Math.abs(motorRightOut), Math.abs(right) * 12 / (kMaxSpeed * 0.025));
-    //SmartDashboard.putNumber("MotorLeftOut", motorLeftOut);
-    //SmartDashboard.putNumber("MotorRightOut", motorRightOut);
-    tankDrive(motorLeftOut / 12.0, -motorRightOut / 12.0);
-    //leftMaster.setVoltage(motorLeftOut);
-    //rightMaster.setVoltage(motorRightOut);
-  }
+    final double desiredRightVel = wheelSpeeds.rightMetersPerSecond;
+    final double actualRightVel = Units.inchesToMeters(getEncRate(Side.RIGHT));
+    final double rightAccel = (desiredRightVel - prevRightVel) / (currentTime - prevTime);
 
-  /**
-   * Characterizes the left/right motor values.
-   * 
-   * @param left  from -1 to 1
-   * @param right from -1 to 1
-   */
-  public void characterizedDrive(double left, double right) {
-    final double actualLeftVel = this.getEncRate(Side.LEFT);
-    final double actualRightVel = this.getEncRate(Side.RIGHT);
+    // FF.calculate = kS + kV * velocity + kA * acceleration
+    final double fwdLeftFF = forwardLeftFF.calculate(desiredLeftVel, leftAccel);
+    final double backLeftFF = backwardLeftFF.calculate(desiredLeftVel, leftAccel);
+    final double fwdRightFF = forwardRightFF.calculate(desiredRightVel, rightAccel);
+    final double backRightFF = backwardRightFF.calculate(desiredRightVel, rightAccel);
 
-    SmartDashboard.putNumber("LeftEnc", actualLeftVel);
-    SmartDashboard.putNumber("RightEnc", actualRightVel);
+    final double leftOutput = leftPIDController.calculate(actualLeftVel, desiredLeftVel);
+    final double rightOutput = rightPIDController.calculate(actualRightVel, desiredRightVel);
 
-    final double desiredLeftVel = kMaxSpeed * left;
-    final double desiredRightVel = kMaxSpeed * right;
+    final double motorLeftOut = leftOutput + (desiredLeftVel >= 0.0 ? fwdLeftFF : backLeftFF);
+    final double motorRightOut = rightOutput + (desiredRightVel >= 0.0 ? fwdRightFF : backRightFF);
 
-    SmartDashboard.putNumber("DesiredLeft", desiredLeftVel);
-    SmartDashboard.putNumber("DesiredRight", desiredRightVel);
+    tankDrive(motorLeftOut / 12.0, motorRightOut / 12.0, false);
 
-    double leftAccel = (desiredLeftVel - actualLeftVel) / kLoopTime;
-    double rightAccel = (desiredRightVel - actualRightVel) / kLoopTime;
-    leftAccel = Math.signum(leftAccel) * Math.min(Math.abs(leftAccel), kMaxAccel);
-    rightAccel = Math.signum(rightAccel) * Math.min(Math.abs(rightAccel), kMaxAccel);
-    SmartDashboard.putNumber("LeftAccel", leftAccel);
-    SmartDashboard.putNumber("RightAccel", rightAccel);
-
-    double newLeft, newRight;
-    if (left >= 0.0) {
-        // Forward-Left
-        newLeft = kVolts[0] + kVels[0] * actualLeftVel + kAccels[0] * leftAccel; 
-    } else {
-        // Backward-Left
-        newLeft = -kVolts[2] + kVels[2] * actualLeftVel + kAccels[2] * leftAccel;
-    }
-    if (right >= 0.0) {
-        // Forward-Right
-        newRight = kVolts[1] + kVels[1] * actualRightVel + kAccels[1] * rightAccel;
-    } else {
-        // Backward-Right
-        newRight = -kVolts[3] + kVels[3] * actualRightVel + kAccels[3] * rightAccel;
-    }
-    /*SmartDashboard.putNumber("VForwardLeft", kVELS[0] * desiredLeftVel);
-    SmartDashboard.putNumber("AForwardLeft", kACCELS[0] * leftAccel);
-    SmartDashboard.putNumber("VBackwardLeft", kVELS[2] * desiredLeftVel);
-    SmartDashboard.putNumber("ABackwardLeft", kACCELS[2] * leftAccel);
-    SmartDashboard.putNumber("VForwardRight", kVELS[1] * desiredRightVel);
-    SmartDashboard.putNumber("AForwardRight", kACCELS[1] * rightAccel);
-    SmartDashboard.putNumber("VBackwardRight", kVELS[3] * desiredRightVel);
-    SmartDashboard.putNumber("ABackwardRight", kACCELS[3] * rightAccel);
-    */
-    newLeft = Math.signum(newLeft) * Math.min(Math.abs(newLeft), 12) / 12;
-    newRight = Math.signum(newRight) * Math.min(Math.abs(newRight), 12) / 12;
-
-    SmartDashboard.putNumber("newLeft", newLeft);
-    SmartDashboard.putNumber("newRight", newRight);
-
-    diffDrive.tankDrive(newLeft, newRight, false);
+    prevTime = currentTime;
+    prevLeftVel = desiredLeftVel;
+    prevRightVel = desiredRightVel;
   }
 }

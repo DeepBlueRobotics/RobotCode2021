@@ -12,7 +12,7 @@ import org.team199.robot2020.subsystems.Climber;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DeployClimber extends CommandBase {
-  private Climber climber;
+  private final Climber climber;
 
   /**
    * Deploys climber up to switch
