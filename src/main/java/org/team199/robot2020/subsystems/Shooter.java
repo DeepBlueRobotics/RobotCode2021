@@ -13,10 +13,6 @@ import org.team199.robot2020.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends SubsystemBase {
-
-    // private static final double kP = 0.959;
-    // private static final double kI = 0.0;
-    // private static final double kD = 0.0;
     private static double kV = 0.129 / 60;
     private static double kS = 0.105;
     private static final double kP = 0.0001;
@@ -44,7 +40,6 @@ public class Shooter extends SubsystemBase {
 
         Log.registerDoubleVar("Spark Max Port 2 Speed", () -> master.getEncoder().getVelocity());
         Log.registerDoubleVar("Spark Max Port 4 Speed", () -> slave.getEncoder().getVelocity());
-        //Log.setDataLogInterval(10);
     }
 
     public void periodic()  {
@@ -61,11 +56,6 @@ public class Shooter extends SubsystemBase {
         if (d != pidController.getD()) pidController.setD(d);
         pidController.setReference(getTargetSpeed(), ControlType.kVelocity, 0, calculateFeedForward(getTargetSpeed()));
         
-        //SmartDashboard.putNumber("Shooter Margin of error (RPM)", master.getEncoder().getVelocity() - SmartDashboard.getNumber("Shooter Target Speed", 0));
-        // SmartDashboard.putNumber("Temp Spark Max Port 2", master.getMotorTemperature());
-        // SmartDashboard.putNumber("Temp Spark Max Port 4", slave.getMotorTemperature());
-        // SmartDashboard.putNumber("Current Spark Max Port 2", master.getOutputCurrent());
-        // SmartDashboard.putNumber("Current Spark Max Port 4", slave.getOutputCurrent());
         SmartDashboard.putNumber("Speed Spark Max Port 2", master.getEncoder().getVelocity());
         SmartDashboard.putNumber("Speed Spark Max Port 4", slave.getEncoder().getVelocity());
     }

@@ -7,13 +7,12 @@
 
 package org.team199.robot2020.commands;
 
-import org.team199.robot2020.Constants;
 import org.team199.robot2020.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class RaiseRobot extends CommandBase {
-  private Climber climber;
+  private final Climber climber;
 
   /**
    * Pulls the winch to raise the robot up to the switch

@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class AdjustClimber extends CommandBase {
-  private Climber climber;
-  private Joystick controller;
+  private final Climber climber;
+  private final Joystick controller;
 
   /**
    * Manually adjusting the climber hook position
