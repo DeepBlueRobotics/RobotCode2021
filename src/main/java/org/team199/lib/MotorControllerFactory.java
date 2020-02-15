@@ -61,12 +61,12 @@ public class MotorControllerFactory {
     spark.enableVoltageCompensation(12);
     spark.setSmartCurrentLimit(50);
 
-    //Purposely obivously impersonal to differentiate from
+    //Purposely super casual to differentiate from actual errors made by computer
     if (spark.getFaults() !=0) {
-      System.out.println("Whoops, big oopsie : fault error with spark max id : " + spark.getDeviceId() + ", ooF!");
+      System.err.println("ERROR : Whoops, big oopsie : fault error with spark max id : " + id + ", ooF!");
     }
     if (spark.getStickyFaults() != 0) {
-      System.out.println("Bruh, you did an Error : sticky fault error with spark max id : " + spark.getDeviceId() + ", Ouch!");
+      System.err.println("ERROR : Bruh, you did an Error : sticky fault error with spark max id : " + id + ", Ouch!");
     }
 
     CANPIDController controller = spark.getPIDController();
