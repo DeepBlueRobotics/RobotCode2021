@@ -43,13 +43,6 @@ public class Shooter extends SubsystemBase {
         
         slave.follow(master, true);
         master.setInverted(false);
-
-        if (master.getFaults() != 0 && master.getStickyFaults() != 0) {
-            System.out.println("ERRORError with master spark max");
-        }
-        if (slave.getFaults() != 0 && slave.getStickyFaults() != 0) {
-            System.out.println("ERROR : Error with slave spark max");
-        }
         
         Log.registerDoubleVar("Spark Max Port 2 Speed", () -> master.getEncoder().getVelocity());
         Log.registerDoubleVar("Spark Max Port 4 Speed", () -> slave.getEncoder().getVelocity());
