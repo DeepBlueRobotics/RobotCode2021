@@ -7,8 +7,6 @@
 
 package org.team199.lib;
 
-import java.util.HashMap;
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -21,17 +19,15 @@ import com.revrobotics.CANSparkMax.IdleMode;
  * Add your docs here.
  */
 public class MotorControllerFactory {
-  private static final HashMap<CANSparkMax, Short> flags = new HashMap<>();
-  private static final HashMap<CANSparkMax, Short> stickyFlags = new HashMap<>();
   public static WPI_VictorSPX createVictor(int port) {
     WPI_VictorSPX victor = new WPI_VictorSPX(port);
 
     // Put all configurations for the victor motor controllers in here.
-    victor.configNominalOutputForward(0, 10);
-    victor.configNominalOutputReverse(0, 10);
-    victor.configPeakOutputForward(1, 10);
-    victor.configPeakOutputReverse(-1, 10);
-    victor.configNeutralDeadband(0.001, 10);
+    MotorErrors.reportError(victor.configNominalOutputForward(0, 10));
+    MotorErrors.reportError(victor.configNominalOutputReverse(0, 10));
+    MotorErrors.reportError(victor.configPeakOutputForward(1, 10));
+    MotorErrors.reportError(victor.configPeakOutputReverse(-1, 10));
+    MotorErrors.reportError(victor.configNeutralDeadband(0.001, 10));
     victor.setNeutralMode(NeutralMode.Brake);
 
     return victor;
@@ -42,59 +38,43 @@ public class MotorControllerFactory {
 
     // Put all configurations for the talon motor controllers in here.
     // All values are from last year's code.
-    talon.configNominalOutputForward(0, 10);
-    talon.configNominalOutputReverse(0, 10);
-    talon.configPeakOutputForward(1, 10);
-    talon.configPeakOutputReverse(-1, 10);
-    talon.configPeakCurrentLimit(0, 0);
-    talon.configPeakCurrentDuration(0, 0);
+    MotorErrors.reportError(talon.configNominalOutputForward(0, 10));
+    MotorErrors.reportError(talon.configNominalOutputReverse(0, 10));
+    MotorErrors.reportError(talon.configPeakOutputForward(1, 10));
+    MotorErrors.reportError(talon.configPeakOutputReverse(-1, 10));
+    MotorErrors.reportError(talon.configPeakCurrentLimit(0, 0));
+    MotorErrors.reportError(talon.configPeakCurrentDuration(0, 0));
     // 40 Amps is the amp limit of a CIM. lThe PDP has 40 amp circuit breakers,
-    talon.configContinuousCurrentLimit(30, 0);
+    MotorErrors.reportError(talon.configContinuousCurrentLimit(30, 0));
     talon.enableCurrentLimit(true);
-    talon.configNeutralDeadband(0.001, 10);
+    MotorErrors.reportError(talon.configNeutralDeadband(0.001, 10));
     talon.setNeutralMode(NeutralMode.Brake);
 
     return talon;
   }
 
   //checks for spark max errors
-  public static void checkSparkMaxErrors(CANSparkMax spark) {     
-    //Purposely obivously impersonal to differentiate from actual computer generated errors
-    short faults = spark.getFaults();
-    short stickyFaults = spark.getStickyFaults();
-    short prevFaults = flags.containsKey(spark)?flags.get(spark) : 0;
-    short prevStickyFaults = stickyFlags.containsKey(spark)?stickyFlags.get(spark) : 0;
-
-    if (spark.getFaults() != 0 && prevFaults != faults) {
-      System.err.println("Whoops, big oopsie : fault error with spark max id : " + spark.getDeviceId() + ", ooF!");
-    }
-    if (spark.getStickyFaults() != 0 && prevStickyFaults != stickyFaults) {
-      System.err.println("Bruh, you did an Error : sticky fault error with spark max id : " + spark.getDeviceId() + ", Ouch!");
-    }
-    spark.clearFaults();
-    flags.put(spark, faults);
-    stickyFlags.put(spark, stickyFaults);
-  }
-
-  public static void printMessages() {
-    flags.keySet().forEach((spark) -> checkSparkMaxErrors(spark));
-  }
 
   public static CANSparkMax createSparkMax(int id) {
     CANSparkMax spark = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
-    spark.restoreFactoryDefaults();
-    spark.setIdleMode(IdleMode.kBrake);
-    spark.enableVoltageCompensation(12);
-    spark.setSmartCurrentLimit(50);
+    if(spark.getFirmwareVersion() == 0) {
+      spark.close();
+      System.err.println("SparkMax on port: " + id + " is not connected!");
+      return MotorErrors.createDummySparkMax();
+    }
+    MotorErrors.reportError(spark.restoreFactoryDefaults());
+    MotorErrors.reportError(spark.setIdleMode(IdleMode.kBrake));
+    MotorErrors.reportError(spark.enableVoltageCompensation(12));
+    MotorErrors.reportError(spark.setSmartCurrentLimit(50));
 
-    checkSparkMaxErrors(spark);
+    MotorErrors.checkSparkMaxErrors(spark);
 
     CANPIDController controller = spark.getPIDController();
-    controller.setOutputRange(-1, 1);
-    controller.setP(0);
-    controller.setI(0);
-    controller.setD(0);
-    controller.setFF(0);
+    MotorErrors.reportError(controller.setOutputRange(-1, 1));
+    MotorErrors.reportError(controller.setP(0));
+    MotorErrors.reportError(controller.setI(0));
+    MotorErrors.reportError(controller.setD(0));
+    MotorErrors.reportError(controller.setFF(0));
 
     return spark;
   }
