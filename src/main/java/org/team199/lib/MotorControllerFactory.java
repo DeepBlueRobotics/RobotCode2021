@@ -57,6 +57,11 @@ public class MotorControllerFactory {
 
   public static CANSparkMax createSparkMax(int id) {
     CANSparkMax spark = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
+    if(spark.getFirmwareVersion() == 0) {
+      spark.close();
+      System.err.println("SparkMax on port: " + id + " is not connected!");
+      return MotorErrors.createDummySparkMax();
+    }
     MotorErrors.reportError(spark.restoreFactoryDefaults());
     MotorErrors.reportError(spark.setIdleMode(IdleMode.kBrake));
     MotorErrors.reportError(spark.enableVoltageCompensation(12));

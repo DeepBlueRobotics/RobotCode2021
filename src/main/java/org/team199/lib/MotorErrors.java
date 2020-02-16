@@ -7,6 +7,8 @@ import com.ctre.phoenix.ErrorCode;
 import com.revrobotics.CANError;
 import com.revrobotics.CANSparkMax;
 
+import org.mockito.Mockito;
+
 public final class MotorErrors {
 
     private static final HashMap<CANSparkMax, Short> flags = new HashMap<>();
@@ -63,6 +65,10 @@ public final class MotorErrors {
 
     public static void printSparkMaxErrorMessages() {
         flags.keySet().forEach((spark) -> checkSparkMaxErrors(spark));
+    }
+
+    public static CANSparkMax createDummySparkMax() {
+        return Mockito.mock(CANSparkMax.class, new DummySparkMaxAnswer());
     }
 
     private MotorErrors() {}
