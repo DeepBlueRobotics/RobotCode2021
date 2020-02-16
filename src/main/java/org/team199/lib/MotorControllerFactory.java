@@ -113,7 +113,7 @@ public class MotorControllerFactory {
       if(error == null || error == ok) {
         continue;
       }
-      System.err.println("Error: " + error.name() + " occured while configuring: " + motorType + " on CAN port: " id);
+      System.err.println("Error: " + error.name() + " occured while configuring: " + motorType + " on CAN port: " + id);
     }
   }
 }
