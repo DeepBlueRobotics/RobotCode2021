@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.ctre.phoenix.ErrorCode;
 import com.revrobotics.CANError;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.FaultID;
 
 import org.mockito.Mockito;
 
@@ -53,14 +54,34 @@ public final class MotorErrors {
         short prevStickyFaults = stickyFlags.containsKey(spark) ? stickyFlags.get(spark) : 0;
 
         if (spark.getFaults() != 0 && prevFaults != faults) {
-        System.err.println("Whoops, big oopsie : fault error with spark max id : " + spark.getDeviceId() + ", ooF!");
+        System.err.println("Whoops, big oopsie : fault error(s) with spark max id : " + spark.getDeviceId() + ": [ " + formatFaults(spark) + "], ooF!");
         }
         if (spark.getStickyFaults() != 0 && prevStickyFaults != stickyFaults) {
-        System.err.println("Bruh, you did an Error : sticky fault error with spark max id : " + spark.getDeviceId() + ", Ouch!");
+        System.err.println("Bruh, you did an Error : sticky fault(s) error with spark max id : " + spark.getDeviceId() + ": " + formatStickyFaults(spark) + ", Ouch!");
         }
         spark.clearFaults();
         flags.put(spark, faults);
         stickyFlags.put(spark, stickyFaults);
+    }
+
+    private static String formatFaults(CANSparkMax spark) {
+        String out = "";
+        for(FaultID fault: FaultID.values()) {
+            if(spark.getFault(fault)) {
+                out += (fault.name() + " ");
+            }
+        }
+        return out;
+    }
+
+    private static String formatStickyFaults(CANSparkMax spark) {
+        String out = "";
+        for(FaultID fault: FaultID.values()) {
+            if(spark.getStickyFault(fault)) {
+                out += (fault.name() + " ");
+            }
+        }
+        return out;
     }
 
     public static void printSparkMaxErrorMessages() {
