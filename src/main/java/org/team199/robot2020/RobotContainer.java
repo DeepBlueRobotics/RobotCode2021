@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import org.team199.lib.Limelight;
 
@@ -60,13 +61,31 @@ public class RobotContainer {
     private final Limelight lime = new Limelight();
 
     public RobotContainer() {
+        
+        if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
+            configureButtonBindingsLeftJoy();
+        } else{
+            System.err.println("ERROR: Dude, you're missing the left joystick.");
+        }
+
+        if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
+            configureButtonBindingsRightJoy();
+        } else{
+            System.err.println("ERROR: Dude, you're missing the right joystick.");
+        }
+
+        if(DriverStation.getInstance().getJoystickName(2).length() != 0) {
+            configureButtonBindingsController();
+        } else{
+            System.err.println("ERROR: Dude, you're missing the controller.");
+        }
+
         //1,6 2,5
         //DoubleSolenoid sol1 = new DoubleSolenoid(1,6);
         //DoubleSolenoid sol2 = new DoubleSolenoid(2,5);
         //sol1.set(DoubleSolenoid.Value.kOff);
         //sol2.set(DoubleSolenoid.Value.kOff);
 
-        configureButtonBindings();
         shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
         
@@ -86,7 +105,7 @@ public class RobotContainer {
         loadPath(Path.RED3, "Red3", true);
     }
 
-    private void configureButtonBindings() {
+    private void configureButtonBindingsLeftJoy() {
         // Arcade/Tank drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kToggleDriveModeButton).whenPressed(new InstantCommand(
                 () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
@@ -99,7 +118,14 @@ public class RobotContainer {
         // Toggle Characterize Drive                
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
                 () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
+    }
 
+    private void configureButtonBindingsRightJoy() {
+        // Align the robot and then shoots
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
+    }
+
+    private void configureButtonBindingsController() {
         // Intake toggle button
         new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
             if (intake.isDeployed()) {
@@ -120,9 +146,6 @@ public class RobotContainer {
             new AdjustClimber(climber, controller)
         ));
 
-        // Align the robot and then shoots
-        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
-
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
     }
@@ -139,6 +162,7 @@ public class RobotContainer {
         }
     }
 
+    
     /**
      * DIO Port 0 = Switch 1
      * DIO Port 1 = Switch 2
