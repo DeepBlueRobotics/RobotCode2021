@@ -40,6 +40,10 @@ public class Feeder extends SubsystemBase {
    * Takes and stores five balls from intake to give to shooter
    */
   public Feeder() {
+    beltMotor.configPeakOutputForward(1D/3D, 10);
+    beltMotor.configPeakOutputReverse(-1D/3D, 10);
+    ejectMotor.configPeakOutputForward(1, 10);
+    ejectMotor.configPeakOutputReverse(-1, 10);
     SmartDashboard.putNumber("Feeder.kBeltIntakeSpeed", kBeltIntakeSpeed);
     SmartDashboard.putNumber("Feeder.kRollerIntakeSpeed", kRollerIntakeSpeed);
     SmartDashboard.putNumber("Feeder.kBeltEjectSpeed", kBeltEjectSpeed);
