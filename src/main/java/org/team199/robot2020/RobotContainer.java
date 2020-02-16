@@ -62,10 +62,22 @@ public class RobotContainer {
 
     public RobotContainer() {
         
-        if(DriverStation.getInstance().getJoystickName(0).length() != 0 && DriverStation.getInstance().getJoystickName(1).length() != 0 && DriverStation.getInstance().getJoystickName(2).length() != 0) {
-            configureButtonBindings();
+        if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
+            configureButtonBindingsLeftJoy();
         } else{
-            System.out.println("Missing joysticks.");
+            System.err.println("ERROR: Dude, you're missing the left joystick.");
+        }
+
+        if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
+            configureButtonBindingsRightJoy();
+        } else{
+            System.err.println("ERROR: Dude, you're missing the right joystick.");
+        }
+
+        if(DriverStation.getInstance().getJoystickName(2).length() != 0) {
+            configureButtonBindingsController();
+        } else{
+            System.err.println("ERROR: Dude, you're missing the controller.");
         }
 
         //1,6 2,5
@@ -93,7 +105,7 @@ public class RobotContainer {
         loadPath(Path.RED3, "Red3", true);
     }
 
-    private void configureButtonBindings() {
+    private void configureButtonBindingsLeftJoy() {
         // Arcade/Tank drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kToggleDriveModeButton).whenPressed(new InstantCommand(
                 () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
@@ -106,7 +118,14 @@ public class RobotContainer {
         // Toggle Characterize Drive                
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
                 () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
+    }
 
+    private void configureButtonBindingsRightJoy() {
+        // Align the robot and then shoots
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
+    }
+
+    private void configureButtonBindingsController() {
         // Intake toggle button
         new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
             if (intake.isDeployed()) {
@@ -127,9 +146,6 @@ public class RobotContainer {
             new AdjustClimber(climber, controller)
         ));
 
-        // Align the robot and then shoots
-        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
-
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
     }
@@ -146,6 +162,7 @@ public class RobotContainer {
         }
     }
 
+    
     /**
      * DIO Port 0 = Switch 1
      * DIO Port 1 = Switch 2
