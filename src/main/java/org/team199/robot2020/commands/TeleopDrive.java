@@ -19,12 +19,11 @@ public class TeleopDrive extends CommandBase {
   private static final double kSlowDriveSpeed = 0.6;
   private static final double kSlowDriveRotation = 0.6;
 
-
-  private Drivetrain drivetrain;
-  private Joystick leftJoy, rightJoy;
-  Limelight lime;
+  private final Drivetrain drivetrain;
+  private final Joystick leftJoy, rightJoy;
+  private final Limelight lime;
   private Limelight.Mode limelightMode = Limelight.Mode.STEER;
-  private double minError = 0.05; // currently only used for steer and distance combo
+  private final double minError = 0.05; // currently only used for steer and distance combo
 
   /**
    * Creates a new TeleopDrive.
@@ -72,7 +71,7 @@ public class TeleopDrive extends CommandBase {
       if (SmartDashboard.getBoolean("Characterized Drive", false)) {
         drivetrain.charDriveTank(left, right);
       } else {
-        drivetrain.tankDrive(left, right);
+        drivetrain.tankDrive(left, right, true);
       }
     }
   }
@@ -81,7 +80,7 @@ public class TeleopDrive extends CommandBase {
     double adjustment;
     if (limelightMode == Limelight.Mode.DIST) {
         adjustment = lime.distanceAssist();
-        drivetrain.tankDrive(adjustment, adjustment);
+        drivetrain.tankDrive(adjustment, adjustment, false);
         if (lime.isAligned())  {
           SmartDashboard.putBoolean("Finished Aligning", true);
         }
@@ -89,13 +88,13 @@ public class TeleopDrive extends CommandBase {
       else if (limelightMode == Limelight.Mode.STEER) {
         adjustment = lime.steeringAssist();
         //final double[] charParams = drivetrain.characterizedDrive(adjustment, -adjustment);
-        drivetrain.tankDrive(adjustment, -adjustment);
+        drivetrain.tankDrive(adjustment, -adjustment, false);
         if (lime.isAligned())  {
           SmartDashboard.putBoolean("Finished Aligning", true);
         }
       } else {
         final double[] params = lime.autoTarget();
-        drivetrain.tankDrive(params[0], params[1]);
+        drivetrain.tankDrive(params[0], params[1], false);
         final double maxInput = Math.max(Math.abs(params[0]), Math.abs(params[1]));
         if (maxInput < minError)  {
           SmartDashboard.putBoolean("Finished Aligning", true);
@@ -110,7 +109,7 @@ public class TeleopDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.tankDrive(0, 0);
+    drivetrain.tankDrive(0, 0, true);
   }
 
   // Returns true when the command should end.

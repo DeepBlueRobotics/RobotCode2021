@@ -8,6 +8,9 @@
 
 package org.team199.robot2020;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import org.team199.lib.Limelight;
-import java.io.IOException;
 
 import org.team199.lib.RobotPath;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -29,6 +31,7 @@ import org.team199.robot2020.commands.ShooterHorizontalAim;
 import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Shooter;
 import org.team199.robot2020.commands.AdjustClimber;
+import org.team199.robot2020.commands.AutoShootAndDrive;
 import org.team199.robot2020.commands.DeployClimber;
 import org.team199.robot2020.commands.RaiseRobot;
 import org.team199.robot2020.subsystems.Feeder;
@@ -43,6 +46,8 @@ import org.team199.robot2020.subsystems.Climber;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drive.kAutoPathSwitch1Port);
+    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
     private final Drivetrain drivetrain = new Drivetrain();
     private final Shooter shooter = new Shooter();
     private final Intake intake = new Intake();
@@ -51,9 +56,9 @@ public class RobotContainer {
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.kPort);
     private final Joystick controller = new Joystick(Constants.OI.Controller.kPort);
     private final Climber climber = new Climber();
-    private final Limelight lime = new Limelight();
+    private final RobotPath[] paths;
 
-    private RobotPath path;
+    private final Limelight lime = new Limelight();
 
     public RobotContainer() {
         
@@ -63,13 +68,15 @@ public class RobotContainer {
             System.out.println("Missing joysticks.");
         }
 
+        //1,6 2,5
+        //DoubleSolenoid sol1 = new DoubleSolenoid(1,6);
+        //DoubleSolenoid sol2 = new DoubleSolenoid(2,5);
+        //sol1.set(DoubleSolenoid.Value.kOff);
+        //sol2.set(DoubleSolenoid.Value.kOff);
+
         shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
-        try {
-            path = new RobotPath("Test");
-        } catch (IOException e) {
-            path = null;
-        }
+        
         feeder.setDefaultCommand(new RunCommand(() -> {
             if (feeder.isCellEntering() && !feeder.isCellAtShooter()) 
                 feeder.runForward();
@@ -77,12 +84,13 @@ public class RobotContainer {
                 feeder.stop();
         }, feeder));
 
-        try {
-            path = new RobotPath("Test2");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        path.init(drivetrain);
+        paths = new RobotPath[6];
+        loadPath(Path.BLUE1, "Blue1", true);
+        loadPath(Path.BLUE2, "Blue2", true);
+        loadPath(Path.BLUE3, "Blue3", true);
+        loadPath(Path.RED1, "Red1", true);
+        loadPath(Path.RED2, "Red2", true);
+        loadPath(Path.RED3, "Red3", true);
     }
 
     private void configureButtonBindings() {
@@ -124,10 +132,94 @@ public class RobotContainer {
 
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
-
     }
 
     public Command getAutonomousCommand() {
-        return path.getPathCommand();
+        try {
+            final RobotPath path = paths[getPath().idx];
+            if(path == null) {
+                throw new Exception();
+            }
+            return new AutoShootAndDrive(intake, path);
+        } catch(final Exception e) {
+            return new InstantCommand();
+        }
+    }
+
+    /**
+     * DIO Port 0 = Switch 1
+     * DIO Port 1 = Switch 2
+     * on = jumper in
+     * off= jumper out
+     * Red/Blue determined by DS
+     * Switch states
+     * 1    2
+     * off off = off
+     * on off = 1
+     * off on = 2
+     * on on = 3
+     */
+    public Path getPath() {
+        Path outPath = Path.OFF;
+        // get() returns true if the circuit is open.
+        if(!autoSwitch1.get()) {
+            if(!autoSwitch2.get()) {
+                outPath = Path.BLUE3;
+                System.out.println("Blue3 loaded.");
+            } else {
+                outPath = Path.BLUE1;
+                System.out.println("Blue1 loaded.");
+            }
+        } else if(!autoSwitch2.get()) {
+            outPath = Path.BLUE2;
+            System.out.println("Blue2 loaded.");
+        } else {
+            outPath = Path.OFF;
+            System.out.println("No path loaded.");
+        }
+        return outPath.toSide(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue);
+    }
+
+    private void loadPath(final Path path, final String pathName, final boolean isInverted) {
+        try {
+            paths[path.idx] = new RobotPath(pathName, drivetrain, isInverted);
+        } catch(final Exception e) {
+            System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
+            e.printStackTrace(System.err);
+        }
+    }public static enum Path {
+        BLUE1(0), BLUE2(1), BLUE3(2), RED1(3), RED2(4), RED3(5), OFF(-1);
+
+        public final int idx;
+
+        private Path(final int idx) {
+            this.idx = idx;
+        }
+
+        public Path toSide(final boolean isBlue) {
+            switch(this) {
+                case BLUE1:
+                case RED1:
+                    if(isBlue) {
+                        return BLUE1;
+                    }
+                    return RED1;
+                case BLUE2:
+                case RED2:
+                    if(isBlue) {
+                        return BLUE2;
+                    }
+                    return RED2;
+                case BLUE3:
+                case RED3:
+                    if(isBlue) {
+                        return BLUE3;
+                    }
+                    return RED3;
+                case OFF:
+                default:
+                    return OFF;
+            }
+        }
     }
 }

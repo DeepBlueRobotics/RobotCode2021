@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.team199.robot2020.subsystems.Feeder;
 
 public class Shoot extends CommandBase {
-    Feeder feeder;
+    private final Feeder feeder;
 
     public Shoot(Feeder feeder) {
         this.feeder = feeder;
