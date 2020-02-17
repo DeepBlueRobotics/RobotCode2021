@@ -90,11 +90,16 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
         
         feeder.setDefaultCommand(new RunCommand(() -> {
-            if (feeder.isCellEntering() && !feeder.isCellAtShooter()) 
+            if (feeder.isCellEntering() && !feeder.isCellAtShooter()) {
                 feeder.runForward();
-            else 
+                if(intake.isDeployed())
+                    intake.slow();
+            } else {
                 feeder.stop();
-        }, feeder));
+                if(intake.isDeployed())
+                    intake.intake();
+            }
+        }, feeder, intake));
 
         paths = new RobotPath[6];
         loadPath(Path.BLUE1, "Blue1", true);
