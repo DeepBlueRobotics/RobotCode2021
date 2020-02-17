@@ -27,7 +27,7 @@ public class Feeder extends SubsystemBase {
   private static double kRollerEjectSpeed = 1;
   private static double kInSensorDistance = Units.inchesToMeters(5) * 1000; // 5 inches in millimeters
   private static double kOutSensorDistance = Units.inchesToMeters(2.5) * 1000; // 5 inches in millimeters
-  private static double kIntakeGapTime = .1;
+  private static double kIntakeGapTime = .35;
 
   private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederBelt);
   private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederEjector);
@@ -66,6 +66,9 @@ public class Feeder extends SubsystemBase {
     kInSensorDistance = SmartDashboard.getNumber("Feeder.kInSensorDistance", kInSensorDistance);
     kOutSensorDistance = SmartDashboard.getNumber("Feeder.kOutSensorDistance", kOutSensorDistance);
     kIntakeGapTime = SmartDashboard.getNumber("Feeder.kIntakeGapTime", kIntakeGapTime);
+
+    SmartDashboard.putNumber("Feeder.currentInSensorDistance", inSensor.getRange());
+    SmartDashboard.putNumber("Feeder.currentOutSensorDistance", outSensor.getRange());
   }
 
   public void runForward() {
