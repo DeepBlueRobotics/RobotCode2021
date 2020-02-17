@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
     // TODO: find good values and then set to final
-    private static double kIntakeSpeed = 0.5;
-    private static double kSlowSpeed = -0.05;
+    private static double kIntakeSpeed = 0.75;
+    private static double kSlowSpeed = -0.1;
 
     private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kIntakeRoller);
     private final DoubleSolenoid intakePistons = new DoubleSolenoid(Constants.Drive.kIntakePistons[0], Constants.Drive.kIntakePistons[1]);

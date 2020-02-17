@@ -25,7 +25,7 @@ public class Feeder extends SubsystemBase {
   private static double kBeltEjectSpeed = 1;
 
   private static double kRollerEjectSpeed = 1;
-  private static double kInSensorDistance = Units.inchesToMeters(5) * 1000; // 5 inches in millimeters
+  private static double kInSensorDistance = 45; // 5 inches in millimeters //Old: Units.inchesToMeters(5) * 1000
   private static double kOutSensorDistance = Units.inchesToMeters(2.5) * 1000; // 5 inches in millimeters
   private static double kIntakeGapTime = .35;
 
