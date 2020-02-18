@@ -102,12 +102,12 @@ public class RobotContainer {
         }, feeder, intake));
 
         paths = new RobotPath[6];
-        loadPath(Path.BLUE1, "Blue1", true);
-        loadPath(Path.BLUE2, "Blue2", true);
-        loadPath(Path.BLUE3, "Blue3", true);
-        loadPath(Path.RED1, "Red1", true);
-        loadPath(Path.RED2, "Red2", true);
-        loadPath(Path.RED3, "Red3", true);
+        loadPath(Path.BLUE1, "Blue1", false);
+        loadPath(Path.BLUE2, "TestBlue2StraightLine", false);
+        loadPath(Path.BLUE3, "Blue3", false);
+        loadPath(Path.RED1, "Red1", false);
+        loadPath(Path.RED2, "Red2", false);
+        loadPath(Path.RED3, "Red3", false);
     }
 
     private void configureButtonBindingsLeftJoy() {
@@ -161,7 +161,7 @@ public class RobotContainer {
             if(path == null) {
                 throw new Exception();
             }
-            return new AutoShootAndDrive(intake, path);
+            return new AutoShootAndDrive(drivetrain, intake, feeder, lime, path);
         } catch(final Exception e) {
             return new InstantCommand();
         }

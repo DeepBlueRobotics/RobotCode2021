@@ -1,5 +1,6 @@
 package org.team199.lib;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -31,6 +32,7 @@ public class RobotPath {
 
     private Trajectory trajectory;
     private Drivetrain dt;
+    private File file;
 
     public RobotPath(String filename, Drivetrain dt, boolean isInverted) throws IOException {
         TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
@@ -47,7 +49,8 @@ public class RobotPath {
         ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
         
         try {
-            CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(Filesystem.getDeployDirectory().toPath().resolve(Paths.get("/paths/" + filename + ".path")).toFile()));
+            file = Filesystem.getDeployDirectory().toPath().resolve(Paths.get("PathWeaver/Paths/" + filename + ".path")).toFile();
+            CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(file));
             double x, y, tanx, tany;
             Rotation2d rot;
             
@@ -79,6 +82,7 @@ public class RobotPath {
     }
 
     public Command getPathCommand() {
+        System.out.println(file.toPath());
         RamseteCommand ram = new RamseteCommand(trajectory, 
                                                 () -> dt.getOdometry().getPoseMeters(), 
                                                 new RamseteController(), 

@@ -39,11 +39,11 @@ public class Drivetrain extends SubsystemBase {
   private static final double[] kPIDRight = {2.875, 0.0, 0.0};  // PID values for the right PID Contoller for characterization.
 
   // Order of the entries: {Forward-Left, Forward-Right, Backward-Left, Backward-Right}
-  public static final double[] kVolts = {0.146, 0.129, 0.154, 0.134};  // Volts
-  public static final double[] kVels = {2.11, 2.04, 2.1, 2.04};  // Volt * seconds / meter
-  public static final double[] kAccels = {0.222, 0.299, 0.195, 0.275};  // Volt * seconds^2 / meter
+  public static final double[] kVolts = {0.23, 0.24, 0.23, 0.224};  // Volts
+  public static final double[] kVels = {2.05, 2.02, 2.06, 2.05};  // Volt * seconds / meter
+  public static final double[] kAccels = {0.31, 0.253, 0.355, 0.275};  // Volt * seconds^2 / meter
 
-  public static final double kAutoMaxSpeed = 2.54;  // Meters / second
+  public static final double kAutoMaxSpeed = 1.0;  // Meters / second
   public static final double kAutoMaxAccel = 0.847;  // Meters / seconds^2
   public static final double kMaxAccel = 200;  // Inches / seconds^2
   public static final double kMaxSpeed = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
