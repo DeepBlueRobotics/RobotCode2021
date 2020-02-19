@@ -40,8 +40,8 @@ public final class Constants {
         public static final int kShooterMaster = 15;     // Left
         public static final int kShooterSlave = 14;     // Right
 
-        public static final int kClimberWinch = 9;
-        public static final int kClimberLift = 13;
+        public static final int kClimberWinch = 12;
+        public static final int kClimberLift = 11;
 
         // solenoids
         public static final int[] kIntakePistons = {0, 1};
