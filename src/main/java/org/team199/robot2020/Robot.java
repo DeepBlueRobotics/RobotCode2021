@@ -7,6 +7,7 @@
 
 package org.team199.robot2020;
 
+import org.team199.lib.MotorControllerFactory;
 import org.team199.lib.logging.Log;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -39,6 +40,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     Log.logData();
+    MotorControllerFactory.printMessages();
   }
 
   /**
@@ -47,6 +49,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.getAutonomousCommand().schedule();
+    Log.setDataLoggingDisabled(false);
   }
 
   /**
@@ -61,6 +64,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
+    Log.setDataLoggingDisabled(false);
   }
 
   /**
@@ -74,6 +78,12 @@ public class Robot extends TimedRobot {
    * This function is called periodically during test mode.
    */
   @Override
-  public void testPeriodic() {
+  public void testPeriodic(){
+
+  }
+  @Override
+  public void disabledInit() {
+    Log.flush();
+    Log.setDataLoggingDisabled(true);
   }
 }

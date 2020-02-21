@@ -4,12 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-class LinearInterpolation {
+public class LinearInterpolation {
     public double[] xs, ys;
     public double[] slopes, intercepts;
     public double minX, maxX;
@@ -19,18 +20,22 @@ class LinearInterpolation {
     public LinearInterpolation(String filename) {
         try {
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(filename));
-            numPoints = csvParser.getRecords().size() - 1;  // Subtract 1 because of the labels.
+            List<CSVRecord> records = csvParser.getRecords();
+            numPoints = records.size() - 1;  // Subtract 1 because of the labels.
             // Set the size of the arrays
             xs = new double[numPoints];
             ys = new double[numPoints];
             slopes = new double[numPoints - 1];
             intercepts = new double[numPoints - 1];
 
-            int count = 0;
-            for (CSVRecord record : csvParser) {
-                xs[count] = Double.parseDouble(record.get(0));
-                ys[count] = Double.parseDouble(record.get(1));
+            for (int count = 0; count < numPoints + 1; count++) {
+                CSVRecord record = records.get(count);
+                if (count > 0) {
+                    xs[count - 1] = Double.parseDouble(record.get(0));
+                    ys[count - 1] = Double.parseDouble(record.get(1));
+                }
             }
+            csvParser.close();
             Arrays.sort(xs);
             minX = xs[0];
             maxX = xs[xs.length - 1];
@@ -38,7 +43,7 @@ class LinearInterpolation {
             for (int i = 1; i < numPoints; i++) {
                 // Linear interpolation (y = mx + b)
                 slopes[i - 1] = (ys[i] - ys[i - 1]) / (xs[i] - xs[i - 1]);
-                intercepts[i - 1] = ys[i] - slopes[i] * xs[i];
+                intercepts[i - 1] = ys[i] - slopes[i - 1] * xs[i];
             }
         } catch (FileNotFoundException e) {
             System.out.println("File named " + filename + " not found.");

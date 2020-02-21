@@ -11,6 +11,8 @@ import org.team199.lib.MotorControllerFactory;
 import org.team199.lib.logging.Log;
 import org.team199.robot2020.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.wpilibj.SpeedController;
+//import java.lang.AutoCloseable;
 
 public class Shooter extends SubsystemBase {
     private static double kV = 0.129 / 60;
@@ -19,7 +21,7 @@ public class Shooter extends SubsystemBase {
     private static final double kI = 0.0;
     private static final double kD = 0.005;
 
-    private double kTargetSpeed = 100;
+    private double kTargetSpeed = 4200;
 
     private final CANSparkMax master = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterMaster);
     private final CANSparkMax slave = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterSlave);
@@ -36,8 +38,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter.kS", kS);
         
         slave.follow(master, true);
-        master.setInverted(false);
-
+        master.setInverted(true);
         Log.registerDoubleVar("Spark Max Port 2 Speed", () -> master.getEncoder().getVelocity());
         Log.registerDoubleVar("Spark Max Port 4 Speed", () -> slave.getEncoder().getVelocity());
     }

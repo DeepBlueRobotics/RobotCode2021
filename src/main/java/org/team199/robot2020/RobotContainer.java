@@ -10,6 +10,7 @@ package org.team199.robot2020;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,16 +60,27 @@ public class RobotContainer {
     private final Limelight lime = new Limelight();
 
     public RobotContainer() {
+        //1,6 2,5
+        //DoubleSolenoid sol1 = new DoubleSolenoid(1,6);
+        //DoubleSolenoid sol2 = new DoubleSolenoid(2,5);
+        //sol1.set(DoubleSolenoid.Value.kOff);
+        //sol2.set(DoubleSolenoid.Value.kOff);
+
         configureButtonBindings();
         shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
         
         feeder.setDefaultCommand(new RunCommand(() -> {
-            if (feeder.isCellEntering() && !feeder.isCellAtShooter()) 
+            if (feeder.isCellEntering() && !feeder.isCellAtShooter()) {
                 feeder.runForward();
-            else 
+                if(intake.isDeployed())
+                    intake.slow();
+            } else {
                 feeder.stop();
-        }, feeder));
+                if(intake.isDeployed())
+                    intake.intake();
+            }
+        }, feeder, intake));
 
         paths = new RobotPath[6];
         loadPath(Path.BLUE1, "Blue1", true);
@@ -118,7 +130,6 @@ public class RobotContainer {
 
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
-
     }
 
     public Command getAutonomousCommand() {
@@ -138,7 +149,6 @@ public class RobotContainer {
      * DIO Port 1 = Switch 2
      * on = jumper in
      * off= jumper out
-     * connect jumpers between 5V and S NOT 5V and GND
      * Red/Blue determined by DS
      * Switch states
      * 1    2
@@ -149,16 +159,21 @@ public class RobotContainer {
      */
     public Path getPath() {
         Path outPath = Path.OFF;
-        if(autoSwitch1.get()) {
-            if(autoSwitch2.get()) {
+        // get() returns true if the circuit is open.
+        if(!autoSwitch1.get()) {
+            if(!autoSwitch2.get()) {
                 outPath = Path.BLUE3;
+                System.out.println("Blue3 loaded.");
             } else {
                 outPath = Path.BLUE1;
+                System.out.println("Blue1 loaded.");
             }
-        } else if(autoSwitch2.get()) {
+        } else if(!autoSwitch2.get()) {
             outPath = Path.BLUE2;
+            System.out.println("Blue2 loaded.");
         } else {
             outPath = Path.OFF;
+            System.out.println("No path loaded.");
         }
         return outPath.toSide(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue);
     }
