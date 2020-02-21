@@ -68,6 +68,7 @@ public class Intake extends SubsystemBase {
     public void doTheFlop() {
         intakePistons1.set(DoubleSolenoid.Value.kForward);
         intakePistons2.set(DoubleSolenoid.Value.kForward);
+        deployed = true;
     }
 
     public boolean isDeployed() {
