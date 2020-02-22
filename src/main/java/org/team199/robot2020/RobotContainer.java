@@ -137,7 +137,7 @@ public class RobotContainer {
                 intake.retract();
                 intake.stop();
             } else {
-                intake.deploy();
+                intake.doTheFlop();
                 intake.intake();
             }
         }, intake));
