@@ -118,7 +118,8 @@ final class DataLog {
         if(data.size() != varIds.size()) {
             fetchData();
         }
-        for(String id: varIds) {
+        for(int i = 1; i < varIds.size(); i++) {
+            String id = varIds.get(i);
             try {
                 switch(types.get(id)) {
                     case BOOLEAN:
