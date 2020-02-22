@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
     // TODO: find good values and then set to final
-    private static double kIntakeSpeed = 0.75;
+    private static double kIntakeSpeed = 0.4;
     private static double kSlowSpeed = -0.1;
 
     private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kIntakeRoller);
@@ -53,25 +53,26 @@ public class Intake extends SubsystemBase {
     }
 
     public void deploy() {
-        intakePistons1.set(DoubleSolenoid.Value.kForward);
-        intakePistons2.set(DoubleSolenoid.Value.kReverse);
+        intakePistons1.set(DoubleSolenoid.Value.kReverse);
+        intakePistons2.set(DoubleSolenoid.Value.kForward);
         deployed = true;
     }
 
     public void retract() {
-        intakePistons1.set(DoubleSolenoid.Value.kReverse);
-        intakePistons2.set(DoubleSolenoid.Value.kForward);
+        intakePistons1.set(DoubleSolenoid.Value.kForward);
+        intakePistons2.set(DoubleSolenoid.Value.kReverse);
         deployed = false;
     }
 
     // for if we want to try making our intake less rigid
     public void doTheFlop() {
-        intakePistons1.set(DoubleSolenoid.Value.kForward);
-        intakePistons2.set(DoubleSolenoid.Value.kForward);
+        intakePistons1.set(DoubleSolenoid.Value.kReverse);
+        intakePistons2.set(DoubleSolenoid.Value.kReverse);
         deployed = true;
     }
 
     public boolean isDeployed() {
         return deployed;
     }
+
 }
