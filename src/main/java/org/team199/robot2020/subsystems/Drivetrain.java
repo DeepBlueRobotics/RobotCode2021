@@ -117,7 +117,7 @@ public class Drivetrain extends SubsystemBase {
     odometry.update(Rotation2d.fromDegrees(getHeading()), 
                     Units.inchesToMeters(getEncPos(Side.LEFT)), 
                     Units.inchesToMeters(getEncPos(Side.RIGHT)));
-
+  
     SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());
     SmartDashboard.putNumber("Left Encoder Distance", getEncPos(Drivetrain.Side.LEFT));
@@ -128,6 +128,7 @@ public class Drivetrain extends SubsystemBase {
   public void setOdometry(DifferentialDriveOdometry odometry) {
     if(!isOdometryInit) {
       this.odometry = odometry;
+      resetEncoders();
       isOdometryInit = true;
     }
   }

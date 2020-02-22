@@ -59,14 +59,10 @@ public class RobotPath {
                 if (count > 0) {
                     x = Double.parseDouble(record.get(0));
                     y = Double.parseDouble(record.get(1));
-                    if (isInverted) {
-                        x *= -1;
-                        y *= -1;
-                    }
                     tanx = Double.parseDouble(record.get(2));
                     tany = Double.parseDouble(record.get(3));
                     rot = new Rotation2d(tanx, tany);
-                    if (isInverted) { rot.rotateBy(new Rotation2d(Math.PI)); }
+                    if (isInverted) { rot = rot.rotateBy(new Rotation2d(Math.PI)); }
                     poses.add(new Pose2d(x, y, rot));
                 }
                 count++;
