@@ -92,8 +92,8 @@ public final class Constants {
             // climber
             public static final int kDeployClimberButton = Y;
             public static final int kRaiseRobotButton = LB;
-            public static final int kAdjustClimberUpButton = 0; // TODO: change button
-            public static final int kAdjustClimberDownButton = 0; // TODO: change button    
+            public static final int kAdjustClimberUpButton = B; // TODO: change button
+            public static final int kAdjustClimberDownButton = X; // TODO: change button    
 
             // intake/feeder
             public static final int kIntakeButton = X;

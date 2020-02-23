@@ -9,6 +9,7 @@ package org.team199.robot2020.commands;
 
 import org.team199.robot2020.subsystems.Climber;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DeployClimber extends CommandBase {
@@ -26,6 +27,7 @@ public class DeployClimber extends CommandBase {
   public void initialize() {
     climber.runLift(Climber.kLiftDeploySpeed);
     climber.runWinch(Climber.kWinchDeploySpeed);
+    System.out.println("--RUNNING--");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,11 +43,13 @@ public class DeployClimber extends CommandBase {
   public void end(boolean interrupted) {
     climber.runLift(Climber.kLiftKeepSpeed);
     climber.runWinch(0);
+    System.out.println("--ENDED--");
   }
 
-  // Returns true when the command should end.
+  // eturns true when the command should end.
   @Override
   public boolean isFinished() {
     return climber.getLiftHeight() >= Climber.kLiftHeight;
+   // return climber.getWinchHeight() >= 0;
   }
 }
