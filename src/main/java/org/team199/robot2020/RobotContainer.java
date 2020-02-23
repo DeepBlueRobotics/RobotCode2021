@@ -48,7 +48,7 @@ import org.team199.robot2020.subsystems.Climber;
 public class RobotContainer {
     private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drive.kAutoPathSwitch1Port);
     private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
-    private final Drivetrain drivetrain = new Drivetrain();
+    final Drivetrain drivetrain = new Drivetrain();
     private final Shooter shooter = new Shooter();
     private final Intake intake = new Intake();
     private final Feeder feeder = new Feeder();
@@ -103,7 +103,7 @@ public class RobotContainer {
 
         paths = new RobotPath[6];
         loadPath(Path.BLUE1, "Blue1", false);
-        loadPath(Path.BLUE2, "TestBlue2StraightLine", true);
+        loadPath(Path.BLUE2, "TestBlue2OneBall", false);
         loadPath(Path.BLUE3, "Blue3", false);
         loadPath(Path.RED1, "Red1", false);
         loadPath(Path.RED2, "Red2", false);
@@ -116,16 +116,13 @@ public class RobotContainer {
                 () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
 
         // characterize drive button
-        // new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton)
-        //         .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
-        //                 !SmartDashboard.getBoolean("Characterized Drive", false))));
         
         // Toggle Characterize Drive                
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
                 () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
     }
 
-    private void configureButtonBindingsRightJoy() {
+    private void configureButtonBindingsRightJoy() {new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleMode, drivetrain));
         // Align the robot and then shoots
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
     }
@@ -160,8 +157,7 @@ public class RobotContainer {
             final RobotPath path = paths[getPath().idx];
             if(path == null) {
                 throw new Exception();
-            }
-            return new AutoShootAndDrive(drivetrain, intake, feeder, lime, path);
+            } return new AutoShootAndDrive(drivetrain, intake, feeder, shooter, lime, path);
         } catch(final Exception e) {
             return new InstantCommand();
         }

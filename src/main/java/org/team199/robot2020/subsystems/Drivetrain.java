@@ -10,6 +10,7 @@ package org.team199.robot2020.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
@@ -143,6 +144,20 @@ public class Drivetrain extends SubsystemBase {
     isOdometryInit = false;
   }
 
+  public void toggleMode() {
+    if(leftMaster.getIdleMode() == IdleMode.kBrake) {
+      leftMaster.setIdleMode(IdleMode.kCoast);
+      leftSlave.setIdleMode(IdleMode.kCoast);
+      rightMaster.setIdleMode(IdleMode.kCoast);
+      rightSlave.setIdleMode(IdleMode.kCoast);
+    } else {
+      leftMaster.setIdleMode(IdleMode.kBrake);
+      leftSlave.setIdleMode(IdleMode.kBrake);
+      rightMaster.setIdleMode(IdleMode.kBrake);
+      rightSlave.setIdleMode(IdleMode.kBrake);
+    }
+  }
+
   public double getHeading() {
     return Math.IEEEremainder(gyro.getAngle(), 360) * (isGyroReversed ? -1.0 : 1.0);
   }
@@ -189,7 +204,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void charDriveArcade(double speed, double rotation) {
     // The arguments to wheelspeeds are in m/s and radians.
-    speed = Math.copySign(speed * speed, speed) * Units.inchesToMeters(kMaxSpeed);
+    speed = Math.copySign(speed * speed, speed) * kAutoMaxSpeed;
     rotation = Math.copySign(rotation * rotation, rotation) * kMaxAngularSpeed;
 
     DifferentialDriveWheelSpeeds wheelspeeds = kinematics.toWheelSpeeds(new ChassisSpeeds(speed, 0.0, -rotation));
@@ -216,6 +231,13 @@ public class Drivetrain extends SubsystemBase {
     final double desiredRightVel = wheelSpeeds.rightMetersPerSecond;
     final double actualRightVel = Units.inchesToMeters(getEncRate(Side.RIGHT));
     final double rightAccel = (desiredRightVel - prevRightVel) / (currentTime - prevTime);
+
+    SmartDashboard.putNumber("Desired Left Vel", desiredLeftVel);
+    SmartDashboard.putNumber("Actual Left Vel", actualLeftVel);
+    SmartDashboard.putNumber("Left Vel Error", desiredLeftVel - actualLeftVel);
+    SmartDashboard.putNumber("Desired Right Vel", desiredRightVel);
+    SmartDashboard.putNumber("Actual Right Vel", actualRightVel);
+    SmartDashboard.putNumber("Right Vel Error", desiredRightVel - actualRightVel);
 
     // FF.calculate = kS + kV * velocity + kA * acceleration
     final double fwdLeftFF = forwardLeftFF.calculate(desiredLeftVel, leftAccel);

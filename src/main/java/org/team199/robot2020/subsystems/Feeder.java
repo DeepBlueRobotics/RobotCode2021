@@ -40,6 +40,7 @@ public class Feeder extends SubsystemBase {
    * Takes and stores five balls from intake to give to shooter
    */
   public Feeder() {
+    timer.start();
     beltMotor.configPeakOutputForward(1D/3D, 10);
     beltMotor.configPeakOutputReverse(-1D/3D, 10);
     ejectMotor.configPeakOutputForward(1, 10);
@@ -69,6 +70,7 @@ public class Feeder extends SubsystemBase {
 
     SmartDashboard.putNumber("Feeder.currentInSensorDistance", inSensor.getRange());
     SmartDashboard.putNumber("Feeder.currentOutSensorDistance", outSensor.getRange());
+    SmartDashboard.putNumber("Feeder.timer", timer.get());
   }
 
   public void runForward() {
@@ -97,5 +99,9 @@ public class Feeder extends SubsystemBase {
 
   public boolean isCellAtShooter() {
     return outSensor.getRange() < kOutSensorDistance;
+  }
+
+  public TimeOfFlight getShooterDistanceSensor() {
+    return outSensor;
   }
 }

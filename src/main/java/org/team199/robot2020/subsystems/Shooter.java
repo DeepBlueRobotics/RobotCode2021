@@ -22,6 +22,7 @@ public class Shooter extends SubsystemBase {
     private static final double kD = 0.005;
 
     private double kTargetSpeed = 4200;
+    private final double speedOffset = 100;
 
     private final CANSparkMax master = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterMaster);
     private final CANSparkMax slave = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterSlave);
@@ -67,6 +68,10 @@ public class Shooter extends SubsystemBase {
 
     public double getTargetSpeed() {
         return kTargetSpeed;
+    }
+
+    public boolean isAtTargetSpeed() {
+        return (master.getEncoder().getVelocity() > (kTargetSpeed - speedOffset));
     }
 
     public double calculateFeedForward(double velocity) {
