@@ -44,7 +44,7 @@ public final class Constants {
         public static final int kClimberLift = 13;
 
         // solenoids
-        public static final int[] kIntakePistons = {0, 1};
+        public static final int[] kIntakePistons = { 0, 1, 2, 5 };
 
         // other
         public static final int kFeederInSensor = 11;
