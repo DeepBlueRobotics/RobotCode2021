@@ -38,7 +38,7 @@ public class Limelight {
 
   public Limelight() {
     SmartDashboard.putNumber("Area Threshold", 0.02);
-    pidController = new PIDController(0.015,0,0,1D/90D); // TODO: Set correct i and d values
+    pidController = new PIDController(0.0075,0,0,1D/90D); // TODO: Set correct i and d values
     pidController.setSetpoint(0);
     pidController.setTolerance(0.01); // TODO: Set correct tolerance
   }
@@ -143,7 +143,7 @@ public class Limelight {
     }
     SmartDashboard.putBoolean("Stop Auto Steering", stopSteer);
 
-    adjustment = Math.signum(adjustment) * Math.min(Math.abs(adjustment), 0.5);
+    adjustment = Math.signum(tx) * Math.min(Math.abs(adjustment), 0.5);
     SmartDashboard.putNumber("Adjustment", adjustment);
     return adjustment;
   }
@@ -273,5 +273,9 @@ public class Limelight {
       }
     }
     return true;
+  }
+
+  public PIDController getPIDController() {
+    return pidController;
   }
 }

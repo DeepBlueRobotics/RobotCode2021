@@ -49,7 +49,8 @@ public class RobotContainer {
     private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drive.kAutoPathSwitch1Port);
     private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
     final Drivetrain drivetrain = new Drivetrain();
-    private final Shooter shooter = new Shooter();
+    private final Limelight lime = new Limelight();
+    private final Shooter shooter = new Shooter(lime);
     private final Intake intake = new Intake();
     private final Feeder feeder = new Feeder();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.kPort);
@@ -58,7 +59,6 @@ public class RobotContainer {
     private final Climber climber = new Climber();
     private final RobotPath[] paths;
 
-    private final Limelight lime = new Limelight();
 
     public RobotContainer() {
         
