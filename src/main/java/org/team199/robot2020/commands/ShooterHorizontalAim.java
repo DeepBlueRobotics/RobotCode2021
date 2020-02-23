@@ -9,7 +9,7 @@ import org.team199.robot2020.subsystems.Drivetrain;
 public class ShooterHorizontalAim extends CommandBase {
     private final Limelight limelight;
     private final Drivetrain drivetrain;
-    private final double txRange = 0.0;     // TODO: Determine correct txRange
+    private final double txRange = 2.0;     // TODO: Determine correct txRange
     public ShooterHorizontalAim(Drivetrain drivetrain, Limelight limelight){
         this.drivetrain = drivetrain;
         this.limelight = limelight;
@@ -18,11 +18,12 @@ public class ShooterHorizontalAim extends CommandBase {
 
     public void execute() {
         double adjustment = limelight.steeringAssist();
-        drivetrain.charDriveTank(adjustment, -adjustment);
+        drivetrain.tankDrive(adjustment, -adjustment, false);
     }
 
     public boolean isFinished() {
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
-        return (Math.abs(tx) < txRange);
+        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
+        return (Math.abs(tx) < txRange) && tv == 1.0;
     }
 }

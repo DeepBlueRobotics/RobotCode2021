@@ -28,15 +28,16 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
 
         addCommands(
             initShoot,
+            new ShooterHorizontalAim(drivetrain, lime),
             new InstantCommand(() -> {
                 intake.intake();
                 intake.doTheFlop();
-            }),
+            }, intake),
             path.getPathCommand(),
             new InstantCommand(() -> {
                 intake.retract();
                 intake.stop();
-            }),
+            }, intake),
             finalShoot
         );
     }
