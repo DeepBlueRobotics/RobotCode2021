@@ -73,8 +73,8 @@ final class DataLog {
      */
     static void logData() throws IllegalStateException {
         LogUtils.checkInit();
+        fetchData();
         if(!isDisabled) {
-            fetchData();
             TimeLog.startDataLogCycle();
             try {
                 CSVPrinter printer = GlobalLogInfo.getDataPrinter();
