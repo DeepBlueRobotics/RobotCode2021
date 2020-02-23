@@ -103,7 +103,7 @@ public class RobotContainer {
 
         paths = new RobotPath[6];
         loadPath(Path.BLUE1, "Blue1", false);
-        loadPath(Path.BLUE2, "TestBlue2StraightLine", false);
+        loadPath(Path.BLUE2, "TestBlue2StraightLine", true);
         loadPath(Path.BLUE3, "Blue3", false);
         loadPath(Path.RED1, "Red1", false);
         loadPath(Path.RED2, "Red2", false);
@@ -116,9 +116,9 @@ public class RobotContainer {
                 () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
 
         // characterize drive button
-        new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton)
-                .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
-                        !SmartDashboard.getBoolean("Characterized Drive", false))));
+        // new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton)
+        //         .whenPressed(new InstantCommand(() -> SmartDashboard.putBoolean("Characterized Drive",
+        //                 !SmartDashboard.getBoolean("Characterized Drive", false))));
         
         // Toggle Characterize Drive                
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
