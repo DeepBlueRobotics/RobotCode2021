@@ -38,7 +38,7 @@ public class Limelight {
 
   public Limelight() {
     SmartDashboard.putNumber("Area Threshold", 0.02);
-    pidController = new PIDController(0.015,0,0,1/90); // TODO: Set correct i and d values
+    pidController = new PIDController(0.015,0.01,0,1/90); // TODO: Set correct i and d values
     pidController.setSetpoint(0);
     pidController.setTolerance(0.01); // TODO: Set correct tolerance
   }
