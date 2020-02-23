@@ -57,5 +57,6 @@ public class AutoShoot extends CommandBase {
 
     public void end(boolean interrupted) {
         feeder.stop();
+        feeder.reset();
     }
 }

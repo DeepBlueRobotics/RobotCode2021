@@ -29,8 +29,8 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
         addCommands(
             initShoot,
             new InstantCommand(() -> {
-                intake.deploy();
                 intake.intake();
+                intake.doTheFlop();
             }),
             path.getPathCommand(),
             new InstantCommand(() -> {
