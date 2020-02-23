@@ -24,6 +24,6 @@ public class ShooterHorizontalAim extends CommandBase {
     public boolean isFinished() {
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
-        return (Math.abs(tx) < txRange) && tv == 1;
+        return (Math.abs(tx) < txRange) && tv == 1.0;
     }
 }
