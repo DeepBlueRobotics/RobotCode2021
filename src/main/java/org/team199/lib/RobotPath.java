@@ -69,7 +69,7 @@ public class RobotPath {
             }
             csvParser.close();
         } catch (FileNotFoundException e) {
-            System.out.println("File named /home/lvuser/deploy/paths/" + filename + ".path not found.");
+            System.out.println("File named /home/lvuser/deploy/PathWeaver/Paths/" + filename + ".path not found.");
             e.printStackTrace();
         }
 
