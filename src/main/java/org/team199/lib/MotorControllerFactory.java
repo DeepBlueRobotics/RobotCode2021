@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 /**
@@ -63,6 +64,7 @@ public class MotorControllerFactory {
       return MotorErrors.createDummySparkMax();
     }
     MotorErrors.reportError(spark.restoreFactoryDefaults());
+    MotorErrors.reportError(spark.follow(ExternalFollower.kFollowerDisabled, 0));
     MotorErrors.reportError(spark.setIdleMode(IdleMode.kBrake));
     MotorErrors.reportError(spark.enableVoltageCompensation(12));
     MotorErrors.reportError(spark.setSmartCurrentLimit(50));
