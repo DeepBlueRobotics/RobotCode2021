@@ -35,6 +35,7 @@ public class RobotPath {
     private File file;
 
     public RobotPath(String filename, Drivetrain dt, boolean isInverted) throws IOException {
+        System.out.println("Path name: " + filename + ", IsInverted: " + isInverted);
         TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
                                                        Drivetrain.kAutoMaxAccel);
         config.setKinematics(dt.getKinematics());
@@ -45,7 +46,7 @@ public class RobotPath {
         DifferentialDriveVoltageConstraint voltConstraint = new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), dt.getKinematics(), Drivetrain.kAutoMaxVolt);
         config.addConstraint(voltConstraint);
-        if (isInverted) { config.setReversed(true); }
+        config.setReversed(isInverted);
         ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
         
         try {

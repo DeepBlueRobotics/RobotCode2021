@@ -103,7 +103,7 @@ public class RobotContainer {
 
         paths = new RobotPath[6];
         loadPath(Path.BLUE1, "Blue1", false);
-        loadPath(Path.BLUE2, "TestBlue2StraightLine", false);
+        loadPath(Path.BLUE2, "TestBlue2StraightLine", true);
         loadPath(Path.BLUE3, "Blue3", false);
         loadPath(Path.RED1, "Red1", false);
         loadPath(Path.RED2, "Red2", false);
@@ -209,7 +209,9 @@ public class RobotContainer {
             System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
             e.printStackTrace(System.err);
         }
-    }public static enum Path {
+    }
+    
+    public static enum Path {
         BLUE1(0), BLUE2(1), BLUE3(2), RED1(3), RED2(4), RED3(5), OFF(-1);
 
         public final int idx;
