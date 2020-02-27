@@ -198,6 +198,11 @@ public class RobotContainer {
         return outPath.toSide(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue);
     }
 
+    private void loadDPath(Path path, String pathName, boolean isInverted) {
+        loadPath(path.toSide(true), pathName, isInverted);
+        loadPath(path.toSide(false), pathName, !isInverted);
+    }
+        
     private void loadPath(final Path path, final String pathName, final boolean isInverted) {
         try {
             paths[path.idx] = new RobotPath(pathName, drivetrain, isInverted);
@@ -205,7 +210,9 @@ public class RobotContainer {
             System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
             e.printStackTrace(System.err);
         }
-    }public static enum Path {
+    }
+    
+    public static enum Path {
         BLUE1(0), BLUE2(1), BLUE3(2), RED1(3), RED2(4), RED3(5), OFF(-1);
 
         public final int idx;

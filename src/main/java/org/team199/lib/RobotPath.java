@@ -11,6 +11,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -35,6 +36,10 @@ public class RobotPath {
     private File file;
 
     public RobotPath(String filename, Drivetrain dt, boolean isInverted) throws IOException {
+        this(filename, dt, isInverted, DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue);
+    }
+
+    public RobotPath(String filename, Drivetrain dt, boolean isInverted, boolean isBlue) throws IOException {
         TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
                                                        Drivetrain.kAutoMaxAccel);
         config.setKinematics(dt.getKinematics());
@@ -53,19 +58,19 @@ public class RobotPath {
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(file));
             double x, y, tanx, tany;
             Rotation2d rot;
-            
-            int count = 0;
-            for (CSVRecord record : csvParser) {
-                if (count > 0) {
-                    x = Double.parseDouble(record.get(0));
-                    y = Double.parseDouble(record.get(1));
-                    tanx = Double.parseDouble(record.get(2));
-                    tany = Double.parseDouble(record.get(3));
-                    rot = new Rotation2d(tanx, tany);
-                    if (isInverted) { rot = rot.rotateBy(new Rotation2d(Math.PI)); }
-                    poses.add(new Pose2d(x, y, rot));
-                }
-                count++;
+            CSVRecord startCoords = csvParser.getRecords().get(1);
+            double startX = Double.parseDouble(isBlue ? startCoords.get(2) : startCoords.get(0));
+            double startY = Double.parseDouble(isBlue ? startCoords.get(3) : startCoords.get(1));
+
+            for (int i = 2; i < csvParser.getRecords().size(); i++) {
+                CSVRecord record = csvParser.getRecords().get(i);
+                x = Double.parseDouble(record.get(0)) + startX;
+                y = Double.parseDouble(record.get(1)) + startY;
+                tanx = Double.parseDouble(record.get(2));
+                tany = Double.parseDouble(record.get(3));
+                rot = new Rotation2d(tanx, tany);
+                if (isInverted) { rot = rot.rotateBy(new Rotation2d(Math.PI)); }
+                poses.add(new Pose2d(x, y, rot));
             }
             csvParser.close();
         } catch (FileNotFoundException e) {
