@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
@@ -35,11 +36,7 @@ public class RobotPath {
     private Drivetrain dt;
     private File file;
 
-    public RobotPath(String filename, Drivetrain dt, boolean isInverted) throws IOException {
-        this(filename, dt, isInverted, DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue);
-    }
-
-    public RobotPath(String filename, Drivetrain dt, boolean isInverted, boolean isBlue) throws IOException {
+    public RobotPath(String filename, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
         TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
                                                        Drivetrain.kAutoMaxAccel);
         config.setKinematics(dt.getKinematics());
@@ -58,14 +55,11 @@ public class RobotPath {
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(file));
             double x, y, tanx, tany;
             Rotation2d rot;
-            CSVRecord startCoords = csvParser.getRecords().get(1);
-            double startX = Double.parseDouble(isBlue ? startCoords.get(2) : startCoords.get(0));
-            double startY = Double.parseDouble(isBlue ? startCoords.get(3) : startCoords.get(1));
 
-            for (int i = 2; i < csvParser.getRecords().size(); i++) {
+            for (int i = 1; i < csvParser.getRecords().size(); i++) {
                 CSVRecord record = csvParser.getRecords().get(i);
-                x = Double.parseDouble(record.get(0)) + startX;
-                y = Double.parseDouble(record.get(1)) + startY;
+                x = Double.parseDouble(record.get(0)) + initPos.getX();
+                y = Double.parseDouble(record.get(1)) + initPos.getY();
                 tanx = Double.parseDouble(record.get(2));
                 tany = Double.parseDouble(record.get(3));
                 rot = new Rotation2d(tanx, tany);
