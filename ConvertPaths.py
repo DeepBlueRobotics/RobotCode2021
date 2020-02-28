@@ -1,7 +1,7 @@
 import csv
 import glob
 import os
-for filename in glob.glob("Paths/*.path"):
+for filename in glob.glob("src/main/deploy/PathWeaver/Paths/*.path"):
 	pathCSV = csv.reader(open(filename,"r"))
 
 	path = [row for row in pathCSV]
