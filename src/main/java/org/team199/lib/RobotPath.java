@@ -6,12 +6,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -34,9 +34,39 @@ public class RobotPath {
 
     private Trajectory trajectory;
     private Drivetrain dt;
-    private File file;
 
-    public RobotPath(String filename, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
+    public RobotPath(String pathName, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
+        this(getPointsFromFile(pathName, dt, isInverted, initPos), isInverted, dt);
+    }
+
+    public RobotPath(List<Pose2d> poses, boolean isInverted, Drivetrain dt) {
+        this(poses, createConfig(isInverted, dt), dt);
+    }
+
+    public RobotPath(List<Pose2d> poses, TrajectoryConfig config, Drivetrain dt) {
+        this(TrajectoryGenerator.generateTrajectory(poses, config), dt);
+    }
+
+    public RobotPath(Trajectory trajectory, Drivetrain dt) {
+        this.trajectory = trajectory;
+        this.dt = dt;
+    }
+
+    public Command getPathCommand() {
+        RamseteCommand ram = new RamseteCommand(trajectory, 
+                                                () -> dt.getOdometry().getPoseMeters(), 
+                                                new RamseteController(), 
+                                                dt.getKinematics(),
+                                                dt::charDriveDirect,
+                                                dt);
+        return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.charDriveTank(0, 0), dt)); //TODO: Configure Ramsete Controller Values
+    }
+
+    public void loadOdometry() {
+        dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
+    }
+
+    public static TrajectoryConfig createConfig(boolean isInverted, Drivetrain dt) {
         TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
                                                        Drivetrain.kAutoMaxAccel);
         config.setKinematics(dt.getKinematics());
@@ -47,11 +77,20 @@ public class RobotPath {
         DifferentialDriveVoltageConstraint voltConstraint = new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), dt.getKinematics(), Drivetrain.kAutoMaxVolt);
         config.addConstraint(voltConstraint);
-        if (isInverted) { config.setReversed(true); }
-        ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
         
+        if (isInverted) { config.setReversed(true); }
+        
+        return config;
+    }
+
+    public static List<Pose2d> getPointsFromFile(String pathName, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
+        return getPointsFromFile(getPathFile(pathName), dt, isInverted, initPos);
+    }
+
+    public static List<Pose2d> getPointsFromFile(File file, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
+        ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
+
         try {
-            file = Filesystem.getDeployDirectory().toPath().resolve(Paths.get("PathWeaver/Paths/" + filename + ".path")).toFile();
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(file));
             double x, y, tanx, tany;
             Rotation2d rot;
@@ -68,26 +107,14 @@ public class RobotPath {
             }
             csvParser.close();
         } catch (FileNotFoundException e) {
-            System.out.println("File named /home/lvuser/deploy/PathWeaver/Paths/" + filename + ".path not found.");
+            System.out.println("File named: " + file.getAbsolutePath() + " not found.");
             e.printStackTrace();
         }
 
-        trajectory = TrajectoryGenerator.generateTrajectory(poses, config);
-        this.dt = dt;
+        return poses;
     }
 
-    public Command getPathCommand() {
-        System.out.println(file.toPath());
-        RamseteCommand ram = new RamseteCommand(trajectory, 
-                                                () -> dt.getOdometry().getPoseMeters(), 
-                                                new RamseteController(), 
-                                                dt.getKinematics(),
-                                                dt::charDriveDirect,
-                                                dt);
-        return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.charDriveTank(0, 0), dt)); //TODO: Configure Ramsete Controller Values
-    }
-
-    public void loadOdometry() {
-        dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
+    public static File getPathFile(String pathName) {
+        return Filesystem.getDeployDirectory().toPath().resolve(Paths.get("PathWeaver/Paths/" + pathName + ".path")).toFile();
     }
 }
