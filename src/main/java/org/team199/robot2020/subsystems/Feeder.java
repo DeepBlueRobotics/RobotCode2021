@@ -119,4 +119,8 @@ public class Feeder extends SubsystemBase {
   public boolean isCellAtShooter() {
     return reachedShooter && outSensor.getRange() >= kOutSensorMaxDistance;
   }
+
+  public TimeOfFlight getShooterDistanceSensor() {
+    return outSensor;
+  }
 }
