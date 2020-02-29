@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import org.team199.lib.Limelight;
-
+import org.team199.lib.LinearInterpolation;
 import org.team199.lib.RobotPath;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -57,6 +57,7 @@ public class RobotContainer {
     private final Joystick controller = new Joystick(Constants.OI.Controller.kPort);
     private final Climber climber = new Climber();
     private final RobotPath[] paths;
+    private final LinearInterpolation linearInterpol;
 
     public RobotContainer() {
         
@@ -103,6 +104,7 @@ public class RobotContainer {
             loadPath(Path.PATH2, "OneBall", false, StartingPosition.RED_CENTER.pos);
             loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);
         }
+        linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
     private void configureButtonBindingsLeftJoy() {
@@ -152,7 +154,11 @@ public class RobotContainer {
             final RobotPath path = paths[getPath().idx];
             if(path == null) {
                 throw new Exception();
-            } return new AutoShootAndDrive(drivetrain, intake, feeder, shooter, lime, path);
+            }
+            boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
+            return new AutoShootAndDrive(drivetrain, intake, feeder, 
+                                         shooter, lime, path, 
+                                         linearInterpol, (isBlue ? Target.BLUE_PORT.pos : Target.RED_PORT.pos));
         } catch(final Exception e) {
             return new InstantCommand();
         }
@@ -228,4 +234,16 @@ public class RobotContainer {
             pos = new Translation2d(x, y);
         }
     }
+
+    public static enum Target {
+        // DO NOT CHANGE ANY OF THESE VALUES.
+        BLUE_PORT(16, -5.75), 
+        RED_PORT(0, -2.4); 
+    
+        public final Translation2d pos;
+    
+        private Target(double x, double y) {
+            pos = new Translation2d(x, y);
+        }
+      }
 }

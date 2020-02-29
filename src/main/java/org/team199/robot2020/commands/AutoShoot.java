@@ -14,23 +14,17 @@ public class AutoShoot extends CommandBase {
     private final TimeOfFlight distanceSensor;
     private final double[] distanceRange = {117.0, 224.0};  // TODO: Determine the correct distance interval
     private final double numBallsToShoot;
-    private final double shooterTargetSpeed;
     private int ballCount = 0;
 
     private boolean ballCounted = false;
     private boolean stopInit = false;
 
-    public AutoShoot(Feeder feeder, Shooter shooter, TimeOfFlight distanceSensor, int numBallsToShoot, double shooterTargetSpeed) {
+    public AutoShoot(Feeder feeder, Shooter shooter, TimeOfFlight distanceSensor, int numBallsToShoot) {
         this.feeder = feeder;
         this.shooter = shooter;
         this.distanceSensor = distanceSensor;
         this.numBallsToShoot = numBallsToShoot;
-        this.shooterTargetSpeed = shooterTargetSpeed;
         addRequirements(feeder, shooter);
-    }
-
-    public void initialize() {
-        SmartDashboard.putNumber("Shooter.kTargetSpeed", shooterTargetSpeed);
     }
 
     public void execute() {
