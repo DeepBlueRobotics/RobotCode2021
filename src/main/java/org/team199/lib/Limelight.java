@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight {
+  
   public enum Mode {
     DIST, STEER, TARGET
   }
@@ -29,7 +30,6 @@ public class Limelight {
   private double prev_tx = 1.0;
 
   private PIDController pidController;
-  private double backlashOffset = 0;
   private boolean newPIDLoop = false;
   // Parameters for vision using linear algebra. 
   private double[][] rotMat = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
@@ -38,9 +38,18 @@ public class Limelight {
 
   public Limelight() {
     SmartDashboard.putNumber("Area Threshold", 0.02);
-    pidController = new PIDController(0.015,0,0,1/90); // TODO: Set correct i and d values
+    SmartDashboard.putNumberArray("AutoAlign: PID Values", new double[]{0.015,0,0});
+    SmartDashboard.putNumber("AutoAlign: Tolerance", 0.01);
+    SmartDashboard.putNumber("AutoAlign: Backlash Offset", 0);
+    SmartDashboard.setPersistent("Area Threshold");
+    SmartDashboard.setPersistent("AutoAlign: PID Values");
+    SmartDashboard.setPersistent("AutoAlign: Tolerance");
+    SmartDashboard.setPersistent("AutoAlign: Backlash Offset");
+    
+    double[] pidValues = SmartDashboard.getNumberArray("AutoAlign: PID Values", new double[]{0.015,0,0});
+    pidController = new PIDController(pidValues[0],pidValues[1],pidValues[2],1/90);
     pidController.setSetpoint(0);
-    pidController.setTolerance(0.01); // TODO: Set correct tolerance
+    pidController.setTolerance(SmartDashboard.getNumber("AutoAlign: Tolerance", 0.01));
   }
 
   // For the shooter. Given what the limelight sees and the shooter angle, compute the desired initial speed for the shooter.
@@ -115,18 +124,21 @@ public class Limelight {
     SmartDashboard.putNumber("Crosshair Horizontal Offset", tx);
     SmartDashboard.putNumber("Found Vision Target", tv);
     SmartDashboard.putNumber("Prev_tx", prev_tx);
+    double[] pidValues = SmartDashboard.getNumberArray("AutoAlign: PID Values", new double[]{0.015,0,0});
+    pidController.setPID(pidValues[0],pidValues[1],pidValues[2]);
+    pidController.setTolerance(SmartDashboard.getNumber("AutoAlign: Tolerance", 0.01));
+    
     double adjustment = 0;
     double steering_factor = 0.25;
-    
-
+  
     if (tv == 1.0 && !stopSteer) {
       if (ta > SmartDashboard.getNumber("Area Threshold", 0.02)) {
         adjustment = pidController.calculate(tx);
         prev_tx = tx;
-
+        
         if (!newPIDLoop) {
           newPIDLoop = true;
-          pidController.setSetpoint(Math.signum(tx)*backlashOffset);
+          pidController.setSetpoint(Math.signum(tx)*SmartDashboard.getNumber("AutoAlign: Backlash Offset",0));
         }
       }
     } else {
@@ -227,7 +239,7 @@ public class Limelight {
     double[] diff = new double[x.length];
     for (int i = 0; i < x.length; i++) { diff[i] = x[i] - y[i]; }
     return diff;
-  }
+  } 
 
   // Returns the reduced row-echelon form of a matrix.
   private double[][] Gaussian(double[][] matrix) {
