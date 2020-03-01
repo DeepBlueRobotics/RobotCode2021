@@ -15,15 +15,15 @@ public class Climber extends SubsystemBase {
     private static final double kWinchConversionFactor = 1.0/9 * Math.PI; // TODO: confirm numbers (inches)
 
     // TODO: find good values and then set to final
-    public static double kLiftDeploySpeed = 0.25; // TODO: set correct speed
+    public static double kLiftDeploySpeed = 0.3; // TODO: set correct speed
     public static double kWinchDeploySpeed = 1; // TODO: set correct speed
     public static double kLiftKeepSpeed = 0.06; // TODO: set cor9rect speed
     public static double kLiftRetractSpeed = -0.3; // TODO: set correct speed
     public static double kWinchRetractSpeed = 0.6; // TODO: set correct speed
-    public static double kLiftAdjustSpeed = 0.1; // TODO: set correct speed
+    public static double kLiftAdjustSpeed = 0.2; // TODO: set correct speed  a4
     public static double kWinchAdjustSpeed = 0.2;
 
-    public static final double kLiftHeight = 52;
+    public static final double kLiftHeight = 87;
     public static final double kWinchEndHeight = 71;
     public static final double kWinchStartHeight = -80;
     private final CANSparkMax liftMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberLift);
@@ -39,7 +39,7 @@ public class Climber extends SubsystemBase {
         liftEnc.setPosition(0);
         winchEnc.setPosition(kWinchStartHeight);
         winchMotor.setIdleMode(IdleMode.kCoast);
-        liftMotor.setSmartCurrentLimit(20);
+        liftMotor.setSmartCurrentLimit(30);
 
         SmartDashboard.putNumber("Climber.kLiftDeploySpeed", kLiftDeploySpeed);
         SmartDashboard.putNumber("Climber.kWinchDeploySpeed", kWinchDeploySpeed);
@@ -65,11 +65,20 @@ public class Climber extends SubsystemBase {
     public void runLift(double speed) {
         System.out.println("CARRY ME BOII IS SPEED " + liftMotor.getEncoder().getVelocity());
         liftMotor.set(speed);
+        if (liftMotor.getEncoder().getVelocity() == 0){
+            System.out.println("UNWIND WHEN DONE TESTING!!!");
+            System.out.println("UNWIND WHEN DONE TESTING!!!");
+            System.out.println("UNWIND WHEN DONE TESTING!!!");
+            System.out.println("UNWIND WHEN DONE TESTING!!!");
+            System.out.println("UNWIND WHEN DONE TESTING!!!");
+        }
     }
 
     public void runWinch(double speed) {
         System.out.println("HEYY WINCH IS RUNNING AT SPEED " + winchMotor.getEncoder().getVelocity());
         winchMotor.set(Math.abs(speed));
+        
+        
     }
 
     public double getLiftHeight() {
