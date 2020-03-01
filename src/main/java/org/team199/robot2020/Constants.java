@@ -71,6 +71,7 @@ public final class Constants {
             public static final int kPort = 1;
 
             public static final int kAlignAndShootButton = 2;
+            public static final int kShootButton = 3;
             public static final int kSlowDriveButton = 5;
         }
 
