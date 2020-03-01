@@ -75,4 +75,11 @@ public class Intake extends SubsystemBase {
         return deployed;
     }
 
+    public double getEncoderDistance() {
+        return rollerMotor.getEncoder().getPosition();
+    }
+
+    public void resetEncoder() {
+        rollerMotor.getEncoder().setPosition(0.0);
+    }
 }

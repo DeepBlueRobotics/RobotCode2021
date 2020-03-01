@@ -91,11 +91,24 @@ public class RobotContainer {
         }, feeder));
 
         intake.setDefaultCommand(new RunCommand(() -> {
+            boolean encoderReset = false;
+            double targetEncoderDist = 100.0;   // TODO: Figure out the correct value.
             if(intake.isDeployed()) {
-                if(feeder.has5Intake()) {
-                    intake.stop();
-                } else if(feeder.isIntakeCellEntering()) {
-                    intake.slow();
+                if(feeder.isIntakeCellEntering()) {
+                    if (!feeder.isCellAtShooter()) {
+                        intake.slow();
+                    } else {
+                        if (!encoderReset) {
+                            intake.resetEncoder();
+                            encoderReset = true;
+                        }
+                        if (intake.getEncoderDistance() <= targetEncoderDist) {
+                            intake.slow();
+                        } else {
+                            encoderReset = false;
+                            intake.stop();
+                        }
+                    }
                 } else {
                     intake.intake();
                 }
@@ -131,8 +144,8 @@ public class RobotContainer {
 
     private void configureButtonBindingsRightJoy() {new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleMode, drivetrain));
         // Align the robot and then shoots
-        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
-        new JoystickButton(rightJoy, Constants.OI.RightJoy.kShootButton).whileHeld(new Shoot(feeder));
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder, intake)));
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.kShootButton).whileHeld(new Shoot(feeder, intake));
     }
 
     private void configureButtonBindingsController() {

@@ -142,6 +142,10 @@ public class Feeder extends SubsystemBase {
     reachedShooter = false;
   }
 
+  public double getCellPosition() {
+    return beltMotor.getSelectedSensorPosition(0) - startPosition;
+  }
+
   public boolean isCellEntering() {
     return beltMotor.getSelectedSensorPosition(0) - startPosition < limitDistance;
   }
