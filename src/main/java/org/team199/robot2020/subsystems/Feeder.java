@@ -14,13 +14,14 @@ import com.playingwithfusion.TimeOfFlight;
 import org.team199.lib.MotorControllerFactory;
 import org.team199.robot2020.Constants;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
   // TODO: find good values and then set to final
   private static double kBeltIntakeSpeed = .8;
-  private static double kRollerIntakeSpeed = .1;
+  private static double kRollerIntakeSpeed = .3;
   private static double kBeltEjectSpeed = 1;
   private static double kRollerEjectSpeed = 1;
 
@@ -40,6 +41,9 @@ public class Feeder extends SubsystemBase {
   private double intakeDelay = 0.1;
   private int startPosition = 0;
   private boolean reachedShooter = false;
+  private boolean intaking = false;
+  private boolean intakeTimerStarted = false;
+  private Timer intakeTimer = new Timer();
 
   /**
    * Takes and stores five balls from intake to give to shooter
@@ -63,15 +67,33 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder.kOutSensorMinDistance", kOutSensorMinDistance);
     SmartDashboard.putNumber("Feeder.kOutSensorMaxDistance", kOutSensorMaxDistance);
     SmartDashboard.putNumber("Feeder.limitDistance", limitDistance);
+    SmartDashboard.putNumber("Feeder.intakeDelay", intakeDelay);
   }
 
   public void periodic() {
     if (inSensor.getRange() <= kInSensorMaxDistance && inSensor.getRange() >= kInSensorMinDistance) {
+      if(!intakeTimerStarted) {
+        intakeTimerStarted = true;
+        intakeTimer.start();
+      }
+    } else {
+      intakeTimerStarted = false;
+      intakeTimer.stop();
+      intakeTimer.reset();
+      intaking = false;
+    }
+    SmartDashboard.putNumber("Feeder.intakeTimer", intakeTimer.get());
+
+    if(intakeTimer.hasElapsed(intakeDelay)) {
+      intaking = true;
+    }
+
+    if(intaking) {
       startPosition = beltMotor.getSelectedSensorPosition(0);
     }
 
     if (!reachedShooter) {
-      reachedShooter = outSensor.getRange() <= kOutSensorMinDistance;
+      reachedShooter = outSensor.getRange() <= kOutSensorMaxDistance;
     }
 
     kBeltIntakeSpeed = SmartDashboard.getNumber("Feeder.kBeltIntakeSpeed", kBeltIntakeSpeed);
@@ -86,6 +108,7 @@ public class Feeder extends SubsystemBase {
     kOutSensorMaxDistance = SmartDashboard.getNumber("Feeder.kOutSensorMaxDistance", kOutSensorMaxDistance);
 
     limitDistance = SmartDashboard.getNumber("Feeder.limitDistance", limitDistance);
+    intakeDelay = SmartDashboard.getNumber("Feeder.intakeDelay", intakeDelay);
 
     SmartDashboard.putNumber("Feeder.currentInSensorDistance", inSensor.getRange());
     SmartDashboard.putNumber("Feeder.currentOutSensorDistance", outSensor.getRange());
