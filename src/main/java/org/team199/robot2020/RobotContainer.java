@@ -85,14 +85,24 @@ public class RobotContainer {
         feeder.setDefaultCommand(new RunCommand(() -> {
             if (feeder.isCellEntering() && !feeder.isCellAtShooter()) {
                 feeder.runForward();
-                if(intake.isDeployed())
-                    intake.slow();
             } else {
                 feeder.stop();
-                if(intake.isDeployed())
-                    intake.intake();
             }
-        }, feeder, intake));
+        }, feeder));
+
+        intake.setDefaultCommand(new RunCommand(() -> {
+            if(intake.isDeployed()) {
+                if(feeder.has5Intake()) {
+                    intake.stop();
+                } else if(feeder.isIntakeCellEntering()) {
+                    intake.slow();
+                } else {
+                    intake.intake();
+                }
+            } else {
+                intake.stop();
+            }
+        }, intake));
 
         paths = new RobotPath[4];
         if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {

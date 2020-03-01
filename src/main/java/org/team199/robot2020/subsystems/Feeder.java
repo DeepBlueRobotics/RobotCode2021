@@ -26,8 +26,8 @@ public class Feeder extends SubsystemBase {
 
   private static double kInSensorMinDistance = 0;
   private static double kInSensorMaxDistance = 65; // 5 inches in millimeters //Old: Units.inchesToMeters(5) * 1000
-  private static double kOutSensorMinDistance = 32;
-  private static double kOutSensorMaxDistance = 45;
+  private static double kInSensorMinDistance2 = 30;
+  private static double kInSensorMaxDistance2 = 50;
   
   private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederBelt);
   private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederEjector);
@@ -55,6 +55,8 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder.kRollerEjectSpeed", kRollerEjectSpeed);
     SmartDashboard.putNumber("Feeder.kInSensorMinDistance", kInSensorMinDistance);
     SmartDashboard.putNumber("Feeder.kInSensorMaxDistance", kInSensorMaxDistance);
+    SmartDashboard.putNumber("Feeder.kInSensorMinDistance2", kInSensorMinDistance2);
+    SmartDashboard.putNumber("Feeder.kInSensorMaxDistance2", kInSensorMaxDistance2);
     SmartDashboard.putNumber("Feeder.kOutSensorMinDistance", kOutSensorMinDistance);
     SmartDashboard.putNumber("Feeder.kOutSensorMaxDistance", kOutSensorMaxDistance);
     SmartDashboard.putNumber("Feeder.limitDistance", limitDistance);
@@ -75,6 +77,8 @@ public class Feeder extends SubsystemBase {
     kRollerEjectSpeed = SmartDashboard.getNumber("Feeder.kRollerEjectSpeed", kRollerEjectSpeed);
     kInSensorMinDistance = SmartDashboard.getNumber("Feeder.kInSensorMinDistance", kInSensorMinDistance);
     kInSensorMaxDistance = SmartDashboard.getNumber("Feeder.kInSensorMaxDistance", kInSensorMaxDistance);
+    kInSensorMinDistance2 = SmartDashboard.getNumber("Feeder.kInSensorMinDistance2", kInSensorMinDistance2);
+    kInSensorMaxDistance2 = SmartDashboard.getNumber("Feeder.kInSensorMaxDistance2", kInSensorMaxDistance2);
     kOutSensorMinDistance = SmartDashboard.getNumber("Feeder.kOutSensorMinDistance", kOutSensorMinDistance);
     kOutSensorMaxDistance = SmartDashboard.getNumber("Feeder.kOutSensorMaxDistance", kOutSensorMaxDistance);
 
@@ -116,8 +120,18 @@ public class Feeder extends SubsystemBase {
     return beltMotor.getSelectedSensorPosition(0) - startPosition < limitDistance;
   }
 
+  public boolean isIntakeCellEntering() {
+    return inSensor.getRange() <= kInSensorMaxDistance;
+  }
+
   public boolean isCellAtShooter() {
-    return reachedShooter && outSensor.getRange() >= kOutSensorMaxDistance;
+    return /*reachedShooter &&*/ outSensor.getRange() <= kOutSensorMinDistance;
+  }
+
+  public boolean has5Intake() {
+    double dist = inSensor.getRange();
+    SmartDashboard.putBoolean("cellAtShooter", isCellAtShooter());
+    return isCellAtShooter() && dist >= kInSensorMinDistance2 && dist <= kInSensorMaxDistance2;
   }
 
   public TimeOfFlight getShooterDistanceSensor() {
