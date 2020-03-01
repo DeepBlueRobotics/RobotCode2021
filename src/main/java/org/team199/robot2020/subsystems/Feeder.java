@@ -28,13 +28,16 @@ public class Feeder extends SubsystemBase {
   private static double kInSensorMaxDistance = 65; // 5 inches in millimeters //Old: Units.inchesToMeters(5) * 1000
   private static double kInSensorMinDistance2 = 30;
   private static double kInSensorMaxDistance2 = 50;
+  private static double kOutSensorMinDistance = 65;
+  private static double kOutSensorMaxDistance = 90;
   
   private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederBelt);
   private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederEjector);
   private final TimeOfFlight inSensor = new TimeOfFlight(Constants.Drive.kFeederInSensor);
   private final TimeOfFlight outSensor = new TimeOfFlight(Constants.Drive.kFeederOutSensor);
   
-  private double limitDistance = 7000;
+  private double limitDistance = 12000;
+  private double intakeDelay = 0.1;
   private int startPosition = 0;
   private boolean reachedShooter = false;
 
