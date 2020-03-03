@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
@@ -19,7 +18,7 @@ public class LinearInterpolation {
     public double minX, maxX;
     public int numPoints = 0;
 
-    // Performs linear interpolation for a strictly monotonically increasing function.
+    // Performs linear interpolation. It is assumed that the function has been formatted so that the x value increases from top to bottom.
     public LinearInterpolation(String filename) {
         try {
             
@@ -40,10 +39,8 @@ public class LinearInterpolation {
                 }
             }
             csvParser.close();
-            Arrays.sort(xs);
             minX = xs[0];
             maxX = xs[xs.length - 1];
-            Arrays.sort(ys);
             for (int i = 1; i < numPoints; i++) {
                 // Linear interpolation (y = mx + b)
                 slopes[i - 1] = (ys[i] - ys[i - 1]) / (xs[i] - xs[i - 1]);

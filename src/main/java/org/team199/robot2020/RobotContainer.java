@@ -49,7 +49,6 @@ public class RobotContainer {
     private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
     final Drivetrain drivetrain = new Drivetrain();
     private final Limelight lime = new Limelight();
-    private final Shooter shooter = new Shooter(lime);
     private final Intake intake = new Intake();
     private final Feeder feeder = new Feeder();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.kPort);
@@ -57,10 +56,11 @@ public class RobotContainer {
     private final Joystick controller = new Joystick(Constants.OI.Controller.kPort);
     private final Climber climber = new Climber();
     private final RobotPath[] paths;
-    private final LinearInterpolation linearInterpol;
+    private final LinearInterpolation linearInterpol = new LinearInterpolation("ShooterData.csv");
+    private final boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
+    private final Shooter shooter = new Shooter(drivetrain, lime, linearInterpol, isBlue ? Target.BLUE_PORT : Target.RED_PORT);
 
     public RobotContainer() {
-        
         if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
             configureButtonBindingsLeftJoy();
         } else{
@@ -127,7 +127,6 @@ public class RobotContainer {
             loadPath(Path.PATH2, "OneBall", false, StartingPosition.RED_CENTER.pos);
             loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);
         }
-        linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
     private void configureButtonBindingsLeftJoy() {
@@ -179,10 +178,9 @@ public class RobotContainer {
             if(path == null) {
                 throw new Exception();
             }
-            boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
             return new AutoShootAndDrive(drivetrain, intake, feeder, 
                                          shooter, lime, path, 
-                                         linearInterpol, (isBlue ? Target.BLUE_PORT.pos : Target.RED_PORT.pos));
+                                         (isBlue ? Target.BLUE_PORT.pos : Target.RED_PORT.pos));
         } catch(final Exception e) {
             return new InstantCommand();
         }
@@ -269,5 +267,5 @@ public class RobotContainer {
         private Target(double x, double y) {
             pos = new Translation2d(x, y);
         }
-      }
+    }
 }
