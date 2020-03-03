@@ -90,6 +90,22 @@ public class RobotContainer {
             }
         }, feeder));
 
+        // Old Intake default command:
+        /*
+        intake.setDefaultCommand(new RunCommand(() -> {
+            if(intake.isDeployed()) {
+                if(feeder.has5Intake()) {
+                    intake.stop();
+                } else if(feeder.isIntakeCellEntering()) {
+                    intake.slow();
+                } else {
+                    intake.intake();
+                }
+            } else {
+                intake.stop();
+            }
+        }, intake));
+        */
         intake.setDefaultCommand(new RunCommand(() -> {
             boolean encoderReset = false;
             double targetEncoderDist = 100.0;   // TODO: Figure out the correct value.
