@@ -47,7 +47,7 @@ import org.team199.robot2020.subsystems.Climber;
 public class RobotContainer {
     private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drive.kAutoPathSwitch1Port);
     private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
-    final Drivetrain drivetrain = new Drivetrain();
+    private final Drivetrain drivetrain = new Drivetrain();
     private final Limelight lime = new Limelight();
     private final Intake intake = new Intake();
     private final Feeder feeder = new Feeder();
@@ -157,7 +157,7 @@ public class RobotContainer {
                 () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
     }
 
-    private void configureButtonBindingsRightJoy() {new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleMode, drivetrain));
+    private void configureButtonBindingsRightJoy() {new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleBreakMode, drivetrain));
         // Align the robot and then shoots
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder, intake)));
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kShootButton).whileHeld(new Shoot(feeder, intake));
@@ -186,6 +186,10 @@ public class RobotContainer {
 
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
+    }
+
+    final Drivetrain getDrivetrain() {
+        return drivetrain;
     }
 
     public Command getAutonomousCommand() {

@@ -144,7 +144,7 @@ public class Drivetrain extends SubsystemBase {
     isOdometryInit = false;
   }
 
-  public void toggleMode() {
+  public void toggleBreakMode() {
     if(leftMaster.getIdleMode() == IdleMode.kBrake) {
       leftMaster.setIdleMode(IdleMode.kCoast);
       leftSlave.setIdleMode(IdleMode.kCoast);
