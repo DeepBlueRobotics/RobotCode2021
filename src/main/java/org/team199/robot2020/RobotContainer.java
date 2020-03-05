@@ -32,6 +32,7 @@ import org.team199.robot2020.subsystems.Shooter;
 import org.team199.robot2020.commands.AdjustClimber;
 import org.team199.robot2020.commands.AutoShootAndDrive;
 import org.team199.robot2020.commands.DeployClimber;
+import org.team199.robot2020.commands.DropLift;
 import org.team199.robot2020.commands.RaiseRobot;
 import org.team199.robot2020.subsystems.Feeder;
 import org.team199.robot2020.subsystems.Intake;
@@ -146,7 +147,10 @@ public class RobotContainer {
         ));
 
         // climb button
-        new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
+        new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new SequentialCommandGroup(
+            new DropLift(climber),
+            new RaiseRobot(climber)
+         ));
     }
 
     public Command getAutonomousCommand() {

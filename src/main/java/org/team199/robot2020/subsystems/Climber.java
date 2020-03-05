@@ -17,7 +17,7 @@ public class Climber extends SubsystemBase {
     // TODO: find good values and then set to final
     public static double kLiftDeploySpeed = 0.3; // TODO: set correct speed
     public static double kWinchDeploySpeed = 1; // TODO: set correct speed
-    public static double kLiftKeepSpeed = 0.06; // TODO: set cor9rect speed
+    public static double kLiftKeepSpeed = 0.06; // TODO: set correct speed
     public static double kLiftRetractSpeed = -0.3; // TODO: set correct speed
     public static double kWinchRetractSpeed = 0.6; // TODO: set correct speed
     public static double kLiftAdjustSpeed = 0.2; // TODO: set correct speed  a4
