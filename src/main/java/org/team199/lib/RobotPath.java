@@ -94,9 +94,10 @@ public class RobotPath {
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(file));
             double x, y, tanx, tany;
             Rotation2d rot;
+            List<CSVRecord> records = csvParser.getRecords();
 
-            for (int i = 1; i < csvParser.getRecords().size(); i++) {
-                CSVRecord record = csvParser.getRecords().get(i);
+            for (int i = 1; i < records.size(); i++) {
+                CSVRecord record = records.get(i);
                 x = Double.parseDouble(record.get(0)) + initPos.getX();
                 y = Double.parseDouble(record.get(1)) + initPos.getY();
                 tanx = Double.parseDouble(record.get(2));
