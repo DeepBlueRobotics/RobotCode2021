@@ -51,10 +51,10 @@ public class Drivetrain extends SubsystemBase {
   public static final double kMaxAngularSpeed = 4 * Math.PI; // Radians / second
   public static final double kAutoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java
   
-  private final CANSparkMax leftMaster = MotorControllerFactory.createSparkMax(Constants.Drive.kDtLeftMaster);
-  private final CANSparkMax leftSlave = MotorControllerFactory.createSparkMax(Constants.Drive.kDtLeftSlave);
-  private final CANSparkMax rightMaster = MotorControllerFactory.createSparkMax(Constants.Drive.kDtRightMaster);
-  private final CANSparkMax rightSlave = MotorControllerFactory.createSparkMax(Constants.Drive.kDtRightSlave);
+  private final CANSparkMax leftMaster = MotorControllerFactory.createSparkMax(Constants.Ports.kDtLeftMaster);
+  private final CANSparkMax leftSlave = MotorControllerFactory.createSparkMax(Constants.Ports.kDtLeftSlave);
+  private final CANSparkMax rightMaster = MotorControllerFactory.createSparkMax(Constants.Ports.kDtRightMaster);
+  private final CANSparkMax rightSlave = MotorControllerFactory.createSparkMax(Constants.Ports.kDtRightSlave);
 
   private final CANEncoder leftEnc = leftMaster.getEncoder();
   private final CANEncoder rightEnc = rightMaster.getEncoder();
