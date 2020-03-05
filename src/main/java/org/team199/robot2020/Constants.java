@@ -52,6 +52,9 @@ public final class Constants {
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
+
+        public static final int kCamera1Port = 0;
+        public static final int kCamera2Port = 1;
     }
 
     /**

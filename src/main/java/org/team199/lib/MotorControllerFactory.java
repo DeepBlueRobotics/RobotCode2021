@@ -15,6 +15,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.cscore.UsbCamera;
 
 /**
  * Add your docs here.
@@ -79,5 +82,10 @@ public class MotorControllerFactory {
     MotorErrors.reportError(controller.setFF(0));
 
     return spark;
+  }
+  public static UsbCamera configureCamera(int port) {
+    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(port);
+    camera.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
+    return camera;
   }
 }

@@ -36,7 +36,10 @@ import org.team199.robot2020.commands.RaiseRobot;
 import org.team199.robot2020.subsystems.Feeder;
 import org.team199.robot2020.subsystems.Intake;
 import org.team199.robot2020.subsystems.Climber;
-
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
+import org.team199.lib.MotorControllerFactory;
+import edu.wpi.first.cameraserver.CameraServer;
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -58,6 +61,9 @@ public class RobotContainer {
     private final Climber climber = new Climber();
     private final RobotPath[] paths;
     private final LinearInterpolation linearInterpol;
+    private final UsbCamera camera1 = MotorControllerFactory.configureCamera(Constants.Drive.kCamera1Port);
+    private final UsbCamera camera2 = MotorControllerFactory.configureCamera(Constants.Drive.kCamera2Port);
+    private final VideoSink cameraServer = CameraServer.getInstance().getServer();
 
     public RobotContainer() {
         
@@ -93,7 +99,7 @@ public class RobotContainer {
                     intake.intake();
             }
         }, feeder, intake));
-
+        cameraServer.setSource(camera1);
         paths = new RobotPath[4];
         if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
             loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
