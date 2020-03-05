@@ -45,6 +45,7 @@ public class Regurgitate extends CommandBase {
     if (intake.isDeployed()) {
       intake.intake();
     }
+    feeder.reset();
   }
 
   // Returns true when the command should end.
