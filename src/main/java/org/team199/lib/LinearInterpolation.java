@@ -16,12 +16,13 @@ public class LinearInterpolation {
     public double[] xs, ys;
     public double[] slopes, intercepts;
     public double minX, maxX;
+    public double minY = 100000000;     // Give minY an initial maximum value
+    public double maxY = -100000000;    // Give maxY an initial minimum value
     public int numPoints = 0;
 
     // Performs linear interpolation. It is assumed that the function has been formatted so that the x value increases from top to bottom.
     public LinearInterpolation(String filename) {
-        try {
-            
+        try {      
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(Filesystem.getDeployDirectory().toPath().resolve(Paths.get(filename)).toFile()));
             List<CSVRecord> records = csvParser.getRecords();
             numPoints = records.size() - 1;  // Subtract 1 because of the labels.
@@ -36,6 +37,8 @@ public class LinearInterpolation {
                 if (count > 0) {
                     xs[count - 1] = Double.parseDouble(record.get(0));
                     ys[count - 1] = Double.parseDouble(record.get(1));
+                    if (ys[count - 1] > maxY) { maxY = ys[count - 1]; }
+                    if (ys[count - 1] < minY) { minY = ys[count - 1]; }
                 }
             }
             csvParser.close();
@@ -62,11 +65,15 @@ public class LinearInterpolation {
                 // Find the closest datapoint and return the y-value using that datapoint's slope and intercept.
                 if (xs[i] - x >= 0) { return (slopes[i - 1] * x + intercepts[i - 1]); } 
             }
-            // This should never be run, but calculate must return something.
-            return 0.0;
-        } else {
-            System.out.println("Input data is not in the domain.");
-            return 0.0;
+        } else if (x > maxX) {
+            System.out.println("Input data exceeds domain.");
+            return ys[0];
+        } else if (x < minX) {
+            System.out.println("Input data is less than domain.");
+            return ys[xs.length - 1];
         }
+        // This should run only in case neither the calculate or outside domain returns run.
+        System.out.println("There was an unknown issue.");
+        return minY;
     }
 }
