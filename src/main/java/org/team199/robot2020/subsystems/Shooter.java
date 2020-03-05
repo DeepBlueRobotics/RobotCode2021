@@ -40,7 +40,6 @@ public class Shooter extends SubsystemBase {
     private final LinearInterpolation linearInterpol;
     private final Target target;
 
-    // TODO: Shooter should not have to require this many objects. Rework the LinearInterpolation code.
     public Shooter(Drivetrain drivetrain, Limelight lime, LinearInterpolation linearInterpol, Target target) {
         this.drivetrain = drivetrain;
         this.lime = lime;
