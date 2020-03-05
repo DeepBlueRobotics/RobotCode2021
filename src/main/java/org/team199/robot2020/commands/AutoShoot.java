@@ -12,7 +12,7 @@ public class AutoShoot extends CommandBase {
     private final Feeder feeder;
     private final Shooter shooter;
     private final TimeOfFlight distanceSensor;
-    private final double[] distanceRange = {117.0, 224.0};  // TODO: Determine the correct distance interval
+    private final double[] distanceRange = {117.0, 224.0};
     private final double numBallsToShoot;
     private int ballCount = 0;
 

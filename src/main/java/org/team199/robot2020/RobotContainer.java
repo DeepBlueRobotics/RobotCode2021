@@ -45,8 +45,8 @@ import org.team199.robot2020.subsystems.Climber;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drive.kAutoPathSwitch1Port);
-    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
+    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Ports.kAutoPathSwitch1Port);
+    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Ports.kAutoPathSwitch2Port);
     private final Drivetrain drivetrain = new Drivetrain();
     private final Limelight lime = new Limelight();
     private final Intake intake = new Intake();
@@ -58,7 +58,7 @@ public class RobotContainer {
     private final RobotPath[] paths;
     private final LinearInterpolation linearInterpol = new LinearInterpolation("ShooterData.csv");
     private final boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
-    private final Shooter shooter = new Shooter(drivetrain, lime, linearInterpol, isBlue ? Target.BLUE_PORT : Target.RED_PORT);
+    private final Shooter shooter = new Shooter(drivetrain, lime, linearInterpol, isBlue ? Constants.FieldPositions.BLUE_PORT : Constants.FieldPositions.RED_PORT);
 
     public RobotContainer() {
         if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
@@ -135,13 +135,13 @@ public class RobotContainer {
 
         paths = new RobotPath[4];
         if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
-            loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
-            loadPath(Path.PATH2, "OneBall", false, StartingPosition.BLUE_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.BLUE_RIGHT.pos);
+            loadPath(Path.PATH1, "AutoLeft", false, Constants.FieldPositions.BLUE_LEFT.pos);
+            loadPath(Path.PATH2, "OneBall", false, Constants.FieldPositions.BLUE_CENTER.pos);
+            loadPath(Path.PATH3, "AutoRight", false, Constants.FieldPositions.BLUE_RIGHT.pos);
         } else {
-            loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.RED_LEFT.pos);
-            loadPath(Path.PATH2, "OneBall", false, StartingPosition.RED_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);
+            loadPath(Path.PATH1, "AutoLeft", false, Constants.FieldPositions.RED_LEFT.pos);
+            loadPath(Path.PATH2, "OneBall", false, Constants.FieldPositions.RED_CENTER.pos);
+            loadPath(Path.PATH3, "AutoRight", false, Constants.FieldPositions.RED_RIGHT.pos);
         }
     }
 
@@ -200,7 +200,7 @@ public class RobotContainer {
             }
             return new AutoShootAndDrive(drivetrain, intake, feeder, 
                                          shooter, lime, path, 
-                                         (isBlue ? Target.BLUE_PORT.pos : Target.RED_PORT.pos));
+                                         (isBlue ? Constants.FieldPositions.BLUE_PORT.pos : Constants.FieldPositions.RED_PORT.pos));
         } catch(final Exception e) {
             return new InstantCommand();
         }
@@ -258,34 +258,6 @@ public class RobotContainer {
 
         private Path(final int idx) {
             this.idx = idx;
-        }
-    }
-
-    public static enum StartingPosition {
-        // DO NOT CHANGE ANY OF THESE VALUES.
-        BLUE_LEFT(12.61, -4.75), 
-        BLUE_CENTER(12.61, -5.75), 
-        BLUE_RIGHT(12.61, -6.75), 
-        RED_LEFT(3.39, -3.4), 
-        RED_CENTER(3.39, -2.4), 
-        RED_RIGHT(3.39, -1.4);
-
-        public final Translation2d pos;
-
-        private StartingPosition(double x, double y) {
-            pos = new Translation2d(x, y);
-        }
-    }
-
-    public static enum Target {
-        // DO NOT CHANGE ANY OF THESE VALUES.
-        BLUE_PORT(16, -5.75), 
-        RED_PORT(0, -2.4); 
-    
-        public final Translation2d pos;
-    
-        private Target(double x, double y) {
-            pos = new Translation2d(x, y);
         }
     }
 }

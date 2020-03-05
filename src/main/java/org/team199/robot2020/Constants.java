@@ -7,6 +7,8 @@
 
 package org.team199.robot2020;
 
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants. This class should not be used for any other
@@ -25,7 +27,7 @@ public final class Constants {
      * Put other constants (like motor speed and characterization constants) in the
      * subsystems themselves.
      */
-    public static final class Drive {
+    public static final class Ports {
         // CAN IDs
         public static final int kDtLeftMaster = 3;
         public static final int kDtLeftSlave = 4;
@@ -100,6 +102,24 @@ public final class Constants {
             public static final int kIntakeButton = X;
             public static final int kOuttakeButton = A;
             public static final int kRegurgitateButton = B;
+        }
+    }
+
+    public static enum FieldPositions {
+        // DO NOT CHANGE ANY OF THESE VALUES.
+        BLUE_LEFT(12.61, -4.75), 
+        BLUE_CENTER(12.61, -5.75), 
+        BLUE_RIGHT(12.61, -6.75), 
+        RED_LEFT(3.39, -3.4), 
+        RED_CENTER(3.39, -2.4), 
+        RED_RIGHT(3.39, -1.4),
+        BLUE_PORT(16, -5.75), 
+        RED_PORT(0, -2.4);
+
+        public final Translation2d pos;
+
+        private FieldPositions(double x, double y) {
+            pos = new Translation2d(x, y);
         }
     }
 }

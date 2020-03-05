@@ -59,7 +59,7 @@ public class RobotPath {
                                                 dt.getKinematics(),
                                                 dt::charDriveDirect,
                                                 dt);
-        return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.charDriveTank(0, 0), dt)); //TODO: Configure Ramsete Controller Values
+        return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.charDriveTank(0, 0), dt));
     }
 
     public void loadOdometry() {

@@ -12,7 +12,7 @@ import org.team199.lib.LinearInterpolation;
 import org.team199.lib.MotorControllerFactory;
 import org.team199.lib.logging.Log;
 import org.team199.robot2020.Constants;
-import org.team199.robot2020.RobotContainer.Target;
+import org.team199.robot2020.Constants.FieldPositions;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj.SpeedController;
@@ -31,17 +31,16 @@ public class Shooter extends SubsystemBase {
     private double kTargetSpeed = 4200;
     private final double speedOffset = 100;
 
-    private final CANSparkMax master = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterMaster);
-    private final CANSparkMax slave = MotorControllerFactory.createSparkMax(Constants.Drive.kShooterSlave);
+    private final CANSparkMax master = MotorControllerFactory.createSparkMax(Constants.Ports.kShooterMaster);
+    private final CANSparkMax slave = MotorControllerFactory.createSparkMax(Constants.Ports.kShooterSlave);
     private final CANPIDController pidController = master.getPIDController();
 
     private final Drivetrain drivetrain;
     private final Limelight lime;
     private final LinearInterpolation linearInterpol;
-    private final Target target;
+    private final FieldPositions target;
 
-    // TODO: Shooter should not have to require this many objects. Rework the LinearInterpolation code.
-    public Shooter(Drivetrain drivetrain, Limelight lime, LinearInterpolation linearInterpol, Target target) {
+    public Shooter(Drivetrain drivetrain, Limelight lime, LinearInterpolation linearInterpol, FieldPositions target) {
         this.drivetrain = drivetrain;
         this.lime = lime;
         this.linearInterpol = linearInterpol;

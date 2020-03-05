@@ -14,9 +14,9 @@ public class Intake extends SubsystemBase {
     private static double kIntakeSpeed = 0.4;
     private static double kSlowSpeed = -0.1;
 
-    private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kIntakeRoller);
-    private final DoubleSolenoid intakePistons1 = new DoubleSolenoid(Constants.Drive.kIntakePistons[0], Constants.Drive.kIntakePistons[1]);
-    private final DoubleSolenoid intakePistons2 = new DoubleSolenoid(Constants.Drive.kIntakePistons[2], Constants.Drive.kIntakePistons[3]);
+    private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Ports.kIntakeRoller);
+    private final DoubleSolenoid intakePistons1 = new DoubleSolenoid(Constants.Ports.kIntakePistons[0], Constants.Ports.kIntakePistons[1]);
+    private final DoubleSolenoid intakePistons2 = new DoubleSolenoid(Constants.Ports.kIntakePistons[2], Constants.Ports.kIntakePistons[3]);
 
     private boolean deployed = false;
 
