@@ -20,7 +20,7 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
 
         TimeOfFlight shooterDistanceSensor = feeder.getShooterDistanceSensor();
         ShooterHorizontalAim aim = new ShooterHorizontalAim(drivetrain, lime);
-        AutoShoot shoot = new AutoShoot(feeder, shooter, shooterDistanceSensor, 3);
+        AutoShoot shoot = new AutoShoot(feeder, intake, shooter, shooterDistanceSensor, 3);
 
         addCommands(
             aim,
