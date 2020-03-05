@@ -11,37 +11,38 @@ import org.team199.robot2020.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class RaiseRobot extends CommandBase {
+public class DropLift extends CommandBase {
   private final Climber climber;
 
-  /**
-   * Pulls the winch to raise the robot up to the switch
-   */
-  public RaiseRobot(Climber climber) {
-    addRequirements(this.climber = climber);
+  public DropLift(Climber climber) {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(this.climber = climber);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.runWinch(Climber.kWinchRetractSpeed);
+    climber.runLift(Climber.kLiftRetractSpeed);
   }
+      
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (climber.getLiftHeight() < 1) {
+      climber.runLift(0);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.runWinch(0);
+    climber.runLift(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return climber.getWinchHeight() >= Climber.kWinchEndHeight;
+    return false;
   }
 }
