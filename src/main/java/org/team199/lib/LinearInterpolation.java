@@ -16,8 +16,8 @@ public class LinearInterpolation {
     public double[] xs, ys;
     public double[] slopes, intercepts;
     public double minX, maxX;
-    public double minY = 100000000;     // Give minY an initial maximum value
-    public double maxY = -100000000;    // Give maxY an initial minimum value
+    public double minY = Double.POSITIVE_INFINITY;     // Give minY an initial maximum value
+    public double maxY = Double.NEGATIVE_INFINITY;    // Give maxY an initial minimum value
     public int numPoints = 0;
 
     // Performs linear interpolation. It is assumed that the function has been formatted so that the x value increases from top to bottom.
