@@ -13,7 +13,7 @@ public class Shoot extends CommandBase {
     public Shoot(Feeder feeder, Intake intake) {
         this.feeder = feeder;
         this.intake = intake;
-        addRequirements(feeder);
+        addRequirements(feeder, intake);
     }
 
     public void initialize() {
