@@ -28,7 +28,7 @@ public class AutoShoot extends CommandBase {
         this.intake = intake;
         this.distanceSensor = distanceSensor;
         this.numBallsToShoot = numBallsToShoot;
-        addRequirements(feeder, shooter);
+        addRequirements(feeder, intake, shooter);
     }
 
     public void execute() {
