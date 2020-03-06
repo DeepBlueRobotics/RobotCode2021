@@ -67,10 +67,10 @@ public class LinearInterpolation {
             }
         } else if (x > maxX) {
             System.out.println("Input data exceeds domain.");
-            return ys[0];
+            return ys[xs.length - 1];
         } else if (x < minX) {
             System.out.println("Input data is less than domain.");
-            return ys[xs.length - 1];
+            return ys[0];
         }
         // This should run only in case neither the calculate or outside domain returns run.
         System.out.println("There was an unknown issue.");
