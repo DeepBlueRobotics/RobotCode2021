@@ -11,6 +11,7 @@ package org.team199.robot2020;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,6 +60,7 @@ public class RobotContainer {
     private final LinearInterpolation linearInterpol = new LinearInterpolation("ShooterData.csv");
     private final boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
     private final Shooter shooter = new Shooter(drivetrain, lime, linearInterpol, isBlue ? Constants.FieldPositions.BLUE_PORT : Constants.FieldPositions.RED_PORT);
+    private final PowerDistributionPanel pdp = new PowerDistributionPanel(Constants.Ports.kPDPCanID);
 
     public RobotContainer() {
         if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
@@ -200,7 +202,8 @@ public class RobotContainer {
             }
             return new AutoShootAndDrive(drivetrain, intake, feeder, 
                                          shooter, lime, path, 
-                                         (isBlue ? Constants.FieldPositions.BLUE_PORT.pos : Constants.FieldPositions.RED_PORT.pos));
+                                         (isBlue ? Constants.FieldPositions.BLUE_PORT.pos : Constants.FieldPositions.RED_PORT.pos),
+                                         pdp, Constants.Ports.kFeederBeltPDP);
         } catch(final Exception e) {
             return new InstantCommand();
         }
