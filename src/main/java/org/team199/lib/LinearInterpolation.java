@@ -19,6 +19,7 @@ public class LinearInterpolation {
     public double minY = Double.POSITIVE_INFINITY;     // Give minY an initial maximum value
     public double maxY = Double.NEGATIVE_INFINITY;    // Give maxY an initial minimum value
     public int numPoints = 0;
+    private boolean errorShown = false;
 
     // Performs linear interpolation. It is assumed that the function has been formatted so that the x value increases from top to bottom.
     public LinearInterpolation(String filename) {
@@ -66,14 +67,18 @@ public class LinearInterpolation {
                 if (xs[i] - x >= 0) { return (slopes[i - 1] * x + intercepts[i - 1]); } 
             }
         } else if (x > maxX) {
-            System.out.println("Input data exceeds domain.");
+            if (!errorShown) System.out.println("Input data exceeds domain.");
+            errorShown = true;
+            
             return ys[xs.length - 1];
         } else if (x < minX) {
-            System.out.println("Input data is less than domain.");
+            if (!errorShown) System.out.println("Input data is less than domain.");
+            errorShown = true;
             return ys[0];
         }
         // This should run only in case neither the calculate or outside domain returns run.
-        System.out.println("There was an unknown issue.");
+        if (!errorShown) System.out.println("There was an unknown issue.");
+        errorShown = true;
         return minY;
     }
 }

@@ -170,6 +170,10 @@ public class Limelight {
     return params;
   }
 
+  public void setLight(boolean state) {
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(state ? 1 : 3); 
+  }
+
   /* Given a desired straight-line distance targetDist away from the vision target, determine the distance 
     in order to face the target from head-on. Returns the required distance at the current heading.
   */

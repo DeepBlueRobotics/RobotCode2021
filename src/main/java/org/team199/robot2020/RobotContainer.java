@@ -11,11 +11,16 @@ package org.team199.robot2020;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
+
+import java.util.List;
 
 import org.team199.lib.Limelight;
 import org.team199.lib.LinearInterpolation;
@@ -47,6 +52,7 @@ import org.team199.robot2020.subsystems.Climber;
 public class RobotContainer {
     private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Ports.kAutoPathSwitch1Port);
     private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Ports.kAutoPathSwitch2Port);
+    private final DigitalInput autoSwitch3 = new DigitalInput(Constants.Ports.kAutoPathSwitch3Port);
     private final Drivetrain drivetrain = new Drivetrain();
     private final Limelight lime = new Limelight();
     private final Intake intake = new Intake();
@@ -55,10 +61,11 @@ public class RobotContainer {
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.kPort);
     private final Joystick controller = new Joystick(Constants.OI.Controller.kPort);
     private final Climber climber = new Climber();
-    private final RobotPath[] paths;
+    private final RobotPath[][] paths;
     private final LinearInterpolation linearInterpol = new LinearInterpolation("ShooterData.csv");
     private final boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
     private final Shooter shooter = new Shooter(drivetrain, lime, linearInterpol, isBlue ? Constants.FieldPositions.BLUE_PORT : Constants.FieldPositions.RED_PORT);
+    private final PowerDistributionPanel pdp = new PowerDistributionPanel(Constants.Ports.kPDPCanID);
 
     public RobotContainer() {
         if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
@@ -133,16 +140,11 @@ public class RobotContainer {
             }
         }, intake));
 
-        paths = new RobotPath[4];
-        if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
-            loadPath(Path.PATH1, "AutoLeft", false, Constants.FieldPositions.BLUE_LEFT.pos);
-            loadPath(Path.PATH2, "OneBall", false, Constants.FieldPositions.BLUE_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, Constants.FieldPositions.BLUE_RIGHT.pos);
-        } else {
-            loadPath(Path.PATH1, "AutoLeft", false, Constants.FieldPositions.RED_LEFT.pos);
-            loadPath(Path.PATH2, "OneBall", false, Constants.FieldPositions.RED_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, Constants.FieldPositions.RED_RIGHT.pos);
-        }
+        paths = new RobotPath[7][10];
+        loadDPaths(RobotPath.Path.PATH1, new String[] {"TRLeft", "TrenchRun"}, false, Constants.FieldPositions.RED_LEFT.pos, Constants.FieldPositions.BLUE_LEFT.pos);
+        loadDPaths(RobotPath.Path.PATH2, new String[] {"TRCenter", "TrenchRun"}, false, Constants.FieldPositions.RED_CENTER.pos, Constants.FieldPositions.BLUE_CENTER.pos);
+        loadDPaths(RobotPath.Path.PATH3, new String[] {"TRRight", "TrenchRun"}, false, Constants.FieldPositions.RED_RIGHT.pos, Constants.FieldPositions.BLUE_RIGHT.pos);
+        loadDPaths(RobotPath.Path.PATH4, new String[] {"GS1", "GS2", "GS3"}, false, Constants.FieldPositions.RED_GS.pos, Constants.FieldPositions.BLUE_GS.pos);
     }
 
     private void configureButtonBindingsLeftJoy() {
@@ -194,13 +196,15 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         try {
-            final RobotPath path = paths[getPath().idx];
-            if(path == null) {
+            final RobotPath.Path path = getPath();
+            final RobotPath[] paths = this.paths[path.idx];
+            if(paths.length == 0) {
                 throw new Exception();
             }
             return new AutoShootAndDrive(drivetrain, intake, feeder, 
-                                         shooter, lime, path, 
-                                         (isBlue ? Constants.FieldPositions.BLUE_PORT.pos : Constants.FieldPositions.RED_PORT.pos));
+                                         shooter, lime, 
+                                         (isBlue ? Constants.FieldPositions.BLUE_PORT.pos : Constants.FieldPositions.RED_PORT.pos),
+                                         pdp, Constants.Ports.kFeederBeltPDP, paths, path);
         } catch(final Exception e) {
             return new InstantCommand();
         }
@@ -210,54 +214,60 @@ public class RobotContainer {
     /**
      * DIO Port 0 = Switch 1
      * DIO Port 1 = Switch 2
-     * on = jumper in
-     * off= jumper out
+     * DIO Port 2 = Switch 3
+     * on  = jumper in
+     * off = jumper out
      * Red/Blue determined by DS
      * Switch states
      * 1    2
-     * off off = off
-     * on off = 1
-     * off on = 2
-     * on on = 3
+     * off off off = off
+     * on off off  = 1
+     * off on off  = 2
+     * on on off   = 3
+     * off off on  = off
+     * on off on   = 4
+     * off on on   = 5
+     * on on on    = 6
      */
-    public Path getPath() {
-        Path outPath = Path.OFF;
+    public RobotPath.Path getPath() {
         // get() returns true if the circuit is open.
-        if(!autoSwitch1.get()) {
-            if(!autoSwitch2.get()) {
-                outPath = Path.PATH3;
-                System.out.println("Path3 loaded.");
-            } else {
-                outPath = Path.PATH1;
-                System.out.println("Path1 loaded.");
-            }
-        } else if(!autoSwitch2.get()) {
-            outPath = Path.PATH2;
-            System.out.println("Path2 loaded.");
-        } else {
-            outPath = Path.OFF;
-            System.out.println("No path loaded.");
-        }
-        return outPath;
+        int b1 = autoSwitch1.get() ? 0 : 1;
+        int b2 = autoSwitch2.get() ? 0 : 1;
+        int b3 = autoSwitch3.get() ? 0 : 1;
+        return RobotPath.Path.fromIdx((b1 | b2 << 1 | b3 << 2)-1);
     }
 
+    private void loadDPaths(RobotPath.Path path, String[] pathNames, boolean isInverted, Translation2d redInitPos, Translation2d blueInitPos) {
+        loadPaths(path, pathNames, isInverted, DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue ? blueInitPos : redInitPos);
+    }
         
-    private void loadPath(final Path path, final String pathName, final boolean isInverted, final Translation2d initPos) {
+    private void loadPaths(final RobotPath.Path path, final String[] pathNames, final boolean isInverted, Translation2d initPos) {
+        for(int i = 0; i < pathNames.length; i++) {
+            loadPath(path, pathNames[i], isInverted, initPos, i);
+            Trajectory trajectory = paths[path.idx][i].getTrajectory();
+            List<State> states = trajectory.getStates();
+            initPos = states.get(states.size()-1).poseMeters.getTranslation();
+        }
+    }
+
+    private void loadDPath(RobotPath.Path path, String pathName, boolean isInverted, Translation2d redInitPos, Translation2d blueInitPos) {
+        loadDPath(path, pathName, isInverted, redInitPos, blueInitPos, 0);
+    }
+
+    private void loadDPath(RobotPath.Path path, String pathName, boolean isInverted, Translation2d redInitPos, Translation2d blueInitPos, int idx) {
+        loadPath(path, pathName, isInverted, DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue ? blueInitPos : redInitPos, idx);
+    }
+        
+    private void loadPath(final RobotPath.Path path, final String pathName, final boolean isInverted, final Translation2d initPos) {
+        loadPath(path, pathName, isInverted, initPos, 0);
+    }
+        
+    private void loadPath(final RobotPath.Path path, final String pathName, final boolean isInverted, final Translation2d initPos, int idx) {
         try {
-            paths[path.idx] = new RobotPath(pathName, drivetrain, isInverted, initPos);
+            paths[path.idx][idx] = new RobotPath(pathName, drivetrain, isInverted, initPos);
         } catch(final Exception e) {
             System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
             e.printStackTrace(System.err);
-        }
-    }
-    
-    public static enum Path {
-        PATH1(0), PATH2(1), PATH3(2), OFF(-1);
-
-        public final int idx;
-
-        private Path(final int idx) {
-            this.idx = idx;
         }
     }
 }

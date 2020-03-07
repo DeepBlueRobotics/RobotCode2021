@@ -29,6 +29,8 @@ public final class Constants {
      */
     public static final class Ports {
         // CAN IDs
+        public static final int kPDPCanID = 0;
+
         public static final int kDtLeftMaster = 3;
         public static final int kDtLeftSlave = 4;
         public static final int kDtRightMaster = 5;
@@ -54,6 +56,11 @@ public final class Constants {
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
+        public static final int kAutoPathSwitch3Port = 2;
+
+        // PDP ports
+        public static final int kFeederBeltPDP = 4;
+        public static final int kFeederEjectorPDP = 5;
     }
 
     /**
@@ -109,10 +116,12 @@ public final class Constants {
         // DO NOT CHANGE ANY OF THESE VALUES.
         BLUE_LEFT(12.61, -4.75), 
         BLUE_CENTER(12.61, -5.75), 
-        BLUE_RIGHT(12.61, -6.75), 
+        BLUE_RIGHT(12.61, -6.75),
+        BLUE_GS(12.61, -5.75), 
         RED_LEFT(3.39, -3.4), 
         RED_CENTER(3.39, -2.4), 
         RED_RIGHT(3.39, -1.4),
+        RED_GS(3.39, -5.6),
         BLUE_PORT(16, -5.75), 
         RED_PORT(0, -2.4);
 
