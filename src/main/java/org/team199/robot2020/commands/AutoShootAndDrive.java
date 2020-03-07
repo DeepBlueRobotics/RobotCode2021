@@ -22,17 +22,32 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
         TimeOfFlight shooterDistanceSensor = feeder.getShooterDistanceSensor();
         ShooterHorizontalAim aim = new ShooterHorizontalAim(drivetrain, lime);
         AutoShoot shoot = new AutoShoot(feeder, intake, shooter, shooterDistanceSensor, 3);
-        AutoBallPickup pickup = new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort);
-
-        addCommands(
-            aim,
-            shoot,
-            new ParallelCommandGroup(
+        switch(path) {
+            case PATH1:
+            case PATH2:
+            case PATH3:
+            addCommands(
+                aim,
+                shoot,
+                new ParallelCommandGroup(
+                    paths[0].getPathCommand(),
+                    new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 5)
+                ),
+                aim,
+                shoot
+            );
+            break;
+            case PATH4:
+            addCommands(
                 paths[0].getPathCommand(),
-                pickup
-            ),
-            aim,
-            shoot
-        );
+                new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 2),
+                paths[1].getPathCommand(),
+                new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 2),
+                paths[2].getPathCommand(),
+                new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 1),
+                aim, shoot
+            );
+            break;
+        }
     }
 }

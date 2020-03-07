@@ -141,10 +141,10 @@ public class RobotContainer {
         }, intake));
 
         paths = new RobotPath[7][10];
-        loadDPath(RobotPath.Path.PATH1, "AutoLeft", false, Constants.FieldPositions.RED_LEFT.pos, Constants.FieldPositions.BLUE_LEFT.pos);
-        loadDPath(RobotPath.Path.PATH2, "OneBall", false, Constants.FieldPositions.RED_CENTER.pos, Constants.FieldPositions.BLUE_CENTER.pos);
-        loadDPath(RobotPath.Path.PATH3, "AutoRight", false, Constants.FieldPositions.RED_RIGHT.pos, Constants.FieldPositions.BLUE_RIGHT.pos);
-        
+        loadDPaths(RobotPath.Path.PATH1, new String[] {"TRLeft", "TrenchRun"}, false, Constants.FieldPositions.RED_LEFT.pos, Constants.FieldPositions.BLUE_LEFT.pos);
+        loadDPaths(RobotPath.Path.PATH2, new String[] {"TRCenter", "TrenchRun"}, false, Constants.FieldPositions.RED_CENTER.pos, Constants.FieldPositions.BLUE_CENTER.pos);
+        loadDPaths(RobotPath.Path.PATH3, new String[] {"TRRight", "TrenchRun"}, false, Constants.FieldPositions.RED_RIGHT.pos, Constants.FieldPositions.BLUE_RIGHT.pos);
+        loadDPaths(RobotPath.Path.PATH4, new String[] {"GS1", "GS2", "GS3"}, false, Constants.FieldPositions.RED_GS.pos, Constants.FieldPositions.BLUE_GS.pos);
     }
 
     private void configureButtonBindingsLeftJoy() {

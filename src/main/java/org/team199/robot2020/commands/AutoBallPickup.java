@@ -12,15 +12,18 @@ public class AutoBallPickup extends CommandBase {
     private final Intake intake;
     private final Drivetrain drivetrain;
     private final PowerDistributionPanel pdp;
-    private final int feederPDPPort;
+    private final int feederPDPPort, numBallsRequired;
+    private int numBallsEntered = 0;
+    private boolean isIntaking = false;
     private final double currentThreshold = 100.0;      // TODO: Determine correct current threshold
 
-    public AutoBallPickup(Feeder feeder, Intake intake, Drivetrain drivetrain, PowerDistributionPanel pdp, int feederPDPPort) {
+    public AutoBallPickup(Feeder feeder, Intake intake, Drivetrain drivetrain, PowerDistributionPanel pdp, int feederPDPPort, int numBallsRequired) {
         this.feeder = feeder;
         this.intake = intake;
         this.drivetrain = drivetrain;
         this.pdp = pdp;
         this.feederPDPPort = feederPDPPort;
+        this.numBallsRequired = numBallsRequired;
         addRequirements(feeder, intake);
     }
 
@@ -34,10 +37,21 @@ public class AutoBallPickup extends CommandBase {
             if (feeder.isCellEntering()) {
                 // Only run the feeder if there is no ball at the shooter.
                 if (!feeder.isCellAtShooter()) {
+                    isIntaking = true;
                     feeder.runForward();
                     drivetrain.tankDrive(0.0, 0.0, false);
+                } else {
+                    feeder.stop();
+                    if(isIntaking) {
+                        isIntaking = false;
+                        numBallsEntered++;
+                    }
                 }
-                else feeder.stop();
+            } else {
+                if(isIntaking) {
+                    isIntaking = false;
+                    numBallsEntered++;
+                }
             }
         } else {
             // Stop the intake and regurgitate to stop the jam.
@@ -50,7 +64,7 @@ public class AutoBallPickup extends CommandBase {
 
     public boolean isFinished() {
         // Command should only end when it is interrupted.
-        return true;
+        return numBallsEntered >= numBallsRequired;
     }
 
     public void end(boolean interrupted) {

@@ -116,10 +116,12 @@ public final class Constants {
         // DO NOT CHANGE ANY OF THESE VALUES.
         BLUE_LEFT(12.61, -4.75), 
         BLUE_CENTER(12.61, -5.75), 
-        BLUE_RIGHT(12.61, -6.75), 
+        BLUE_RIGHT(12.61, -6.75),
+        BLUE_GS(12.61, -5.75), 
         RED_LEFT(3.39, -3.4), 
         RED_CENTER(3.39, -2.4), 
         RED_RIGHT(3.39, -1.4),
+        RED_GS(3.39, -5.6),
         BLUE_PORT(16, -5.75), 
         RED_PORT(0, -2.4);
 
