@@ -16,7 +16,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class AutoShootAndDrive extends SequentialCommandGroup {
     public AutoShootAndDrive(Drivetrain drivetrain, Intake intake, Feeder feeder, Shooter shooter, 
-                             Limelight lime, RobotPath path, Translation2d target, PowerDistributionPanel pdp, int feederPDPPort) {
+                             Limelight lime, Translation2d target, PowerDistributionPanel pdp,
+                             int feederPDPPort, RobotPath[] paths, RobotPath.Path path) {
 
         TimeOfFlight shooterDistanceSensor = feeder.getShooterDistanceSensor();
         ShooterHorizontalAim aim = new ShooterHorizontalAim(drivetrain, lime);
@@ -27,7 +28,7 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
             aim,
             shoot,
             new ParallelCommandGroup(
-                path.getPathCommand(),
+                paths[0].getPathCommand(),
                 pickup
             ),
             aim,
