@@ -48,6 +48,7 @@ import org.team199.robot2020.subsystems.Climber;
 public class RobotContainer {
     private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Ports.kAutoPathSwitch1Port);
     private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Ports.kAutoPathSwitch2Port);
+    private final DigitalInput autoSwitch3 = new DigitalInput(Constants.Ports.kAutoPathSwitch3Port);
     private final Drivetrain drivetrain = new Drivetrain();
     private final Limelight lime = new Limelight();
     private final Intake intake = new Intake();
@@ -135,16 +136,10 @@ public class RobotContainer {
             }
         }, intake));
 
-        paths = new RobotPath[4];
-        if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
-            loadPath(Path.PATH1, "AutoLeft", false, Constants.FieldPositions.BLUE_LEFT.pos);
-            loadPath(Path.PATH2, "OneBall", false, Constants.FieldPositions.BLUE_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, Constants.FieldPositions.BLUE_RIGHT.pos);
-        } else {
-            loadPath(Path.PATH1, "AutoLeft", false, Constants.FieldPositions.RED_LEFT.pos);
-            loadPath(Path.PATH2, "OneBall", false, Constants.FieldPositions.RED_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, Constants.FieldPositions.RED_RIGHT.pos);
-        }
+        paths = new RobotPath[7];
+        loadDPath(Path.PATH1, "AutoLeft", false, Constants.FieldPositions.RED_LEFT.pos, Constants.FieldPositions.BLUE_LEFT.pos);
+        loadDPath(Path.PATH2, "OneBall", false, Constants.FieldPositions.RED_CENTER.pos, Constants.FieldPositions.BLUE_CENTER.pos);
+        loadDPath(Path.PATH3, "AutoRight", false, Constants.FieldPositions.RED_RIGHT.pos, Constants.FieldPositions.BLUE_RIGHT.pos);
     }
 
     private void configureButtonBindingsLeftJoy() {
@@ -213,37 +208,32 @@ public class RobotContainer {
     /**
      * DIO Port 0 = Switch 1
      * DIO Port 1 = Switch 2
+     * DIO Port 2 = Switch 3
      * on = jumper in
      * off= jumper out
      * Red/Blue determined by DS
      * Switch states
      * 1    2
-     * off off = off
-     * on off = 1
-     * off on = 2
-     * on on = 3
+     * off off off = off
+     * on off off = 1
+     * off on off = 2
+     * on on off= 3
+     * off off on = off
+     * on off on = 1
+     * off on on = 2
+     * on on on = 3
      */
     public Path getPath() {
-        Path outPath = Path.OFF;
         // get() returns true if the circuit is open.
-        if(!autoSwitch1.get()) {
-            if(!autoSwitch2.get()) {
-                outPath = Path.PATH3;
-                System.out.println("Path3 loaded.");
-            } else {
-                outPath = Path.PATH1;
-                System.out.println("Path1 loaded.");
-            }
-        } else if(!autoSwitch2.get()) {
-            outPath = Path.PATH2;
-            System.out.println("Path2 loaded.");
-        } else {
-            outPath = Path.OFF;
-            System.out.println("No path loaded.");
-        }
-        return outPath;
+        int b1 = autoSwitch1.get() ? 0 : 1;
+        int b2 = autoSwitch2.get() ? 0 : 1;
+        int b3 = autoSwitch3.get() ? 0 : 1;
+        return Path.fromIdx((b1 | b2 << 1 | b3 << 2)-1);
     }
 
+    private void loadDPath(Path path, String pathName, boolean isInverted, Translation2d redInitPos, Translation2d blueInitPos) {
+        loadPath(path, pathName, isInverted, DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue ? blueInitPos : redInitPos);
+    }
         
     private void loadPath(final Path path, final String pathName, final boolean isInverted, final Translation2d initPos) {
         try {
@@ -255,12 +245,34 @@ public class RobotContainer {
     }
     
     public static enum Path {
-        PATH1(0), PATH2(1), PATH3(2), OFF(-1);
+        PATH1(0), PATH2(1), PATH3(2), PATH4(3), PATH5(4), PATH6(5), PATH7(6), OFF(-1);
 
         public final int idx;
 
         private Path(final int idx) {
             this.idx = idx;
+        }
+
+        public static final Path fromIdx(int idx) {
+            switch(idx) {
+                case 0:
+                return PATH1;
+                case 1:
+                return PATH2;
+                case 2:
+                return PATH3;
+                case 3:
+                return PATH4;
+                case 4:
+                return PATH5;
+                case 5:
+                return PATH6;
+                case 6:
+                return PATH7;
+                case -1:
+                default:
+                return OFF;
+            }
         }
     }
 }
