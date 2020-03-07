@@ -54,6 +54,7 @@ public final class Constants {
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
+        public static final int kAutoPathSwitch3Port = 2;
     }
 
     /**
