@@ -14,6 +14,7 @@ import org.team199.lib.logging.Log;
 import org.team199.robot2020.Constants;
 import org.team199.robot2020.Constants.FieldPositions;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj.SpeedController;
 //import java.lang.AutoCloseable;
@@ -85,6 +86,8 @@ public class Shooter extends SubsystemBase {
         );
         setSpeed(SmartDashboard.getNumber("Shooter.kTargetSpeed", kTargetSpeed));
 
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").forceSetNumber(SmartDashboard.getNumber("Limelight.streamMode",0));
+        
         if (p != pidController.getP()) pidController.setP(p);
         if (i != pidController.getI()) pidController.setI(i);
         if (d != pidController.getD()) pidController.setD(d);
