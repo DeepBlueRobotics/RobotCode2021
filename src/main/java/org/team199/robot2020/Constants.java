@@ -29,6 +29,8 @@ public final class Constants {
      */
     public static final class Ports {
         // CAN IDs
+        public static final int kPDPCanID = 0;
+
         public static final int kDtLeftMaster = 3;
         public static final int kDtLeftSlave = 4;
         public static final int kDtRightMaster = 5;
@@ -55,6 +57,10 @@ public final class Constants {
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
         public static final int kAutoPathSwitch3Port = 2;
+
+        // PDP ports
+        public static final int kFeederBeltPDP = 4;
+        public static final int kFeederEjectorPDP = 5;
     }
 
     /**

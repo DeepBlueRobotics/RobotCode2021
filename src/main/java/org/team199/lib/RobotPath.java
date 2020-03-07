@@ -66,6 +66,10 @@ public class RobotPath {
         dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
     }
 
+    public Trajectory getTrajectory() {
+        return trajectory;
+    }
+
     public static TrajectoryConfig createConfig(boolean isInverted, Drivetrain dt) {
         TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
                                                        Drivetrain.kAutoMaxAccel);
@@ -117,5 +121,37 @@ public class RobotPath {
 
     public static File getPathFile(String pathName) {
         return Filesystem.getDeployDirectory().toPath().resolve(Paths.get("PathWeaver/Paths/" + pathName + ".path")).toFile();
+    }
+
+    public static enum Path {
+        PATH1(0), PATH2(1), PATH3(2), PATH4(3), PATH5(4), PATH6(5), PATH7(6), OFF(-1);
+
+        public final int idx;
+
+        private Path(final int idx) {
+            this.idx = idx;
+        }
+
+        public static final Path fromIdx(int idx) {
+            switch(idx) {
+                case 0:
+                return PATH1;
+                case 1:
+                return PATH2;
+                case 2:
+                return PATH3;
+                case 3:
+                return PATH4;
+                case 4:
+                return PATH5;
+                case 5:
+                return PATH6;
+                case 6:
+                return PATH7;
+                case -1:
+                default:
+                return OFF;
+            }
+        }
     }
 }
