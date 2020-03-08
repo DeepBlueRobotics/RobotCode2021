@@ -11,6 +11,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
+/**
+ * A {@link Mockito} {@link org.mockito.stubbing.Answer} which can be used to {@link Mockito#mock(Class)} a {@link com.revrobotics.CANSparkMax}
+ * @see MotorErrors#createDummySparkMax()
+ */
 public class DummySparkMaxAnswer extends CANErrorAnswer {
 
     private static final long serialVersionUID = 2284848703213263465L;
