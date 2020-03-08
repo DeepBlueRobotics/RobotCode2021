@@ -162,7 +162,7 @@ public class Feeder extends SubsystemBase {
   public boolean has5Intake() {
     double dist = inSensor.getRange();
     SmartDashboard.putBoolean("cellAtShooter", isCellAtShooter());
-    return isCellAtShooter() && dist >= kInSensorMinDistance2 && dist <= kInSensorMaxDistance2;
+    return isCellAtShooter();// && dist >= kInSensorMinDistance2 && dist <= kInSensorMaxDistance2;
   }
 
   public TimeOfFlight getShooterDistanceSensor() {

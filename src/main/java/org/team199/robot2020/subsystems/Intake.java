@@ -11,10 +11,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
+    public enum States {
+
+    }
     // TODO: find good values and then set to final
     private static double kIntakeSpeed = 0.4;
     private static double kReverseSpeed = -0.1;
     private static double kOutputLimit = 0.3;
+    public double targetEncoderDist = 5.0;   // TODO: Figure out the correct value.
+    public boolean encoderReset = false;
+    public boolean cell5Entered = false;
 
     private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Ports.kIntakeRoller);
     private final CANEncoder rollerEncoder = rollerMotor.getEncoder();
@@ -31,17 +37,19 @@ public class Intake extends SubsystemBase {
         rollerMotor.setSmartCurrentLimit(30);
 
         SmartDashboard.putNumber("Intake.kIntakeSpeed", kIntakeSpeed);
-        SmartDashboard.putNumber("Intake.kSlowSpeed", kReverseSpeed);
+        SmartDashboard.putNumber("Intake.kReverseSpeed", kReverseSpeed);
+        SmartDashboard.putNumber("Intake.kOutputLimit", kOutputLimit);
     }
 
     public void periodic() {
         kIntakeSpeed = SmartDashboard.getNumber("Intake.kIntakeSpeed", kIntakeSpeed);
         kReverseSpeed = SmartDashboard.getNumber("Intake.kReverseSpeed", kReverseSpeed);
+        kOutputLimit = SmartDashboard.getNumber("Intake.kOutputLimit", kOutputLimit);
         // SparkMax does not allow you to set an output limit so it is periodically checked whether the intake speeds conform to the limit.
-        kIntakeSpeed = Math.signum(kIntakeSpeed) * Math.min(kIntakeSpeed, Math.abs(kIntakeSpeed));
-        kReverseSpeed = Math.signum(kReverseSpeed) * Math.min(kReverseSpeed, Math.abs(kReverseSpeed));
+        kIntakeSpeed = Math.signum(kIntakeSpeed) * Math.min(kOutputLimit, Math.abs(kIntakeSpeed));
+        kReverseSpeed = Math.signum(kReverseSpeed) * Math.min(kOutputLimit, Math.abs(kReverseSpeed));
         SmartDashboard.putNumber("Intake.kIntakeSpeed", kIntakeSpeed);
-        SmartDashboard.putNumber("Intake.kSlowSpeed", kReverseSpeed);
+        SmartDashboard.putNumber("Intake.kReverseSpeed", kReverseSpeed);
     }
 
     public void reverse() {
