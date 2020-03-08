@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import java.util.List;
 
@@ -89,16 +90,16 @@ public class RobotContainer {
             System.err.println("ERROR: Dude, you're missing the controller.");
         }
 
-        shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
+        shooter.setDefaultCommand(setName("Shooter Default Command", new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter)));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
         
-        feeder.setDefaultCommand(new RunCommand(() -> {
+        feeder.setDefaultCommand(setName("Feeder Default Command", new RunCommand(() -> {
             if (feeder.isCellEntering() && !feeder.isCellAtShooter()) {
                 feeder.runForward();
             } else {
                 feeder.stop();
             }
-        }, feeder));
+        }, feeder)));
 
         // Old Intake default command:
         /*
@@ -116,7 +117,7 @@ public class RobotContainer {
             }
         }, intake));
         */
-        intake.setDefaultCommand(new RunCommand(() -> {
+        intake.setDefaultCommand(setName("Intake Default Commadn", new RunCommand(() -> {
             boolean encoderReset = false;
             double targetEncoderDist = 100.0;   // TODO: Figure out the correct value.
             if(intake.isDeployed()) {
@@ -141,7 +142,7 @@ public class RobotContainer {
             } else {
                 intake.stop();
             }
-        }, intake));
+        }, intake)));
 
         paths = new RobotPath[7][10];
         loadDPaths(RobotPath.Path.PATH1, new String[] {"TRLeft", "TrenchRun", "TrenchRun"}, new boolean[] {false, false, true}, Constants.FieldPositions.RED_LEFT.pos, Constants.FieldPositions.BLUE_LEFT.pos);
@@ -165,7 +166,7 @@ public class RobotContainer {
     private void configureButtonBindingsRightJoy() {
         // Align the robot and then shoots
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kToggleBreakModeButton).whenPressed(new InstantCommand(drivetrain::toggleBreakMode, drivetrain));
-        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder, intake)));
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(setName("Align and Shoot", new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder, intake))));
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kShootButton).whileHeld(new Shoot(feeder, intake));
     }
 
@@ -185,10 +186,10 @@ public class RobotContainer {
         new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
 
         // Deploy climber button and allow for adjustment
-        new JoystickButton(controller, Constants.OI.Controller.kDeployClimberButton).whenPressed(new SequentialCommandGroup(
+        new JoystickButton(controller, Constants.OI.Controller.kDeployClimberButton).whenPressed(setName("Deploy Climber", new SequentialCommandGroup(
             new DeployClimber(climber),
             new AdjustClimber(climber, controller)
-        ));
+        )));
 
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
@@ -436,5 +437,16 @@ public class RobotContainer {
             System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
             e.printStackTrace(System.err);
         }
+    }
+
+    /**
+     * Sets the name of a command
+     * @param name The name to set
+     * @param command The command of which to set the name
+     * @return <code>command</code>
+     */
+    public static CommandBase setName(String name, CommandBase command) {
+        command.setName(name);
+        return command;
     }
 }
