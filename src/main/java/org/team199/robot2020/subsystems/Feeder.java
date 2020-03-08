@@ -29,8 +29,8 @@ public class Feeder extends SubsystemBase {
   private static double kInSensorMaxDistance = 65; // 5 inches in millimeters //Old: Units.inchesToMeters(5) * 1000
   private static double kInSensorMinDistance2 = 30;
   private static double kInSensorMaxDistance2 = 50;
-  private static double kOutSensorMinDistance = 100;
-  private static double kOutSensorMaxDistance = 100;
+  private static double kOutSensorMinDistance = 150;
+  private static double kOutSensorMaxDistance = 150;
   
   private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Ports.kFeederBelt);
   private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Ports.kFeederEjector);
@@ -114,6 +114,7 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder.currentOutSensorDistance", outSensor.getRange());
     SmartDashboard.putNumber("Feeder.beltDistance", beltMotor.getSelectedSensorPosition(0));
     SmartDashboard.putBoolean("Feeder.reachedShooter", reachedShooter);
+    SmartDashboard.putBoolean("Feeder.isCellAtShooter", isCellAtShooter());
   }
 
   public void runForward() {
