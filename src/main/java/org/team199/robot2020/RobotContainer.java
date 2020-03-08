@@ -237,8 +237,33 @@ public class RobotContainer {
         return RobotPath.Path.fromIdx((b1 | b2 << 1 | b3 << 2)-1);
     }
 
+    private void loadDPaths(RobotPath.Path path, String[] pathNames, boolean[] isInverted, Translation2d redInitPos, Translation2d blueInitPos) {
+        loadPaths(path, pathNames, isInverted, DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue ? blueInitPos : redInitPos);
+    }
+
     private void loadDPaths(RobotPath.Path path, String[] pathNames, boolean isInverted, Translation2d redInitPos, Translation2d blueInitPos) {
         loadPaths(path, pathNames, isInverted, DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue ? blueInitPos : redInitPos);
+    }
+
+    private void loadPaths(RobotPath.Path path, String[] pathNames, boolean[] isInverted, Translation2d initPos) {
+        boolean invalidLength = false;
+        if(isInverted.length < pathNames.length) {
+            invalidLength = true;
+            System.err.println("Invalid inversion parameters for path: " + path.name());
+            if(isInverted.length == 0) {
+                isInverted = new boolean[] {true};
+            }
+        }
+        for(int i = 0; i < pathNames.length; i++) {
+            if(invalidLength) {
+                loadPath(path, pathNames[i], isInverted[0], initPos, i);
+            } else {
+                loadPath(path, pathNames[i], isInverted[i], initPos, i);
+            }
+            Trajectory trajectory = paths[path.idx][i].getTrajectory();
+            List<State> states = trajectory.getStates();
+            initPos = states.get(states.size()-1).poseMeters.getTranslation();
+        }
     }
         
     private void loadPaths(final RobotPath.Path path, final String[] pathNames, final boolean isInverted, Translation2d initPos) {
