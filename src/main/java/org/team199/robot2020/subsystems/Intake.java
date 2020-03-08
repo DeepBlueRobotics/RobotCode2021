@@ -1,5 +1,6 @@
 package org.team199.robot2020.subsystems;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 
 import org.team199.lib.MotorControllerFactory;
@@ -15,6 +16,7 @@ public class Intake extends SubsystemBase {
     private static double kSlowSpeed = -0.1;
 
     private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Ports.kIntakeRoller);
+    private final CANEncoder rollerEncoder = rollerMotor.getEncoder();
     private final DoubleSolenoid intakePistons1 = new DoubleSolenoid(Constants.Ports.kIntakePistons[0], Constants.Ports.kIntakePistons[1]);
     private final DoubleSolenoid intakePistons2 = new DoubleSolenoid(Constants.Ports.kIntakePistons[2], Constants.Ports.kIntakePistons[3]);
 
@@ -76,10 +78,10 @@ public class Intake extends SubsystemBase {
     }
 
     public double getEncoderDistance() {
-        return rollerMotor.getEncoder().getPosition();
+        return rollerEncoder.getPosition();
     }
 
     public void resetEncoder() {
-        rollerMotor.getEncoder().setPosition(0.0);
+        rollerEncoder.setPosition(0.0);
     }
 }

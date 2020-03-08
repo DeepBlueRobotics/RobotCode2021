@@ -113,7 +113,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean isAtTargetSpeed() {
-        return (master.getEncoder().getVelocity() > (kTargetSpeed - speedOffset));
+        return (masterEncoder.getVelocity() > (kTargetSpeed - speedOffset));
     }
 
     public double calculateFeedForward(double velocity) {
