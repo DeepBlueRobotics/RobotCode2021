@@ -14,6 +14,7 @@ public class Intake extends SubsystemBase {
     // TODO: find good values and then set to final
     private static double kIntakeSpeed = 0.4;
     private static double kReverseSpeed = -0.1;
+    private static double kOutputLimit = 0.3;
 
     private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Ports.kIntakeRoller);
     private final CANEncoder rollerEncoder = rollerMotor.getEncoder();
@@ -36,6 +37,11 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         kIntakeSpeed = SmartDashboard.getNumber("Intake.kIntakeSpeed", kIntakeSpeed);
         kReverseSpeed = SmartDashboard.getNumber("Intake.kReverseSpeed", kReverseSpeed);
+        // SparkMax does not allow you to set an output limit so it is periodically checked whether the intake speeds conform to the limit.
+        kIntakeSpeed = Math.signum(kIntakeSpeed) * Math.min(kIntakeSpeed, Math.abs(kIntakeSpeed));
+        kReverseSpeed = Math.signum(kReverseSpeed) * Math.min(kReverseSpeed, Math.abs(kReverseSpeed));
+        SmartDashboard.putNumber("Intake.kIntakeSpeed", kIntakeSpeed);
+        SmartDashboard.putNumber("Intake.kSlowSpeed", kReverseSpeed);
     }
 
     public void reverse() {
