@@ -12,16 +12,25 @@ import org.apache.commons.csv.CSVRecord;
 
 import edu.wpi.first.wpilibj.Filesystem;
 
+/**
+ * Performs linear interpolation. It is assumed that the function has been formatted so that the x value increases from top to bottom.
+ */
 public class LinearInterpolation {
-    public double[] xs, ys;
-    public double[] slopes, intercepts;
-    public double minX, maxX;
-    public double minY = Double.POSITIVE_INFINITY;     // Give minY an initial maximum value
-    public double maxY = Double.NEGATIVE_INFINITY;    // Give maxY an initial minimum value
-    public int numPoints = 0;
+    private double[] xs;
+    private double[] ys;
+    private double[] slopes;
+    private double[] intercepts;
+    private double minX;
+    private double maxX;
+    private double minY = Double.POSITIVE_INFINITY;
+    private double maxY = Double.NEGATIVE_INFINITY;
+    private int numPoints = 0;
     private boolean errorShown = false;
 
-    // Performs linear interpolation. It is assumed that the function has been formatted so that the x value increases from top to bottom.
+    /**
+     * Loads linear interpolation data from a csv file. It is assumed that the function has been formatted so that the x value increases from top to bottom.
+     * @param filename The name of the file to read from. The name will be assumed to be relative to {@link Filesystem#getDeployDirectory()}
+     */
     public LinearInterpolation(String filename) {
         try {      
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(Filesystem.getDeployDirectory().toPath().resolve(Paths.get(filename)).toFile()));
@@ -58,7 +67,11 @@ public class LinearInterpolation {
         }
     }
 
-    // Approximates the respective y coordinate for an arbitrary x-coordinate within the data.
+    /**
+     * Preforms linear interpolation
+     * @param x The x value to interpolate
+     * @return The interpolated y value
+     */
     public double calculate(double x) { 
         // Test to see if the data point is within the domain.
         if ((minX <= x) && (x <= maxX)) {

@@ -17,11 +17,16 @@ import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 /**
- * Add your docs here.
+ * Creates motor controllers
  */
 public class MotorControllerFactory {
-  public static WPI_VictorSPX createVictor(int port) {
-    WPI_VictorSPX victor = new WPI_VictorSPX(port);
+  /**
+   * Creates and configures {@link WPI_VictorSPX}
+   * @param id The can port assigned to the {@link WPI_VictorSPX}
+   * @return A {@link WPI_VictorSPX} configured to run on the specified port
+   */
+  public static WPI_VictorSPX createVictor(int id) {
+    WPI_VictorSPX victor = new WPI_VictorSPX(id);
 
     // Put all configurations for the victor motor controllers in here.
     MotorErrors.reportError(victor.configNominalOutputForward(0, 10));
@@ -34,6 +39,11 @@ public class MotorControllerFactory {
     return victor;
   }
 
+  /**
+   * Creates and configures {@link WPI_TalonSRX}
+   * @param port The can port assigned to the {@link WPI_TalonSRX}
+   * @return A {@link WPI_TalonSRX} configured to run on the specified port
+   */
   public static WPI_TalonSRX createTalon(int id) {
     WPI_TalonSRX talon = new WPI_TalonSRX(id);
 
@@ -56,6 +66,11 @@ public class MotorControllerFactory {
 
   //checks for spark max errors
 
+  /**
+   * Creates and configures {@link CANSparkMax} as well as checking if it is disconnected
+   * @param port The can port assigned to the {@link CANSparkMax}
+   * @return A {@link CANSparkMax} configured to run on the specified port
+   */
   public static CANSparkMax createSparkMax(int id) {
     CANSparkMax spark = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
     if(spark.getFirmwareVersion() == 0) {

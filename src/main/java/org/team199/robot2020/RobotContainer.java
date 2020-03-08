@@ -67,6 +67,9 @@ public class RobotContainer {
     private final Shooter shooter = new Shooter(drivetrain, lime, linearInterpol, isBlue ? Constants.FieldPositions.BLUE_PORT : Constants.FieldPositions.RED_PORT);
     private final PowerDistributionPanel pdp = new PowerDistributionPanel(Constants.Ports.kPDPCanID);
 
+    /**
+     * Creates a new {@link RobotContainer} and initialized joysticks and default commands
+     */
     public RobotContainer() {
         if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
             configureButtonBindingsLeftJoy();
@@ -191,10 +194,17 @@ public class RobotContainer {
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
     }
 
+    /**
+     * @return The {@link Drivetrain} of the robot
+     */
     final Drivetrain getDrivetrain() {
         return drivetrain;
     }
 
+    /**
+     * @return The {@link Command} to run in autonomous
+     * @see Robot#autonomousInit()
+     */
     public Command getAutonomousCommand() {
         try {
             final RobotPath.Path path = getPath();
@@ -212,7 +222,7 @@ public class RobotContainer {
     }
 
     
-    /**
+    /*
      * DIO Port 0 = Switch 1
      * DIO Port 1 = Switch 2
      * DIO Port 2 = Switch 3
@@ -230,6 +240,10 @@ public class RobotContainer {
      * off on on   = 5
      * on on on    = 6
      */
+    /**
+     * @return The {@link RobotPath.Path} to run in autonomous
+     * @see Robot#autonomousInit()
+     */
     public RobotPath.Path getPath() {
         // get() returns true if the circuit is open.
         int b1 = autoSwitch1.get() ? 0 : 1;
@@ -238,14 +252,61 @@ public class RobotContainer {
         return RobotPath.Path.fromIdx((b1 | b2 << 1 | b3 << 2)-1);
     }
 
+    /**
+     * Loads paths into the <code>paths</code> array based on the team's alliance and the {@link RobotPath.Path}
+     * @param path The {@link RobotPath.Path} to load into
+     * @param pathNames The names of the paths to load
+     * @param isInverted Whether the paths should be inverted
+     * @param redInitPos The initial position of the path if the team is on the red alliance
+     * @param blueInitPos The initial position of the path if the team is on the blue alliance
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d, Translation2d)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d, int)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, int)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d)
+     * @see RobotPath#RobotPath(String, Drivetrain, boolean, Translation2d)
+     */
     private void loadDPaths(RobotPath.Path path, String[] pathNames, boolean[] isInverted, Translation2d redInitPos, Translation2d blueInitPos) {
         loadPaths(path, pathNames, isInverted, DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue ? blueInitPos : redInitPos);
     }
 
+    /**
+     * Loads paths into the <code>paths</code> array starting at index <code>[{@link RobotPath.Path#idx}, 0]</code> based on the team's alliance
+     * @param path The {@link RobotPath.Path} to load into
+     * @param pathNames The names of the paths to load
+     * @param isInverted Whether the paths should be inverted
+     * @param redInitPos The initial position of the path if the team is on the red alliance
+     * @param blueInitPos The initial position of the path if the team is on the blue alliance
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d, Translation2d)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d, int)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, int)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d)
+     * @see RobotPath#RobotPath(String, Drivetrain, boolean, Translation2d)
+     */
     private void loadDPaths(RobotPath.Path path, String[] pathNames, boolean isInverted, Translation2d redInitPos, Translation2d blueInitPos) {
         loadPaths(path, pathNames, isInverted, DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue ? blueInitPos : redInitPos);
     }
 
+    /**
+     * Loads paths into the <code>paths</code> array starting at index <code>[{@link RobotPath.Path#idx}, 0]</code>
+     * @param path The {@link RobotPath.Path} to load into
+     * @param pathNames The names of the paths to load
+     * @param isInverted Whether the paths should be inverted
+     * @param initPos The initial position of the path
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d, Translation2d)
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d, Translation2d)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d, int)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, int)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d)
+     * @see RobotPath#RobotPath(String, Drivetrain, boolean, Translation2d)
+     */
     private void loadPaths(RobotPath.Path path, String[] pathNames, boolean[] isInverted, Translation2d initPos) {
         boolean invalidLength = false;
         if(isInverted.length < pathNames.length) {
@@ -266,7 +327,23 @@ public class RobotContainer {
             initPos = states.get(states.size()-1).poseMeters.getTranslation();
         }
     }
-        
+
+    
+    /**
+     * Loads paths into the <code>paths</code> array starting at index <code>[{@link RobotPath.Path#idx}, 0]</code>
+     * @param path The {@link RobotPath.Path} to load into
+     * @param pathNames The names of the paths to load
+     * @param isInverted Whether the paths should be inverted
+     * @param initPos The initial position of the path
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d, Translation2d)
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d, Translation2d)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d, int)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, int)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d)
+     * @see RobotPath#RobotPath(String, Drivetrain, boolean, Translation2d)
+     */
     private void loadPaths(final RobotPath.Path path, final String[] pathNames, final boolean isInverted, Translation2d initPos) {
         for(int i = 0; i < pathNames.length; i++) {
             loadPath(path, pathNames[i], isInverted, initPos, i);
@@ -276,18 +353,82 @@ public class RobotContainer {
         }
     }
 
+    /**
+     * Loads a path into the <code>paths</code> array at index <code>[{@link RobotPath.Path#idx}, 0]</code> based on the team's alliance
+     * @param path The {@link RobotPath.Path} to load into
+     * @param pathNames The name of the path to load
+     * @param isInverted Whether the paths should be inverted
+     * @param redInitPos The initial position of the path if the team is on the red alliance
+     * @param blueInitPos The initial position of the path if the team is on the blue alliance
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d, Translation2d)
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d, Translation2d)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d, int)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, int)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d)
+     * @see RobotPath#RobotPath(String, Drivetrain, boolean, Translation2d)
+     */
     private void loadDPath(RobotPath.Path path, String pathName, boolean isInverted, Translation2d redInitPos, Translation2d blueInitPos) {
         loadDPath(path, pathName, isInverted, redInitPos, blueInitPos, 0);
     }
 
+    /**
+     * Loads a path into the <code>paths</code> array at index <code>[{@link RobotPath.Path#idx}, idx]</code> based on the team's alliance
+     * @param path The {@link RobotPath.Path} to load into
+     * @param pathNames The name of the path to load
+     * @param isInverted Whether the paths should be inverted
+     * @param redInitPos The initial position of the path if the team is on the red alliance
+     * @param blueInitPos The initial position of the path if the team is on the blue alliance
+     * @param idx The index in which to load the path in the 2d array
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d, Translation2d)
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d, Translation2d)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, int)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d)
+     * @see RobotPath#RobotPath(String, Drivetrain, boolean, Translation2d)
+     */
     private void loadDPath(RobotPath.Path path, String pathName, boolean isInverted, Translation2d redInitPos, Translation2d blueInitPos, int idx) {
         loadPath(path, pathName, isInverted, DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue ? blueInitPos : redInitPos, idx);
     }
-        
+
+    /**
+     * Loads a path into the <code>paths</code> array starting at index <code>[{@link RobotPath.Path#idx}, 0]</code>
+     * @param path The {@link RobotPath.Path} to load into
+     * @param pathName The names of the paths to load
+     * @param isInverted Whether the paths should be inverted
+     * @param initPos The initial position of the path
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d, Translation2d)
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d, Translation2d)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d, int)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, int)
+     * @see RobotPath#RobotPath(String, Drivetrain, boolean, Translation2d)
+     */
     private void loadPath(final RobotPath.Path path, final String pathName, final boolean isInverted, final Translation2d initPos) {
         loadPath(path, pathName, isInverted, initPos, 0);
     }
-        
+
+    /**
+     * Loads a path into the <code>paths</code> array at index <code>[{@link RobotPath.Path#idx}, idx]</code>
+     * @param path The {@link RobotPath.Path} to load into
+     * @param pathName The names of the paths to load
+     * @param isInverted Whether the paths should be inverted
+     * @param initPos The initial position of the path
+     * @param idx The index in which to load the path in the 2d array
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d, Translation2d)
+     * @see #loadDPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d, Translation2d)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d, int)
+     * @see #loadDPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d, Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean[], Translation2d)
+     * @see #loadPaths(org.team199.lib.RobotPath.Path, String[], boolean, Translation2d)
+     * @see #loadPath(org.team199.lib.RobotPath.Path, String, boolean, Translation2d)
+     * @see RobotPath#RobotPath(String, Drivetrain, boolean, Translation2d)
+     */
     private void loadPath(final RobotPath.Path path, final String pathName, final boolean isInverted, final Translation2d initPos, int idx) {
         try {
             paths[path.idx][idx] = new RobotPath(pathName, drivetrain, isInverted, initPos);
