@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANEncoder;
 
 import com.revrobotics.CANPIDController;
 
@@ -36,6 +37,9 @@ public class Shooter extends SubsystemBase {
     private final CANSparkMax slave = MotorControllerFactory.createSparkMax(Constants.Ports.kShooterSlave);
     private final CANPIDController pidController = master.getPIDController();
 
+    private final CANEncoder masterEncoder = master.getEncoder();
+    private final CANEncoder slaveEncoder = slave.getEncoder();
+
     private final Drivetrain drivetrain;
     private final Limelight lime;
     private final LinearInterpolation linearInterpol;
@@ -67,8 +71,8 @@ public class Shooter extends SubsystemBase {
         slave.follow(master, true);
         master.setInverted(true);
 
-        Log.registerDoubleVar("Spark Max Port 2 Speed", () -> master.getEncoder().getVelocity());
-        Log.registerDoubleVar("Spark Max Port 4 Speed", () -> slave.getEncoder().getVelocity());
+        Log.registerDoubleVar("Spark Max Port 2 Speed", () -> masterEncoder.getVelocity());
+        Log.registerDoubleVar("Spark Max Port 4 Speed", () -> slaveEncoder.getVelocity());
     }
 
     public void periodic()  {
@@ -96,8 +100,8 @@ public class Shooter extends SubsystemBase {
         if (ld != lime.getPIDController().getD()) lime.getPIDController().setD(ld);
         pidController.setReference(getTargetSpeed(), ControlType.kVelocity, 0, calculateFeedForward(getTargetSpeed()));
         
-        SmartDashboard.putNumber("Speed Spark Max Port 2", master.getEncoder().getVelocity());
-        SmartDashboard.putNumber("Speed Spark Max Port 4", slave.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Speed Spark Max Port 2", masterEncoder.getVelocity());
+        SmartDashboard.putNumber("Speed Spark Max Port 4", slaveEncoder.getVelocity());
     }
 
     public void setSpeed(double speed) {
