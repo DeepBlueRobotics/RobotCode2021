@@ -26,34 +26,33 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
             case PATH1:
             case PATH2:
             case PATH3:
-            addCommands(
-                aim,
-                shoot,
-                new ParallelCommandGroup(
-                    paths[0].getPathCommand(),
-                    new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 5)
-                ),
-                aim,
-                shoot
-            );
-            break;
+                addCommands(
+                    aim,
+                    shoot,
+                    new ParallelCommandGroup(
+                        paths[0].getPathCommand(),   new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 5)
+                    ),
+                    aim,
+                    shoot
+                );
+                break;
             case PATH4:
-            addCommands(
-                new ParallelCommandGroup(
-                    paths[0].getPathCommand(),
-                    new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 2)
-                ),
-                new ParallelCommandGroup(
-                    paths[1].getPathCommand(),
-                    new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 2)
-                ),
-                new ParallelCommandGroup(
-                    paths[2].getPathCommand(),
-                    new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 1)
-                ),
-                aim, shoot
-            );
-            break;
+                addCommands(
+                    new ParallelCommandGroup(
+                        paths[0].getPathCommand(),   new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 2)
+                    ),
+                    aim,
+                    shoot,
+                    new ParallelCommandGroup(
+                        paths[1].getPathCommand(),   new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 2)
+                    ),
+                    new ParallelCommandGroup(
+                        paths[2].getPathCommand(),   new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 1)
+                    ),
+                    aim, 
+                    shoot
+                );
+                break;
         }
     }
 }
