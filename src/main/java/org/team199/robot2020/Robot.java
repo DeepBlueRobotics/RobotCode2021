@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    robotContainer.drivetrain.toggleMode();
     robotContainer.getAutonomousCommand().schedule();
     Log.setDataLoggingDisabled(false);
   }
@@ -63,7 +64,7 @@ public class Robot extends TimedRobot {
    * This function is called once each time the robot enters teleoperated mode.
    */
   @Override
-  public void teleopInit() {
+  public void teleopInit() {robotContainer.drivetrain.toggleMode();
     Log.setDataLoggingDisabled(false);
   }
 
@@ -83,6 +84,12 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void disabledInit() {
+    new Thread(() -> {
+      try {
+        Thread.sleep(1000);
+        robotContainer.drivetrain.toggleMode();
+      } catch(InterruptedException e) {}
+    }).start();
     Log.flush();
     Log.setDataLoggingDisabled(true);
   }

@@ -37,14 +37,14 @@ public final class Constants {
         public static final int kFeederEjector = 7;
         public static final int kFeederBelt = 8;
 
-        public static final int kShooterMaster = 15;     // Left
+        public static final int kShooterMaster = 1;     // Left
         public static final int kShooterSlave = 14;     // Right
 
         public static final int kClimberWinch = 12;
         public static final int kClimberLift = 11;
 
         // solenoids
-        public static final int[] kIntakePistons = {0, 1};
+        public static final int[] kIntakePistons = { 0, 1, 2, 5 };
 
         // other
         public static final int kFeederInSensor = 11;

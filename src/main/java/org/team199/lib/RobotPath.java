@@ -1,10 +1,12 @@
 package org.team199.lib;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -15,6 +17,7 @@ import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
@@ -32,49 +35,20 @@ public class RobotPath {
     private Trajectory trajectory;
     private Drivetrain dt;
 
-    public RobotPath(String filename, Drivetrain dt, boolean isInverted) throws IOException {
-        TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
-                                                       Drivetrain.kAutoMaxAccel);
-        config.setKinematics(dt.getKinematics());
+    public RobotPath(String pathName, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
+        this(getPointsFromFile(pathName, dt, isInverted, initPos), isInverted, dt);
+    }
 
-        double kVoltAVG = 0.25 * (Drivetrain.kVolts[0] + Drivetrain.kVolts[1] + Drivetrain.kVolts[2] + Drivetrain.kVolts[3]);
-        double kVelsAVG = 0.25 * (Drivetrain.kVels[0] + Drivetrain.kVels[1] + Drivetrain.kVels[2] + Drivetrain.kVels[3]);
-        double kAccelAVG = 0.25 * (Drivetrain.kAccels[0] + Drivetrain.kAccels[1] + Drivetrain.kAccels[2] + Drivetrain.kAccels[3]);
-        DifferentialDriveVoltageConstraint voltConstraint = new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), dt.getKinematics(), Drivetrain.kAutoMaxVolt);
-        config.addConstraint(voltConstraint);
-        if (isInverted) { config.setReversed(true); }
-        ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
-        
-        try {
-            CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(Filesystem.getDeployDirectory().toPath().resolve(Paths.get("/paths/" + filename + ".path")).toFile()));
-            double x, y, tanx, tany;
-            Rotation2d rot;
-            
-            int count = 0;
-            for (CSVRecord record : csvParser) {
-                if (count > 0) {
-                    x = Double.parseDouble(record.get(0));
-                    y = Double.parseDouble(record.get(1));
-                    if (isInverted) {
-                        x *= -1;
-                        y *= -1;
-                    }
-                    tanx = Double.parseDouble(record.get(2));
-                    tany = Double.parseDouble(record.get(3));
-                    rot = new Rotation2d(tanx, tany);
-                    if (isInverted) { rot.rotateBy(new Rotation2d(Math.PI)); }
-                    poses.add(new Pose2d(x, y, rot));
-                }
-                count++;
-            }
-            csvParser.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("File named /home/lvuser/deploy/paths/" + filename + ".path not found.");
-            e.printStackTrace();
-        }
+    public RobotPath(List<Pose2d> poses, boolean isInverted, Drivetrain dt) {
+        this(poses, createConfig(isInverted, dt), dt);
+    }
 
-        trajectory = TrajectoryGenerator.generateTrajectory(poses, config);
+    public RobotPath(List<Pose2d> poses, TrajectoryConfig config, Drivetrain dt) {
+        this(TrajectoryGenerator.generateTrajectory(poses, config), dt);
+    }
+
+    public RobotPath(Trajectory trajectory, Drivetrain dt) {
+        this.trajectory = trajectory;
         this.dt = dt;
     }
 
@@ -90,5 +64,58 @@ public class RobotPath {
 
     public void loadOdometry() {
         dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
+    }
+
+    public static TrajectoryConfig createConfig(boolean isInverted, Drivetrain dt) {
+        TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
+                                                       Drivetrain.kAutoMaxAccel);
+        config.setKinematics(dt.getKinematics());
+
+        double kVoltAVG = 0.25 * (Drivetrain.kVolts[0] + Drivetrain.kVolts[1] + Drivetrain.kVolts[2] + Drivetrain.kVolts[3]);
+        double kVelsAVG = 0.25 * (Drivetrain.kVels[0] + Drivetrain.kVels[1] + Drivetrain.kVels[2] + Drivetrain.kVels[3]);
+        double kAccelAVG = 0.25 * (Drivetrain.kAccels[0] + Drivetrain.kAccels[1] + Drivetrain.kAccels[2] + Drivetrain.kAccels[3]);
+        DifferentialDriveVoltageConstraint voltConstraint = new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), dt.getKinematics(), Drivetrain.kAutoMaxVolt);
+        config.addConstraint(voltConstraint);
+        
+        if (isInverted) { config.setReversed(true); }
+        
+        return config;
+    }
+
+    public static List<Pose2d> getPointsFromFile(String pathName, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
+        return getPointsFromFile(getPathFile(pathName), dt, isInverted, initPos);
+    }
+
+    public static List<Pose2d> getPointsFromFile(File file, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
+        ArrayList<Pose2d> poses = new ArrayList<Pose2d>();
+
+        try {
+            CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(file));
+            double x, y, tanx, tany;
+            Rotation2d rot;
+            List<CSVRecord> records = csvParser.getRecords();
+
+            for (int i = 1; i < records.size(); i++) {
+                CSVRecord record = records.get(i);
+                x = Double.parseDouble(record.get(0)) + initPos.getX();
+                y = Double.parseDouble(record.get(1)) + initPos.getY();
+                tanx = Double.parseDouble(record.get(2));
+                tany = Double.parseDouble(record.get(3));
+                rot = new Rotation2d(tanx, tany);
+                if (isInverted) { rot = rot.rotateBy(new Rotation2d(Math.PI)); }
+                poses.add(new Pose2d(x, y, rot));
+            }
+            csvParser.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File named: " + file.getAbsolutePath() + " not found.");
+            e.printStackTrace();
+        }
+
+        return poses;
+    }
+
+    public static File getPathFile(String pathName) {
+        return Filesystem.getDeployDirectory().toPath().resolve(Paths.get("PathWeaver/Paths/" + pathName + ".path")).toFile();
     }
 }
