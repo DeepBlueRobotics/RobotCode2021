@@ -116,24 +116,25 @@ public class RobotContainer {
         intake.setDefaultCommand(new RunCommand(() -> {
             boolean encoderReset = false;
             double targetEncoderDist = 100.0;   // TODO: Figure out the correct value.
-            if(intake.isDeployed()) {
-                if(feeder.isIntakeCellEntering()) {
-                    if (!feeder.isCellAtShooter()) {
-                        intake.slow();
+
+            if (intake.isDeployed()) {
+                if (feeder.has5Intake()) {
+                    if (!encoderReset) {
+                        intake.resetEncoder();
+                        encoderReset = true;
+                    }
+                    if (intake.getEncoderDistance() <= targetEncoderDist) {
+                        intake.intake();
                     } else {
-                        if (!encoderReset) {
-                            intake.resetEncoder();
-                            encoderReset = true;
-                        }
-                        if (intake.getEncoderDistance() <= targetEncoderDist) {
-                            intake.slow();
-                        } else {
-                            encoderReset = false;
-                            intake.stop();
-                        }
+                        intake.stop();
                     }
                 } else {
-                    intake.intake();
+                    encoderReset = false;
+                    if (feeder.isIntakeCellEntering()) {
+                        intake.reverse();
+                    } else {
+                        intake.intake();
+                    }
                 }
             } else {
                 intake.stop();
