@@ -39,12 +39,18 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
             break;
             case PATH4:
             addCommands(
-                paths[0].getPathCommand(),
-                new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 2),
-                paths[1].getPathCommand(),
-                new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 2),
-                paths[2].getPathCommand(),
-                new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 1),
+                new ParallelCommandGroup(
+                    paths[0].getPathCommand(),
+                    new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 2)
+                ),
+                new ParallelCommandGroup(
+                    paths[1].getPathCommand(),
+                    new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 2)
+                ),
+                new ParallelCommandGroup(
+                    paths[2].getPathCommand(),
+                    new AutoBallPickup(feeder, intake, drivetrain, pdp, feederPDPPort, 1)
+                ),
                 aim, shoot
             );
             break;
