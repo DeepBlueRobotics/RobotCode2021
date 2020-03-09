@@ -31,7 +31,7 @@ public class Limelight {
   private double steering_factor = 0.25;
   private double prev_tx = 1.0;
   private double tolerance = 0.01;
-  private double backlashOffset = 0.1;
+  private double backlashOffset = 0.0;
 
   private PIDController pidController;
   private boolean newPIDLoop = false;
@@ -137,7 +137,6 @@ public class Limelight {
       if (ta > SmartDashboard.getNumber("Area Threshold", 0.02)) {
         adjustment = pidController.calculate(tx);
         prev_tx = tx;
-        prev_tx = Double.isNaN(prev_tx) ? 0 : prev_tx;
         
         if (!newPIDLoop) {
           newPIDLoop = true;
@@ -150,14 +149,12 @@ public class Limelight {
       adjustment = Math.signum(prev_tx) * steering_factor;
     }
 
-    if (Math.abs(tx) < 1.0) {
-      stopSteer = true;
-    } else {
-      stopSteer = false;
-    }
+    if (Math.abs(tx) < 1.0) stopSteer = true;
+    else stopSteer = false;
+
     SmartDashboard.putBoolean("Stop Auto Steering", stopSteer);
 
-    adjustment = Math.signum(tx) * Math.min(Math.abs(adjustment), 0.5);
+    adjustment = Math.signum(adjustment) * Math.min(Math.abs(adjustment), 0.5);
     SmartDashboard.putNumber("Adjustment", adjustment);
     return adjustment;
   }
