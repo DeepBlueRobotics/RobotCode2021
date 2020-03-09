@@ -24,7 +24,7 @@ public class Climber extends SubsystemBase {
     public static double kWinchAdjustSpeed = 0.2;
 
     public static final double kLiftHeight = 87;
-    public static final double kWinchEndHeight = 71;
+    public static final double kWinchEndHeight = 60;
     public static final double kWinchStartHeight = -80;
     private final CANSparkMax liftMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberLift);
     private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch);
