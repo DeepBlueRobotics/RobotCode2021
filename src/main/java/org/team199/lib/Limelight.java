@@ -25,9 +25,13 @@ public class Limelight {
   There are more values we could be using. Check the documentation.
   */
   private double tv, tx, ty, ta;
-  private boolean stopSteer = false;
+  public boolean stopSteer = false;
   private double mounting_angle;
+  private double adjustment = 0.0;
+  private double steering_factor = 0.25;
   private double prev_tx = 1.0;
+  private double tolerance = 0.01;
+  private double backlashOffset = 0.1;
 
   private PIDController pidController;
   private boolean newPIDLoop = false;
@@ -39,8 +43,8 @@ public class Limelight {
   public Limelight() {
     SmartDashboard.putNumber("Area Threshold", 0.02);
     SmartDashboard.putNumberArray("AutoAlign: PID Values", new double[]{0.015,0,0});
-    SmartDashboard.putNumber("AutoAlign: Tolerance", 0.01);
-    SmartDashboard.putNumber("AutoAlign: Backlash Offset", 0);
+    SmartDashboard.putNumber("AutoAlign: Tolerance", tolerance);
+    SmartDashboard.putNumber("AutoAlign: Backlash Offset", backlashOffset);
     SmartDashboard.setPersistent("Area Threshold");
     SmartDashboard.setPersistent("AutoAlign: PID Values");
     SmartDashboard.setPersistent("AutoAlign: Tolerance");
@@ -125,27 +129,25 @@ public class Limelight {
     SmartDashboard.putNumber("Found Vision Target", tv);
     SmartDashboard.putNumber("Prev_tx", prev_tx);
     tx = Double.isNaN(tx) ? 0 : tx;
-    double[] pidValues = SmartDashboard.getNumberArray("AutoAlign: PID Values", new double[]{0.015,0,0});
-    pidController.setPID(pidValues[0],pidValues[1],pidValues[2]);
+    double[] pidValues = SmartDashboard.getNumberArray("AutoAlign: PID Values", new double[]{0.015, 0, 0});
+    pidController.setPID(pidValues[0], pidValues[1], pidValues[2]);
     pidController.setTolerance(SmartDashboard.getNumber("AutoAlign: Tolerance", 0.01));
-    
-    double adjustment = 0;
-    double steering_factor = 0.25;
   
     if (tv == 1.0 && !stopSteer) {
       if (ta > SmartDashboard.getNumber("Area Threshold", 0.02)) {
         adjustment = pidController.calculate(tx);
         prev_tx = tx;
+        prev_tx = Double.isNaN(prev_tx) ? 0 : prev_tx;
         
         if (!newPIDLoop) {
           newPIDLoop = true;
-          pidController.setSetpoint(Math.signum(tx)*SmartDashboard.getNumber("AutoAlign: Backlash Offset",0));
+          pidController.setSetpoint(Math.signum(prev_tx) * SmartDashboard.getNumber("AutoAlign: Backlash Offset", backlashOffset));
         }
       }
     } else {
       newPIDLoop = false;
       pidController.reset();
-      adjustment += Math.signum(prev_tx) * steering_factor;
+      adjustment = Math.signum(prev_tx) * steering_factor;
     }
 
     if (Math.abs(tx) < 1.0) {
@@ -171,7 +173,7 @@ public class Limelight {
   }
 
   public void setLight(boolean state) {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(state ? 1 : 3); 
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(state ? 3.0 : 1.0); 
   }
 
   /* Given a desired straight-line distance targetDist away from the vision target, determine the distance 

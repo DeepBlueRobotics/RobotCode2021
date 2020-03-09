@@ -16,8 +16,12 @@ public class ShooterHorizontalAim extends CommandBase {
         addRequirements(drivetrain);
     }
 
-    public void execute() {
+    public void initialize() {
+        limelight.stopSteer = false;
         limelight.setLight(true);
+    }
+
+    public void execute() {
         double adjustment = limelight.steeringAssist();
         drivetrain.tankDrive(adjustment, -adjustment, false);
     }
@@ -25,7 +29,10 @@ public class ShooterHorizontalAim extends CommandBase {
     public boolean isFinished() {
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
-        limelight.setLight(false);
         return (Math.abs(tx) < txRange) && tv == 1.0;
+    }
+
+    public void end(boolean interrupted) {
+        limelight.setLight(false);
     }
 }

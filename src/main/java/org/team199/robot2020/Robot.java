@@ -10,6 +10,7 @@ package org.team199.robot2020;
 import org.team199.lib.MotorErrors;
 import org.team199.lib.logging.Log;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -64,7 +65,8 @@ public class Robot extends TimedRobot {
    * This function is called once each time the robot enters teleoperated mode.
    */
   @Override
-  public void teleopInit() {robotContainer.getDrivetrain().toggleBreakMode();
+  public void teleopInit() {
+    robotContainer.getDrivetrain().toggleBreakMode();
     Log.setDataLoggingDisabled(false);
   }
 
@@ -92,5 +94,6 @@ public class Robot extends TimedRobot {
     }).start();
     Log.flush();
     Log.setDataLoggingDisabled(true);
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1.0);
   }
 }
