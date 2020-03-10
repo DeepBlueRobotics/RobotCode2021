@@ -43,7 +43,10 @@ import org.team199.robot2020.commands.RaiseRobot;
 import org.team199.robot2020.subsystems.Feeder;
 import org.team199.robot2020.subsystems.Intake;
 import org.team199.robot2020.subsystems.Climber;
-
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
+import org.team199.lib.MotorControllerFactory;
+import edu.wpi.first.cameraserver.CameraServer;
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -68,6 +71,8 @@ public class RobotContainer {
     private final boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
     private final Shooter shooter = new Shooter(drivetrain, lime, linearInterpol, isBlue ? Constants.FieldPositions.BLUE_PORT : Constants.FieldPositions.RED_PORT);
     private final PowerDistributionPanel pdp = new PowerDistributionPanel(Constants.Ports.kPDPCanID);
+    private final UsbCamera camera1 = MotorControllerFactory.configureCamera(Constants.Ports.kCamera1Port);
+    private final VideoSink cameraServer = CameraServer.getInstance().getServer();
 
     private boolean encoderReset = false, has5 = false;
     private double targetEncoderDist = 100.0;   // TODO: Figure out the correct value.

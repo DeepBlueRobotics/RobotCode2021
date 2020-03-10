@@ -61,6 +61,8 @@ public final class Constants {
         // PDP ports
         public static final int kFeederBeltPDP = 4;
         public static final int kFeederEjectorPDP = 5;
+
+        public static final int kCamera1Port = 0;
     }
 
     /**
@@ -74,6 +76,8 @@ public final class Constants {
             public static final int kToggleDriveModeButton = 4;
             public static final int kCharacterizedDriveButton = 5;
             public static final int kSlowDriveButton = 2;
+            // camera
+            public static final int kToggleCameraButton = 3;
         }
 
         public static final class RightJoy {
@@ -110,6 +114,9 @@ public final class Constants {
             public static final int kIntakeButton = X;
             public static final int kOuttakeButton = A;
             public static final int kRegurgitateButton = B;
+
+            
+
         }
     }
 
