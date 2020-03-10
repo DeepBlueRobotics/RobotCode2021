@@ -62,7 +62,6 @@ public class RobotContainer {
     private final RobotPath[] paths;
     private final LinearInterpolation linearInterpol;
     private final UsbCamera camera1 = MotorControllerFactory.configureCamera(Constants.Drive.kCamera1Port);
-    private final UsbCamera camera2 = MotorControllerFactory.configureCamera(Constants.Drive.kCamera2Port);
     private final VideoSink cameraServer = CameraServer.getInstance().getServer();
 
     public RobotContainer() {
