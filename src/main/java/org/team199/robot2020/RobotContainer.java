@@ -68,6 +68,8 @@ public class RobotContainer {
     private final Shooter shooter = new Shooter(drivetrain, lime, linearInterpol, isBlue ? Constants.FieldPositions.BLUE_PORT : Constants.FieldPositions.RED_PORT);
     private final PowerDistributionPanel pdp = new PowerDistributionPanel(Constants.Ports.kPDPCanID);
 
+    private boolean encoderReset = false, has5 = false;
+    private double targetEncoderDist = 100.0;   // TODO: Figure out the correct value.
     /**
      * Creates a new {@link RobotContainer} and initialized joysticks and default commands
      */
@@ -118,27 +120,18 @@ public class RobotContainer {
         }, intake));
         */
         intake.setDefaultCommand(setName("Intake Default Commadn", new RunCommand(() -> {
-            boolean encoderReset = false;
-            double targetEncoderDist = 100.0;   // TODO: Figure out the correct value.
-
-            if (intake.isDeployed()) {
-                if (feeder.has5Intake()) {
-                    if (!encoderReset) {
-                        intake.resetEncoder();
-                        encoderReset = true;
-                    }
-                    if (intake.getEncoderDistance() <= targetEncoderDist) {
-                        intake.intake();
-                    } else {
-                        intake.stop();
-                    }
-                } else {
-                    encoderReset = false;
-                    if (feeder.isIntakeCellEntering()) {
+            if(intake.isDeployed()) {
+                if(feeder.isIntakeCellEntering()) {
+                    if (!feeder.isCellAtShooter()) {
+                        has5 = false;
                         intake.reverse();
                     } else {
-                        intake.intake();
+                        has5 = true;
                     }
+                } else if(!has5) {
+                    intake.intake();
+                } else {
+                    intake.stop();
                 }
             } else {
                 intake.stop();
