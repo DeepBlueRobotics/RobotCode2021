@@ -28,6 +28,7 @@ public class AdjustClimber extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("--ADJUST CLIMBER--");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -37,8 +38,10 @@ public class AdjustClimber extends CommandBase {
       climber.runLift(Climber.kLiftKeepSpeed + Climber.kLiftAdjustSpeed);
     } else if (controller.getRawButton(Constants.OI.Controller.kAdjustClimberDownButton)){ // down
       climber.runLift(Climber.kLiftKeepSpeed - Climber.kLiftAdjustSpeed);
+      climber.runWinch(Climber.kWinchAdjustSpeed);
     } else { // neutral
       climber.runLift(Climber.kLiftKeepSpeed);
+      climber.runWinch(0);
     }
   }
 

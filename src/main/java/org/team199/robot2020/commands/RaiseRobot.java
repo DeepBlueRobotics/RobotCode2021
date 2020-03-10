@@ -25,22 +25,17 @@ public class RaiseRobot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.runLift(Climber.kLiftRetractSpeed);
     climber.runWinch(Climber.kWinchRetractSpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (climber.getLiftHeight() < 1) {
-      climber.runLift(0);
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.runLift(0);
     climber.runWinch(0);
   }
 

@@ -38,6 +38,7 @@ import org.team199.robot2020.subsystems.Shooter;
 import org.team199.robot2020.commands.AdjustClimber;
 import org.team199.robot2020.commands.AutoShootAndDrive;
 import org.team199.robot2020.commands.DeployClimber;
+import org.team199.robot2020.commands.DropLift;
 import org.team199.robot2020.commands.RaiseRobot;
 import org.team199.robot2020.subsystems.Feeder;
 import org.team199.robot2020.subsystems.Intake;
@@ -119,24 +120,38 @@ public class RobotContainer {
             }
         }, intake));
         */
-        intake.setDefaultCommand(setName("Intake Default Commadn", new RunCommand(() -> {
-            if(intake.isDeployed()) {
-                if(feeder.isIntakeCellEntering()) {
-                    if (!feeder.isCellAtShooter()) {
-                        has5 = false;
-                        intake.reverse();
-                    } else {
-                        has5 = true;
+
+        intake.setDefaultCommand(new RunCommand(() -> {
+            SmartDashboard.putNumber("Intake.getEncoderDistance", intake.getEncoderDistance());
+
+            if (intake.isDeployed()) {
+                if (feeder.isCellAtShooter()) {
+                    if (!feeder.isIntakeCellEntering() && !intake.cell5Entered) intake.intake();
+                    else if (feeder.isIntakeCellEntering() && !intake.cell5Entered) {
+                        if (!intake.encoderReset) {
+                            intake.resetEncoder();
+                            intake.encoderReset = true;
+                        }
+                        
+                        if (intake.getEncoderDistance() <= intake.targetEncoderDist) intake.intake();
+                        else intake.cell5Entered = true; 
                     }
-                } else if(!has5) {
-                    intake.intake();
+                    else intake.stop();
+                    System.out.println("1, " + feeder.isCellEntering() + ", " + intake.cell5Entered);
                 } else {
-                    intake.stop();
+                    intake.encoderReset = false;
+                    intake.cell5Entered = false;
+                    if (!feeder.isIntakeCellEntering()) {
+                        intake.intake();
+                    } else {
+                        intake.reverse();
+                    }
+                    System.out.println("2");
                 }
             } else {
                 intake.stop();
             }
-        }, intake)));
+        }, intake));
 
         paths = new RobotPath[7][10];
         loadDPaths(RobotPath.Path.PATH1, new String[] {"TRLeft", "TrenchRun", "TrenchRun"}, new boolean[] {false, false, true}, Constants.FieldPositions.RED_LEFT.pos, Constants.FieldPositions.BLUE_LEFT.pos);
@@ -149,8 +164,6 @@ public class RobotContainer {
         // Arcade/Tank drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kToggleDriveModeButton).whenPressed(new InstantCommand(
                 () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
-
-        // characterize drive button
         
         // Toggle Characterize Drive                
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
@@ -186,7 +199,10 @@ public class RobotContainer {
         )));
 
         // climb button
-        new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
+        new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new SequentialCommandGroup(
+            new DropLift(climber),
+            new RaiseRobot(climber)
+         ));
     }
 
     /**

@@ -101,10 +101,10 @@ public final class Constants {
             public static final int START = 10;
 
             // climber
-            public static final int kDeployClimberButton = Y;
-            public static final int kRaiseRobotButton = LB;
-            public static final int kAdjustClimberUpButton = 0; // TODO: change button
-            public static final int kAdjustClimberDownButton = 0; // TODO: change button    
+            public static final int kDeployClimberButton = BACK;
+            public static final int kRaiseRobotButton = START;
+            public static final int kAdjustClimberUpButton = LB;
+            public static final int kAdjustClimberDownButton = RB;
 
             // intake/feeder
             public static final int kIntakeButton = X;

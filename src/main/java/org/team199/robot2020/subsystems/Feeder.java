@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Feeder extends SubsystemBase {
   // TODO: find good values and then set to final
   private static double kBeltIntakeSpeed = .8;
-  private static double kRollerIntakeSpeed = .3;
+  private static double kRollerIntakeSpeed = .15;
   private static double kBeltEjectSpeed = 1;
   private static double kRollerEjectSpeed = 1;
 
@@ -37,8 +37,8 @@ public class Feeder extends SubsystemBase {
   private final TimeOfFlight inSensor = new TimeOfFlight(Constants.Ports.kFeederInSensor);
   private final TimeOfFlight outSensor = new TimeOfFlight(Constants.Ports.kFeederOutSensor);
   
-  private double limitDistance = 12000;
-  private double intakeDelay = 0.1;
+  private double limitDistance = 10000;
+  private double intakeDelay = 0.025;
   private int startPosition = 0;
   private boolean reachedShooter = false;
   private boolean intaking = false;
