@@ -9,33 +9,34 @@ package org.team199.robot2020.commands;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public class ToggleCamera extends InstantCommand {
-  boolean toggle = false;
 
-  UsbCamera camera1, camera2;
-  VideoSink cameraServer;
-
+  private boolean state;
   /**
    * Toggles between the two cameras.
    */
-  public ToggleCamera(UsbCamera camera1, UsbCamera camera2, VideoSink cameraServer) {
+  public ToggleCamera() {
     super();
-    this.camera1 = camera1;
-    this.camera2 = camera2;
-    this.cameraServer = cameraServer;
+    state = false;
   }
 
   // Called once when the command executes
   @Override
   public void initialize() {
-    if (toggle) {
-      cameraServer.setSource(camera1);
+    if (state) {
+      setCamera(2);
     } else {
-      cameraServer.setSource(camera2);
+      setCamera(1);
     }
-    toggle = !toggle;
+    state = !state;
+  }
+
+  public static void setCamera(int camera) {
+    camera = camera < 0 ? 0 : camera > 2 ? 2 : camera;
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(camera);
   }
 
 }
