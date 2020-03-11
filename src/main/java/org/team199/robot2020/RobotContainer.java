@@ -8,46 +8,45 @@
 
 package org.team199.robot2020;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-
 import java.util.List;
 
 import org.team199.lib.Limelight;
 import org.team199.lib.LinearInterpolation;
+import org.team199.lib.MotorControllerFactory;
 import org.team199.lib.RobotPath;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-import org.team199.robot2020.commands.Regurgitate;
-import org.team199.robot2020.commands.TeleopDrive;
-import org.team199.robot2020.commands.ToggleCamera;
-import org.team199.robot2020.commands.Shoot;
-import org.team199.robot2020.commands.ShooterHorizontalAim;
-import org.team199.robot2020.subsystems.Drivetrain;
-import org.team199.robot2020.subsystems.Shooter;
 import org.team199.robot2020.commands.AdjustClimber;
 import org.team199.robot2020.commands.AutoShootAndDrive;
 import org.team199.robot2020.commands.DeployClimber;
 import org.team199.robot2020.commands.DropLift;
 import org.team199.robot2020.commands.RaiseRobot;
+import org.team199.robot2020.commands.Regurgitate;
+import org.team199.robot2020.commands.Shoot;
+import org.team199.robot2020.commands.ShooterHorizontalAim;
+import org.team199.robot2020.commands.TeleopDrive;
+import org.team199.robot2020.commands.ToggleCamera;
+import org.team199.robot2020.subsystems.Climber;
+import org.team199.robot2020.subsystems.Drivetrain;
 import org.team199.robot2020.subsystems.Feeder;
 import org.team199.robot2020.subsystems.Intake;
-import org.team199.robot2020.subsystems.Climber;
+import org.team199.robot2020.subsystems.Shooter;
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
-import org.team199.lib.MotorControllerFactory;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -74,6 +73,8 @@ public class RobotContainer {
     private final PowerDistributionPanel pdp = new PowerDistributionPanel(Constants.Ports.kPDPCanID);
     private final UsbCamera camera1 = MotorControllerFactory.configureCamera(Constants.Ports.kCamera1Port);
     private final VideoSink cameraServer = CameraServer.getInstance().getServer();
+    private static final Object dsSync = new Object();
+    private static boolean isDSConnected = false;
 
     private boolean encoderReset = false, has5 = false;
     private double targetEncoderDist = 100.0;   // TODO: Figure out the correct value.
@@ -81,23 +82,9 @@ public class RobotContainer {
      * Creates a new {@link RobotContainer} and initialized joysticks and default commands
      */
     public RobotContainer() {
-        if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
-            configureButtonBindingsLeftJoy();
-        } else{
-            System.err.println("ERROR: Dude, you're missing the left joystick.");
-            ToggleCamera.setCamera(0);
-        }
-
-        if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
-            configureButtonBindingsRightJoy();
-        } else{
-            System.err.println("ERROR: Dude, you're missing the right joystick.");
-        }
-
-        if(DriverStation.getInstance().getJoystickName(2).length() != 0) {
-            configureButtonBindingsController();
-        } else{
-            System.err.println("ERROR: Dude, you're missing the controller.");
+        isDSConnected = DriverStation.getInstance().isDSAttached();
+        if(isDSConnected) {
+            connectJoysicks();
         }
 
         shooter.setDefaultCommand(setName("Shooter Default Command", new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter)));
@@ -165,6 +152,43 @@ public class RobotContainer {
         loadDPaths(RobotPath.Path.PATH2, new String[] {"TRCenter", "TrenchRun", "TrenchRun"}, new boolean[] {false, false, true}, Constants.FieldPositions.RED_CENTER.pos, Constants.FieldPositions.BLUE_CENTER.pos);
         loadDPaths(RobotPath.Path.PATH3, new String[] {"TRRight", "TrenchRun", "TrenchRun"}, new boolean[] {false, false, true}, Constants.FieldPositions.RED_RIGHT.pos, Constants.FieldPositions.BLUE_RIGHT.pos);
         loadDPaths(RobotPath.Path.PATH4, new String[] {"GS1", "GS2", "GS3"}, false, Constants.FieldPositions.RED_GS.pos, Constants.FieldPositions.BLUE_GS.pos);
+    }
+
+    /**
+     * Registeres the driver station as connected if it isn't already 
+     */
+    void connectDS() {
+        if(!isDSConnected) {
+            connectJoysicks();
+        }
+    }
+
+    /**
+     * @return Whether the driver station is Registered as connected
+     */
+    public boolean isDSConnected() {
+        return isDSConnected;
+    }
+
+    private void connectJoysicks() {
+        if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
+            configureButtonBindingsLeftJoy();
+        } else{
+            System.err.println("ERROR: Dude, you're missing the left joystick.");
+            ToggleCamera.setCamera(0);
+        }
+
+        if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
+            configureButtonBindingsRightJoy();
+        } else{
+            System.err.println("ERROR: Dude, you're missing the right joystick.");
+        }
+
+        if(DriverStation.getInstance().getJoystickName(2).length() != 0) {
+            configureButtonBindingsController();
+        } else{
+            System.err.println("ERROR: Dude, you're missing the controller.");
+        }
     }
 
     private void configureButtonBindingsLeftJoy() {
