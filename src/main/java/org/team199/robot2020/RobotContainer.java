@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import org.team199.robot2020.commands.Regurgitate;
 import org.team199.robot2020.commands.TeleopDrive;
+import org.team199.robot2020.commands.ToggleCamera;
 import org.team199.robot2020.commands.Shoot;
 import org.team199.robot2020.commands.ShooterHorizontalAim;
 import org.team199.robot2020.subsystems.Drivetrain;
@@ -84,6 +85,7 @@ public class RobotContainer {
             configureButtonBindingsLeftJoy();
         } else{
             System.err.println("ERROR: Dude, you're missing the left joystick.");
+            ToggleCamera.setCamera(0);
         }
 
         if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
@@ -169,6 +171,9 @@ public class RobotContainer {
         // Arcade/Tank drive button
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kToggleDriveModeButton).whenPressed(new InstantCommand(
                 () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
+
+        ToggleCamera.setCamera(2);
+        new JoystickButton(leftJoy, Constants.OI.LeftJoy.kToggleCameraButton).whenPressed(new ToggleCamera());
         
         // Toggle Characterize Drive                
         new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
