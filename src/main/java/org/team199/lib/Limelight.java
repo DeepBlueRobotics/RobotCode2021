@@ -149,12 +149,12 @@ public class Limelight {
       adjustment = Math.signum(prev_tx) * steering_factor;
     }
 
-    if (Math.abs(tx) < 1.0) stopSteer = true;
+    if (Math.abs(tx) < 1.0 && Math.abs(prev_tx) < 1.0) stopSteer = true;
     else stopSteer = false;
 
     SmartDashboard.putBoolean("Stop Auto Steering", stopSteer);
 
-    adjustment = Math.signum(adjustment) * Math.min(Math.abs(adjustment), 0.5);
+    adjustment = Math.signum(tx) * Math.min(Math.abs(adjustment), 0.5);
     SmartDashboard.putNumber("Adjustment", adjustment);
     return adjustment;
   }
