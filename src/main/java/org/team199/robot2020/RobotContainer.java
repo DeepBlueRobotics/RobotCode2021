@@ -102,7 +102,7 @@ public class RobotContainer {
 
         shooter.setDefaultCommand(setName("Shooter Default Command", new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter)));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
-        
+        cameraServer.setSource(camera1);
         feeder.setDefaultCommand(setName("Feeder Default Command", new RunCommand(() -> {
             if (feeder.isCellEntering() && !feeder.isCellAtShooter()) {
                 feeder.runForward();
