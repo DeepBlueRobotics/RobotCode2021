@@ -18,7 +18,7 @@ public class Intake extends SubsystemBase {
     private static double kIntakeSpeed = 0.3;
     private static double kReverseSpeed = -0.2;
     private static double kOutputLimit = 0.3;
-    public double targetEncoderDist = 5.0;   // TODO: Figure out the correct value.
+    public double targetEncoderDist = 4.0;   // TODO: Figure out the correct value.
     public boolean encoderReset = false;
     public boolean cell5Entered = false;
 

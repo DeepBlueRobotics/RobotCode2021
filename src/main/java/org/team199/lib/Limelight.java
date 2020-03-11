@@ -7,6 +7,9 @@
 
 package org.team199.lib;
 
+import org.team199.robot2020.subsystems.Drivetrain;
+import org.team199.robot2020.subsystems.Drivetrain.Side;
+
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,6 +35,7 @@ public class Limelight {
   private double prev_tx = 1.0;
   private double tolerance = 0.01;
   private double backlashOffset = 0.0;
+  private double prevHeading = 0;
 
   private PIDController pidController;
   private boolean newPIDLoop = false;
@@ -50,7 +54,7 @@ public class Limelight {
     SmartDashboard.setPersistent("AutoAlign: Tolerance");
     SmartDashboard.setPersistent("AutoAlign: Backlash Offset");
     
-    double[] pidValues = SmartDashboard.getNumberArray("AutoAlign: PID Values", new double[]{0.015,0,0});
+    double[] pidValues = SmartDashboard.getNumberArray("AutoAlign: PID Values", new double[]{0.02,0,0});
     pidController = new PIDController(pidValues[0],pidValues[1],pidValues[2],1D/90D);
     pidController.setSetpoint(0);
     pidController.setTolerance(SmartDashboard.getNumber("AutoAlign: Tolerance", 0.01));
@@ -121,7 +125,7 @@ public class Limelight {
   }
 
   // Adjusts the angle facing a vision target. Uses basic PID with the tx value from the network table.
-  public double steeringAssist() {
+  public double steeringAssist(Drivetrain dt) {
     tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
     tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
     ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0.0);
@@ -149,8 +153,12 @@ public class Limelight {
       adjustment = Math.signum(prev_tx) * steering_factor;
     }
 
-    if (Math.abs(tx) < 1.0 && Math.abs(prev_tx) < 1.0) stopSteer = true;
+    if (Math.abs(tx) < 1.0 && Math.abs(prev_tx) < 1.0 && Math.abs(dt.getHeading() - prevHeading) < 1) stopSteer = true;
     else stopSteer = false;
+    if(stopSteer) {
+      adjustment = 0;
+    }
+    prevHeading = dt.getHeading();
 
     SmartDashboard.putBoolean("Stop Auto Steering", stopSteer);
 
@@ -162,9 +170,9 @@ public class Limelight {
     return pidController.atSetpoint();
   }
   // Combination of distance assist and steering assist
-  public double[] autoTarget() {
+  public double[] autoTarget(Drivetrain dt) {
     double dist_assist = distanceAssist();
-    double steer_assist = steeringAssist();
+    double steer_assist = steeringAssist(dt);
     double[] params = {dist_assist + steer_assist, dist_assist - steer_assist};
     return params;
   }
