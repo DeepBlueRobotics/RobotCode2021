@@ -89,8 +89,6 @@ public class Shooter extends SubsystemBase {
             linearInterpol.calculate(target.pos.getDistance(drivetrain.getOdometry().getPoseMeters().getTranslation()))
         );
         setSpeed(SmartDashboard.getNumber("Shooter.kTargetSpeed", kTargetSpeed));
-
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").forceSetNumber(SmartDashboard.getNumber("Limelight.streamMode",0));
         
         if (p != pidController.getP()) pidController.setP(p);
         if (i != pidController.getI()) pidController.setI(i);

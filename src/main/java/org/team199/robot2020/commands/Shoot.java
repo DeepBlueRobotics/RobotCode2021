@@ -17,6 +17,7 @@ public class Shoot extends CommandBase {
     }
 
     public void initialize() {
+        feeder.setShooting(true);
         feeder.eject();
     }
 
@@ -30,6 +31,7 @@ public class Shoot extends CommandBase {
     }
 
     public void end(boolean interrupted) {
+        feeder.setShooting(false);
         feeder.stop();
         feeder.reset();
     }

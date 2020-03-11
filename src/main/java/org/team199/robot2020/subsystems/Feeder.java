@@ -16,17 +16,18 @@ import org.team199.robot2020.Constants;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
   // TODO: find good values and then set to final
   private static double kBeltIntakeSpeed = .8;
-  private static double kRollerIntakeSpeed = .15;
+  private static double kRollerIntakeSpeed = .3;
   private static double kBeltEjectSpeed = 1;
   private static double kRollerEjectSpeed = 1;
 
   private static double kInSensorMinDistance = 0;
-  private static double kInSensorMaxDistance = 65; // 5 inches in millimeters //Old: Units.inchesToMeters(5) * 1000
+  private static double kInSensorMaxDistance = 90; // 5 inches in millimeters //Old: Units.inchesToMeters(5) * 1000
   private static double kInSensorMinDistance2 = 30;
   private static double kInSensorMaxDistance2 = 50;
   private static double kOutSensorMinDistance = 150;
@@ -38,10 +39,11 @@ public class Feeder extends SubsystemBase {
   private final TimeOfFlight outSensor = new TimeOfFlight(Constants.Ports.kFeederOutSensor);
   
   private double limitDistance = 10000;
-  private double intakeDelay = 0.025;
+  private double intakeDelay = 0;
   private int startPosition = 0;
   private boolean reachedShooter = false;
   private boolean intaking = false;
+  private boolean shooting = false;
   private boolean intakeTimerStarted = false;
   private Timer intakeTimer = new Timer();
 
@@ -71,7 +73,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public void periodic() {
-    if (inSensor.getRange() <= kInSensorMaxDistance && inSensor.getRange() >= kInSensorMinDistance) {
+    if (inSensor.getRange() <= kInSensorMaxDistance && inSensor.getRange() >= kInSensorMinDistance && !shooting) {
       if(!intakeTimerStarted) {
         intakeTimerStarted = true;
         intakeTimer.start();
@@ -115,6 +117,10 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder.beltDistance", beltMotor.getSelectedSensorPosition(0));
     SmartDashboard.putBoolean("Feeder.reachedShooter", reachedShooter);
     SmartDashboard.putBoolean("Feeder.isCellAtShooter", isCellAtShooter());
+  }
+
+  public void setShooting(boolean shooting) {
+    this.shooting = shooting;
   }
 
   public void runForward() {
