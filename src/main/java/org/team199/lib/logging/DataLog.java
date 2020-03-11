@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import org.apache.commons.csv.CSVPrinter;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -167,9 +168,7 @@ final class DataLog {
         try {
             GlobalLogInfo.getDataPrinter().flush();
         } catch(IOException e) {
-            System.err.println("Error flushing data file.");
-            System.err.println("Full stack trace:");
-            e.printStackTrace(System.err);
+            DriverStation.reportError("Error flushing data file.", e.getStackTrace());
         }
     }
 

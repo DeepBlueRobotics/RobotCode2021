@@ -10,6 +10,8 @@ import com.revrobotics.CANSparkMax.FaultID;
 
 import org.mockito.Mockito;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 /**
  * Checks for errors with motor controllers
  */
@@ -77,10 +79,7 @@ public final class MotorErrors {
         if(error == null || error == ok) {
             return;
         }
-        System.err.println("Error: " + error.name() + " occured while configuring " + vendor + " motor");
-        System.err.println("Full stack trace:");
-        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        System.err.println(Arrays.toString(stack));
+        DriverStation.reportError("Error: " + error.name() + " occured while configuring " + vendor + " motor", true);
     }
 
     /**
@@ -96,10 +95,10 @@ public final class MotorErrors {
         short prevStickyFaults = stickyFlags.containsKey(spark) ? stickyFlags.get(spark) : 0;
 
         if (spark.getFaults() != 0 && prevFaults != faults) {
-        System.err.println("Whoops, big oopsie : fault error(s) with spark max id : " + spark.getDeviceId() + ": [ " + formatFaults(spark) + "], ooF!");
+        DriverStation.reportError("Whoops, big oopsie : fault error(s) with spark max id : " + spark.getDeviceId() + ": [ " + formatFaults(spark) + "], ooF!", false);
         }
         if (spark.getStickyFaults() != 0 && prevStickyFaults != stickyFaults) {
-        System.err.println("Bruh, you did an Error : sticky fault(s) error with spark max id : " + spark.getDeviceId() + ": " + formatStickyFaults(spark) + ", Ouch!");
+        DriverStation.reportError("Bruh, you did an Error : sticky fault(s) error with spark max id : " + spark.getDeviceId() + ": " + formatStickyFaults(spark) + ", Ouch!", false);
         }
         spark.clearFaults();
         flags.put(spark, faults);

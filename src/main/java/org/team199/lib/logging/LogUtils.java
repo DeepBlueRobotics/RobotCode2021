@@ -2,6 +2,8 @@ package org.team199.lib.logging;
 
 import static org.team199.lib.logging.GlobalLogInfo.*;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 /**
  * Various utility methods utilized by the logging code
  */
@@ -38,17 +40,19 @@ final class LogUtils {
      */
     static void handleLoggingError(boolean sector, String task, Exception error) {
         if(sector) {
-            System.err.println("Error occured while " + task + ". Logging will continue to run with event logging disabled.");
+            String msg = "Error occured while " + task + ". Logging will continue to run with event logging disabled.";
             if(error != null) {
-                System.err.println("Full stack trace:");
-                error.printStackTrace(System.err);
+                DriverStation.reportError(msg, error.getStackTrace());
+            } else {
+                DriverStation.reportError(msg, true);
             }
             disableEvents();
         } else {
-            System.err.println("Error occured while " + task + " logging will continue to run with data logging disabled.");
+            String msg = "Error occured while " + task + " logging will continue to run with data logging disabled.";
             if(error != null) {
-                System.err.println("Full stack trace:");
-                error.printStackTrace(System.err);
+                DriverStation.reportError(msg, error.getStackTrace());
+            } else {
+                DriverStation.reportError(msg, true);
             }
             disableData();
         }
@@ -61,10 +65,11 @@ final class LogUtils {
      * @see #handleLoggingError(boolean, String, Exception)
      */
     static void handleLoggingApiDisableError(String task, Exception error) {
-        System.err.println("Error occured while " + task + ". Logging will be disabled.");
+        String msg = "Error occured while " + task + ". Logging will be disabled.";
         if(error != null) {
-            System.err.println("Full stack trace:");
-            error.printStackTrace(System.err);
+            DriverStation.reportError(msg, error.getStackTrace());
+        } else {
+            DriverStation.reportError(msg, true);
         }
         disableEvents();
         disableData();
@@ -75,23 +80,23 @@ final class LogUtils {
      * @param e The {@link Exception} to handle
      */
 	static void handleException(Exception e) {
-        System.err.print("An Exception occurred in logging code");
+        StringBuilder msgBuilder = new StringBuilder("An Exception occurred in logging code");
         if(e == null) {
-            System.err.println(". No relevent information regarding the error could be obtained. "
+            msgBuilder.append(". No relevent information regarding the error could be obtained. "
                 + "IsInit=" + GlobalLogInfo.isInit() + " " + getStateMessage());
-                return;
+            DriverStation.reportError(msgBuilder.toString(), true);
+            return;
         }
         StackTraceElement thrower = e.getStackTrace()[0];
         StackTraceElement caller = findCaller(e.getStackTrace());
-        System.err.print(": " + e.getClass().getName() + ": " + e.getMessage() + ". The error originated in: " + formatElement(thrower) + ". ");
+        msgBuilder.append(": " + e.getClass().getName() + ": " + e.getMessage() + ". The error originated in: " + formatElement(thrower) + ". ");
         if(caller == null) {
-            System.err.print("No infornmation could be obtained about the caller that caused this error.");
+            msgBuilder.append("No infornmation could be obtained about the caller that caused this error.");
         } else {
-            System.err.print("Which was called by: " + formatElement(caller) + ". ");
+            msgBuilder.append("Which was called by: " + formatElement(caller) + ". ");
         }
-        System.err.println(getStateMessage());
-        System.err.println("Full stack trace:");
-        e.printStackTrace(System.err);
+        msgBuilder.append(getStateMessage());
+        DriverStation.reportError(msgBuilder.toString(), e.getStackTrace());
     }
     
     private static StackTraceElement findCaller(StackTraceElement[] stack) {

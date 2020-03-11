@@ -17,6 +17,7 @@ import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.cscore.UsbCamera;
 
 /**
@@ -78,7 +79,7 @@ public class MotorControllerFactory {
     CANSparkMax spark = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
     if(spark.getFirmwareVersion() == 0) {
       spark.close();
-      System.err.println("SparkMax on port: " + id + " is not connected!");
+      DriverStation.reportError("SparkMax on port: " + id + " is not connected!", false);
       return MotorErrors.createDummySparkMax();
     }
     MotorErrors.reportError(spark.restoreFactoryDefaults());

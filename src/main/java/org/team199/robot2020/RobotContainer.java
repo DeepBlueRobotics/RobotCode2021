@@ -174,20 +174,20 @@ public class RobotContainer {
         if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
             configureButtonBindingsLeftJoy();
         } else{
-            System.err.println("ERROR: Dude, you're missing the left joystick.");
+            DriverStation.reportError("ERROR: Dude, you're missing the left joystick.", false);
             ToggleCamera.setCamera(0);
         }
 
         if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
             configureButtonBindingsRightJoy();
         } else{
-            System.err.println("ERROR: Dude, you're missing the right joystick.");
+            DriverStation.reportError("ERROR: Dude, you're missing the right joystick.", false);
         }
 
         if(DriverStation.getInstance().getJoystickName(2).length() != 0) {
             configureButtonBindingsController();
         } else{
-            System.err.println("ERROR: Dude, you're missing the controller.");
+            DriverStation.reportError("ERROR: Dude, you're missing the controller.", false);
         }
     }
 
@@ -356,7 +356,7 @@ public class RobotContainer {
         boolean invalidLength = false;
         if(isInverted.length < pathNames.length) {
             invalidLength = true;
-            System.err.println("Invalid inversion parameters for path: " + path.name());
+            DriverStation.reportError("Invalid inversion parameters for path: " + path.name(), false);
             if(isInverted.length == 0) {
                 isInverted = new boolean[] {true};
             }
@@ -478,8 +478,7 @@ public class RobotContainer {
         try {
             paths[path.idx][idx] = new RobotPath(pathName, drivetrain, isInverted, initPos);
         } catch(final Exception e) {
-            System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
-            e.printStackTrace(System.err);
+            DriverStation.reportError("Error Occured Loading Path: [" + path.name() + "," + pathName + "]", e.getStackTrace());
         }
     }
 
