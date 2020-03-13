@@ -9,6 +9,7 @@
 package org.team199.robot2020;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.team199.lib.Limelight;
 import org.team199.lib.LinearInterpolation;
@@ -37,6 +38,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
@@ -47,6 +49,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -74,6 +77,7 @@ public class RobotContainer {
     private final UsbCamera camera1 = MotorControllerFactory.configureCamera(Constants.Ports.kCamera1Port);
     private final VideoSink cameraServer = CameraServer.getInstance().getServer();
     private static boolean isDSConnected = false;
+    private Trigger userCommandConfermTrigger;
     /**
      * Creates a new {@link RobotContainer} and initialized joysticks and default commands
      */
@@ -167,22 +171,24 @@ public class RobotContainer {
     }
 
     private void connectJoysicks() {
+        //Right joy must be initialized first to initialize userCommandConfermTrigger
+        if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
+            configureButtonBindingsRightJoy();
+        } else {
+            userCommandConfermTrigger = new Trigger(() -> false);
+            DriverStation.reportError("ERROR: Dude, you're missing the right joystick.", false);
+        }
+
         if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
             configureButtonBindingsLeftJoy();
-        } else{
+        } else {
             DriverStation.reportError("ERROR: Dude, you're missing the left joystick.", false);
             ToggleCamera.setCamera(0);
         }
 
-        if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
-            configureButtonBindingsRightJoy();
-        } else{
-            DriverStation.reportError("ERROR: Dude, you're missing the right joystick.", false);
-        }
-
         if(DriverStation.getInstance().getJoystickName(2).length() != 0) {
             configureButtonBindingsController();
-        } else{
+        } else {
             DriverStation.reportError("ERROR: Dude, you're missing the controller.", false);
         }
     }
@@ -202,7 +208,8 @@ public class RobotContainer {
 
     private void configureButtonBindingsRightJoy() {
         // Align the robot and then shoots
-        new JoystickButton(rightJoy, Constants.OI.RightJoy.kToggleBreakModeButton).whenPressed(new InstantCommand(drivetrain::toggleBreakMode, drivetrain));
+        userCommandConfermTrigger = new JoystickButton(rightJoy, Constants.OI.RightJoy.kUserCommandConfermButton);
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.kToggleBreakModeButton).and(userCommandConfermTrigger).whenActive(new InstantCommand(drivetrain::toggleBreakMode, drivetrain));
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(setName("Align and Shoot", new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder, intake))));
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kShootButton).whileHeld(new Shoot(feeder, intake));
     }
@@ -232,7 +239,10 @@ public class RobotContainer {
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new SequentialCommandGroup(
             new DropLift(climber),
             new RaiseRobot(climber)
-         ));
+        ));
+
+        new JoystickButton(controller, Constants.OI.Controller.kSetOdometyButton).and(userCommandConfermTrigger).whenActive(new InstantCommand(() -> drivetrain.setOdometry(getAutoStartPose())));
+        new JoystickButton(controller, Constants.OI.Controller.kResetOdometyButton).and(userCommandConfermTrigger).whenActive(new InstantCommand(() -> drivetrain.resetOdometry()));
     }
 
     /**
@@ -244,6 +254,7 @@ public class RobotContainer {
 
     /**
      * @return The {@link Command} to run in autonomous
+     * @see #getAutoStartPose()
      * @see Robot#autonomousInit()
      */
     public Command getAutonomousCommand() {
@@ -262,6 +273,22 @@ public class RobotContainer {
         }
     }
 
+    /**
+     * @return The {@link Pose2d} the robot expects to start at in autonomous
+     * @see #getAutonomousCommand()
+     * @see Robot#autonomousInit()
+     */
+    public Pose2d getAutoStartPose() {
+        try {
+            final RobotPath path = paths[getPath().idx][0];
+            if(path == null) {
+                throw new Exception();
+            }
+            return path.getTrajectory().getInitialPose();
+        } catch(final Exception e) {
+            return new Pose2d();
+        }
+    }
     
     /*
      * DIO Port 0 = Switch 1

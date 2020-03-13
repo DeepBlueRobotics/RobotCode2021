@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
@@ -124,6 +125,10 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Left Encoder Distance", getEncPos(Drivetrain.Side.LEFT));
     SmartDashboard.putNumber("Right Encoder Distance", getEncPos(Drivetrain.Side.RIGHT));
     SmartDashboard.putNumber("Gyro Heading", getHeading());
+  }
+
+  public void setOdometry(Pose2d pose) {
+    setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()), pose));
   }
 
   public void setOdometry(DifferentialDriveOdometry odometry) {

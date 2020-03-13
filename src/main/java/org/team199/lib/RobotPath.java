@@ -120,7 +120,7 @@ public class RobotPath {
      * @see Drivetrain#setOdometry(DifferentialDriveOdometry)
      */
     public void loadOdometry() {
-        dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
+        dt.setOdometry(trajectory.getInitialPose());
     }
 
     /**
