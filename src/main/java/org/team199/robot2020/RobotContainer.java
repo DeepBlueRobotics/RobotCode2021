@@ -73,11 +73,7 @@ public class RobotContainer {
     private final PowerDistributionPanel pdp = new PowerDistributionPanel(Constants.Ports.kPDPCanID);
     private final UsbCamera camera1 = MotorControllerFactory.configureCamera(Constants.Ports.kCamera1Port);
     private final VideoSink cameraServer = CameraServer.getInstance().getServer();
-    private static final Object dsSync = new Object();
     private static boolean isDSConnected = false;
-
-    private boolean encoderReset = false, has5 = false;
-    private double targetEncoderDist = 100.0;   // TODO: Figure out the correct value.
     /**
      * Creates a new {@link RobotContainer} and initialized joysticks and default commands
      */
