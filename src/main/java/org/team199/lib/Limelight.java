@@ -8,7 +8,6 @@
 package org.team199.lib;
 
 import org.team199.robot2020.subsystems.Drivetrain;
-import org.team199.robot2020.subsystems.Drivetrain.Side;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.controller.PIDController;

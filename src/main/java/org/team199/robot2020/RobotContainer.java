@@ -9,7 +9,6 @@
 package org.team199.robot2020;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.team199.lib.Limelight;
 import org.team199.lib.LinearInterpolation;

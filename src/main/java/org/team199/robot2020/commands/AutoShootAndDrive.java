@@ -53,6 +53,12 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
                     shoot
                 );
                 break;
+            case PATH5:
+            case PATH6:
+            case PATH7:
+            case OFF:
+            default:
+                break;
         }
     }
 }

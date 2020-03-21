@@ -15,7 +15,6 @@ import org.team199.lib.logging.Log;
 import org.team199.robot2020.Constants;
 import org.team199.robot2020.Constants.FieldPositions;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import edu.wpi.first.wpilibj.SpeedController;
 //import java.lang.AutoCloseable;

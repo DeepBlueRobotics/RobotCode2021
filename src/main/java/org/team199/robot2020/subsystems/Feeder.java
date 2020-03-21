@@ -16,7 +16,6 @@ import org.team199.robot2020.Constants;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
@@ -166,7 +165,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public boolean has5Intake() {
-    double dist = inSensor.getRange();
+    //double dist = inSensor.getRange();
     SmartDashboard.putBoolean("cellAtShooter", isCellAtShooter());
     return isCellAtShooter();// && dist >= kInSensorMinDistance2 && dist <= kInSensorMaxDistance2;
   }
