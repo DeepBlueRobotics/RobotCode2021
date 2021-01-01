@@ -76,7 +76,7 @@ public class RobotContainer {
     private final UsbCamera camera1 = MotorControllerFactory.configureCamera(Constants.Ports.kCamera1Port);
     private final VideoSink cameraServer = CameraServer.getInstance().getServer();
     private static boolean isDSConnected = false;
-    private Trigger userCommandConfermTrigger;
+    private Trigger userCommandConfirmTrigger;
     /**
      * Creates a new {@link RobotContainer} and initialized joysticks and default commands
      */
@@ -170,11 +170,11 @@ public class RobotContainer {
     }
 
     private void connectJoysicks() {
-        //Right joy must be initialized first to initialize userCommandConfermTrigger
+        //Right joy must be initialized first to initialize userCommandConfirmTrigger
         if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
             configureButtonBindingsRightJoy();
         } else {
-            userCommandConfermTrigger = new Trigger(() -> false);
+            userCommandConfirmTrigger = new Trigger(() -> false);
             DriverStation.reportError("ERROR: Dude, you're missing the right joystick.", false);
         }
 
@@ -207,8 +207,8 @@ public class RobotContainer {
 
     private void configureButtonBindingsRightJoy() {
         // Align the robot and then shoots
-        userCommandConfermTrigger = new JoystickButton(rightJoy, Constants.OI.RightJoy.kUserCommandConfermButton);
-        new JoystickButton(rightJoy, Constants.OI.RightJoy.kToggleBreakModeButton).and(userCommandConfermTrigger).whenActive(new InstantCommand(drivetrain::toggleBreakMode, drivetrain));
+        userCommandConfirmTrigger = new JoystickButton(rightJoy, Constants.OI.RightJoy.kUserCommandConfirmButton);
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.kToggleBreakModeButton).and(userCommandConfirmTrigger).whenActive(new InstantCommand(drivetrain::toggleBreakMode, drivetrain));
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(setName("Align and Shoot", new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder, intake))));
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kShootButton).whileHeld(new Shoot(feeder, intake));
     }
@@ -240,8 +240,8 @@ public class RobotContainer {
             new RaiseRobot(climber)
         ));
 
-        new JoystickButton(controller, Constants.OI.Controller.kSetOdometyButton).and(userCommandConfermTrigger).whenActive(new InstantCommand(() -> drivetrain.setOdometry(getAutoStartPose())));
-        new JoystickButton(controller, Constants.OI.Controller.kResetOdometyButton).and(userCommandConfermTrigger).whenActive(new InstantCommand(() -> drivetrain.resetOdometry()));
+        new JoystickButton(controller, Constants.OI.Controller.kSetOdometyButton).and(userCommandConfirmTrigger).whenActive(new InstantCommand(() -> drivetrain.setOdometry(getAutoStartPose())));
+        new JoystickButton(controller, Constants.OI.Controller.kResetOdometyButton).and(userCommandConfirmTrigger).whenActive(new InstantCommand(() -> drivetrain.resetOdometry()));
     }
 
     /**

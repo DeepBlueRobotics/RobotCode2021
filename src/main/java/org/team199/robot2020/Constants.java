@@ -87,7 +87,7 @@ public final class Constants {
             public static final int kShootButton = 3;
             public static final int kSlowDriveButton = 5;
             public static final int kToggleBreakModeButton = 4;
-            public static final int kUserCommandConfermButton = 6;
+            public static final int kUserCommandConfirmButton = 6;
         }
 
         public static final class Controller {
