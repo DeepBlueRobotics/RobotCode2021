@@ -11,7 +11,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.playingwithfusion.TimeOfFlight;
 
-import org.team199.lib.MotorControllerFactory;
+import frc.robot.lib.MotorControllerFactory;
 import org.team199.robot2021.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

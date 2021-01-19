@@ -5,7 +5,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import org.team199.lib.MotorControllerFactory;
+import frc.robot.lib.MotorControllerFactory;
 import org.team199.robot2021.Constants;
 
 public class Climber extends SubsystemBase {

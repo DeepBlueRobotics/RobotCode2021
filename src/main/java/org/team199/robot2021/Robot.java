@@ -7,8 +7,8 @@
 
 package org.team199.robot2021;
 
-import org.team199.lib.MotorErrors;
-import org.team199.lib.logging.Log;
+import frc.robot.lib.MotorErrors;
+import frc.robot.lib.logging.Log;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
