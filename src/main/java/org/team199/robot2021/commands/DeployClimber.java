@@ -5,48 +5,47 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.team199.robot2020.commands;
+package org.team199.robot2021.commands;
 
-import org.team199.robot2020.subsystems.Climber;
+import org.team199.robot2021.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class RaiseRobot extends CommandBase {
+public class DeployClimber extends CommandBase {
   private final Climber climber;
 
   /**
-   * Pulls the winch to raise the robot up to the switch
+   * Deploys climber up to switch
    */
-  public RaiseRobot(Climber climber) {
+  public DeployClimber(Climber climber) {
     addRequirements(this.climber = climber);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.runLift(Climber.kLiftRetractSpeed);
-    climber.runWinch(Climber.kWinchRetractSpeed);
+    climber.runLift(Climber.kLiftDeploySpeed);
+    climber.runWinch(Climber.kWinchDeploySpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (climber.getLiftHeight() < 1) {
-      climber.runLift(0);
-    }
+      if (climber.getWinchHeight() >= 0) {
+        climber.runWinch(0);
+      }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.runLift(0);
+    climber.runLift(Climber.kLiftKeepSpeed);
     climber.runWinch(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return climber.getWinchHeight() >= Climber.kWinchEndHeight;
+    return climber.getLiftHeight() >= Climber.kLiftHeight;
   }
 }

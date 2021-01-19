@@ -5,47 +5,47 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.team199.robot2020.commands;
+package org.team199.robot2021.commands;
 
-import org.team199.robot2020.Constants;
-import org.team199.robot2020.subsystems.Climber;
+import org.team199.robot2021.subsystems.Feeder;
+import org.team199.robot2021.subsystems.Intake;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class AdjustClimber extends CommandBase {
-  private final Climber climber;
-  private final Joystick controller;
-
+public class Regurgitate extends CommandBase {
+  private final Intake intake;
+  private final Feeder feeder;
+  
   /**
-   * Manually adjusting the climber hook position
+   * Regurgitates the balls out of the feeder (and intake if it's deployed)
    */
-  public AdjustClimber(Climber climber, Joystick manipulator) {
-    addRequirements(this.climber = climber);
-    this.controller = manipulator;
+  public Regurgitate(Intake intake, Feeder feeder) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(this.intake = intake, this.feeder = feeder);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    feeder.runBackward();
+    if (intake.isDeployed()) {
+      intake.outtake();
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (controller.getRawButton(Constants.OI.Controller.kAdjustClimberUpButton)) { // up
-      climber.runLift(Climber.kLiftKeepSpeed + Climber.kLiftAdjustSpeed);
-    } else if (controller.getRawButton(Constants.OI.Controller.kAdjustClimberDownButton)){ // down
-      climber.runLift(Climber.kLiftKeepSpeed - Climber.kLiftAdjustSpeed);
-    } else { // neutral
-      climber.runLift(Climber.kLiftKeepSpeed);
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climber.runLift(Climber.kLiftKeepSpeed);
+    feeder.stop();
+    if (intake.isDeployed()) {
+      intake.intake();
+    }
+    feeder.reset();
   }
 
   // Returns true when the command should end.
