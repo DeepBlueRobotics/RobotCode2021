@@ -32,6 +32,7 @@ import org.team199.robot2021.subsystems.Shooter;
 import org.team199.robot2021.subsystems.Turret;
 import org.team199.robot2021.commands.AdjustClimber;
 import org.team199.robot2021.commands.AutoShootAndDrive;
+import org.team199.robot2021.commands.CalibrateTurret;
 import org.team199.robot2021.commands.DeployClimber;
 import org.team199.robot2021.commands.RaiseRobot;
 import org.team199.robot2021.subsystems.Feeder;
@@ -153,6 +154,9 @@ public class RobotContainer {
         // turn turret
         new JoystickButton(controller, Constants.OI.Controller.kTurnTurretCounterclockwiseButton).whileHeld(new InstantCommand(turret::turnCounterclockwise, turret));
         new JoystickButton(controller, Constants.OI.Controller.kTurnTurretClockwiseButton).whileHeld(new InstantCommand(turret::turnClockwise, turret));
+
+        // calibrate turret
+        new JoystickButton(controller, Constants.OI.Controller.kCalibrateTurret).whenPressed(new CalibrateTurret(turret));
     }
 
     public Command getAutonomousCommand() {

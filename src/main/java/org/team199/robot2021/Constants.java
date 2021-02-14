@@ -111,6 +111,7 @@ public final class Constants {
             // turret
             public static final int kTurnTurretCounterclockwiseButton = 0; // TODO: change button
             public static final int kTurnTurretClockwiseButton = 0; // TODO: change button
+            public static final int kCalibrateTurret = 0; //TODO: change button
         }
     }
 }

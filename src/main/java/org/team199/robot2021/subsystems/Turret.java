@@ -21,7 +21,7 @@ public class Turret extends SubsystemBase {
         if(speed == 0) {
             return;
         }
-        if((Math.signum(speed) == 1 ? counterClockwiseLimit : clockwiseLimit).get()) {
+        if(limited(speed)) {
             motor.set(0);
         }
     }
@@ -64,6 +64,10 @@ public class Turret extends SubsystemBase {
 
     public void resetPosition() {
         encoder.reset();
+    }
+
+    public boolean limited(double speed) {
+        return (Math.signum(speed) == 1 ? counterClockwiseLimit : clockwiseLimit).get();
     }
 
     interface PlaceholderMotor {
