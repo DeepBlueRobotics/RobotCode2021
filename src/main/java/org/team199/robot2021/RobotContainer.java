@@ -29,6 +29,7 @@ import org.team199.robot2021.commands.Shoot;
 import org.team199.robot2021.commands.ShooterHorizontalAim;
 import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Shooter;
+import org.team199.robot2021.subsystems.Turret;
 import org.team199.robot2021.commands.AdjustClimber;
 import org.team199.robot2021.commands.AutoShootAndDrive;
 import org.team199.robot2021.commands.DeployClimber;
@@ -56,6 +57,7 @@ public class RobotContainer {
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.kPort);
     private final Joystick controller = new Joystick(Constants.OI.Controller.kPort);
     private final Climber climber = new Climber();
+    private final Turret turret = new Turret();
     private final RobotPath[] paths;
     private final LinearInterpolation linearInterpol;
 
@@ -147,6 +149,10 @@ public class RobotContainer {
 
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
+
+        // turn turret
+        new JoystickButton(controller, Constants.OI.Controller.kTurnTurretCounterclockwiseButton).whileHeld(new InstantCommand(turret::turnCounterclockwise, turret));
+        new JoystickButton(controller, Constants.OI.Controller.kTurnTurretClockwiseButton).whileHeld(new InstantCommand(turret::turnClockwise, turret));
     }
 
     public Command getAutonomousCommand() {

@@ -107,6 +107,10 @@ public final class Constants {
             public static final int kIntakeButton = X;
             public static final int kOuttakeButton = A;
             public static final int kRegurgitateButton = B;
+
+            // turret
+            public static final int kTurnTurretCounterclockwiseButton = 0; // TODO: change button
+            public static final int kTurnTurretClockwiseButton = 0; // TODO: change button
         }
     }
 }
