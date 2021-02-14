@@ -43,12 +43,20 @@ public final class Constants {
         public static final int kClimberWinch = 9;
         public static final int kClimberLift = 13;
 
+        //TODO: Set Value
+        public static final int kTurretMotor = -1;
+
         // solenoids
         public static final int[] kIntakePistons = { 0, 1, 2, 5 };
 
         // other
         public static final int kFeederInSensor = 11;
         public static final int kFeederOutSensor = 10;
+
+        //TODO: Set Values
+        public static final int kTurretCounterclockwiseLimit = -1;
+        public static final int kTurretClockwiseLimit = -1;
+        public static final int kTurretHomeSensor = -1;
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
