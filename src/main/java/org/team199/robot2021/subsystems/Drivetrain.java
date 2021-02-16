@@ -16,7 +16,7 @@ import frc.robot.lib.MotorControllerFactory;
 import org.team199.robot2021.Constants;
 
 import edu.wpi.first.wpilibj.Timer;
-
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -146,15 +146,25 @@ public class Drivetrain extends SubsystemBase {
 
   public void toggleMode() {
     if(leftMaster.getIdleMode() == IdleMode.kBrake) {
+      brake();
+    } else {
+      coast();
+    }
+  }
+
+  public void brake() {
+    leftMaster.setIdleMode(IdleMode.kBrake);
+    leftSlave.setIdleMode(IdleMode.kBrake);
+    rightMaster.setIdleMode(IdleMode.kBrake);
+    rightSlave.setIdleMode(IdleMode.kBrake);
+  }
+
+  public void coast() {
+    if(DriverStation.getInstance().isDisabled()) {
       leftMaster.setIdleMode(IdleMode.kCoast);
       leftSlave.setIdleMode(IdleMode.kCoast);
       rightMaster.setIdleMode(IdleMode.kCoast);
       rightSlave.setIdleMode(IdleMode.kCoast);
-    } else {
-      leftMaster.setIdleMode(IdleMode.kBrake);
-      leftSlave.setIdleMode(IdleMode.kBrake);
-      rightMaster.setIdleMode(IdleMode.kBrake);
-      rightSlave.setIdleMode(IdleMode.kBrake);
     }
   }
 
