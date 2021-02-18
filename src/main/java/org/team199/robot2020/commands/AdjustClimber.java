@@ -34,15 +34,7 @@ public class AdjustClimber extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (controller.getRawButton(Constants.OI.Controller.kAdjustClimberUpButton)) { // up
-      climber.runLift(Climber.kLiftKeepSpeed + Climber.kLiftAdjustSpeed);
-    } else if (controller.getRawButton(Constants.OI.Controller.kAdjustClimberDownButton)){ // down
-      climber.runLift(Climber.kLiftKeepSpeed - Climber.kLiftAdjustSpeed);
-      climber.runWinch(Climber.kWinchAdjustSpeed);
-    } else { // neutral
-      climber.runLift(Climber.kLiftKeepSpeed);
-      climber.runWinch(0);
-    }
+    climber.runLift();
   }
 
   // Called once the command ends or is interrupted.
@@ -54,6 +46,11 @@ public class AdjustClimber extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    double V = PowerDistributionPanel.getVoltage();
+    if (V < Climber.kVoltage) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

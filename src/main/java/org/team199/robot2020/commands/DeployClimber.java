@@ -17,6 +17,7 @@ public class DeployClimber extends CommandBase {
 
   /**
    * Deploys climber up to switch
+   * Old needs to be updated to current code
    */
   public DeployClimber(Climber climber) {
     addRequirements(this.climber = climber);
@@ -41,12 +42,13 @@ public class DeployClimber extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    
     climber.runLift(Climber.kLiftKeepSpeed);
     climber.runWinch(0);
     System.out.println("--ENDED--");
   }
 
-  // eturns true when the command should end.
+  // returns true when the command should end.
   @Override
   public boolean isFinished() {
     return climber.getLiftHeight() >= Climber.kLiftHeight;

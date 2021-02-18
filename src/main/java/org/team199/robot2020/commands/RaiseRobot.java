@@ -16,6 +16,7 @@ public class RaiseRobot extends CommandBase {
 
   /**
    * Pulls the winch to raise the robot up to the switch
+   * Old needs to be fixed and updated for current
    */
   public RaiseRobot(Climber climber) {
     addRequirements(this.climber = climber);
