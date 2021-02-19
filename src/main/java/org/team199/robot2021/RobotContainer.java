@@ -9,33 +9,11 @@
 package org.team199.robot2021;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 
-import frc.robot.lib.Limelight;
-import frc.robot.lib.LinearInterpolation;
-import org.team199.lib.RobotPath;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-import org.team199.robot2021.commands.Regurgitate;
 import org.team199.robot2021.commands.TeleopDrive;
-import org.team199.robot2021.commands.Shoot;
-import org.team199.robot2021.commands.ShooterHorizontalAim;
 import org.team199.robot2021.subsystems.Drivetrain;
-import org.team199.robot2021.subsystems.Shooter;
-import org.team199.robot2021.commands.AdjustClimber;
-import org.team199.robot2021.commands.AutoShootAndDrive;
-import org.team199.robot2021.commands.DeployClimber;
-import org.team199.robot2021.commands.RaiseRobot;
-import org.team199.robot2021.subsystems.Feeder;
-import org.team199.robot2021.subsystems.Intake;
-import org.team199.robot2021.subsystems.Climber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -45,19 +23,19 @@ import org.team199.robot2021.subsystems.Climber;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drive.kAutoPathSwitch1Port);
-    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
+    //private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drive.kAutoPathSwitch1Port);
+    //private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
     final Drivetrain drivetrain = new Drivetrain();
-    private final Limelight lime = new Limelight();
-    private final Shooter shooter = new Shooter(lime);
-    private final Intake intake = new Intake();
-    private final Feeder feeder = new Feeder();
-    private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.kPort);
-    private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.kPort);
-    private final Joystick controller = new Joystick(Constants.OI.Controller.kPort);
-    private final Climber climber = new Climber();
-    private final RobotPath[] paths;
-    private final LinearInterpolation linearInterpol;
+    //private final Limelight lime = new Limelight();
+    //private final Shooter shooter = new Shooter(lime);
+    //private final Intake intake = new Intake();
+    //private final Feeder feeder = new Feeder();
+    private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.port);
+    private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.port);
+    private final Joystick controller = new Joystick(Constants.OI.Controller.port);
+    //private final Climber climber = new Climber();
+    //private final RobotPath[] paths;
+    //private final LinearInterpolation linearInterpol;
 
     public RobotContainer() {
         
@@ -79,10 +57,14 @@ public class RobotContainer {
             System.err.println("ERROR: Dude, you're missing the controller.");
         }
 
-        shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
-        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
+        //shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
+        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, 
+            () -> signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.Y)),
+            () -> signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X)),
+            () -> signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X))));
+
         
-        feeder.setDefaultCommand(new RunCommand(() -> {
+        /*feeder.setDefaultCommand(new RunCommand(() -> {
             if (feeder.isCellEntering() && !feeder.isCellAtShooter()) {
                 feeder.runForward();
                 if(intake.isDeployed())
@@ -92,9 +74,9 @@ public class RobotContainer {
                 if(intake.isDeployed())
                     intake.intake();
             }
-        }, feeder, intake));
+        }, feeder, intake));*/
 
-        paths = new RobotPath[4];
+        /*paths = new RobotPath[4];
         if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
             loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
             loadPath(Path.PATH2, "OneBall", false, StartingPosition.BLUE_CENTER.pos);
@@ -104,29 +86,30 @@ public class RobotContainer {
             loadPath(Path.PATH2, "OneBall", false, StartingPosition.RED_CENTER.pos);
             loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);
         }
-        linearInterpol = new LinearInterpolation("ShooterData.csv");
+        linearInterpol = new LinearInterpolation("ShooterData.csv");*/
     }
 
     private void configureButtonBindingsLeftJoy() {
         // Arcade/Tank drive button
-        new JoystickButton(leftJoy, Constants.OI.LeftJoy.kToggleDriveModeButton).whenPressed(new InstantCommand(
-                () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
+        //new JoystickButton(leftJoy, Constants.OI.LeftJoy.kToggleDriveModeButton).whenPressed(new InstantCommand(
+        //        () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
 
         // characterize drive button
         
         // Toggle Characterize Drive                
-        new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
-                () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
+        //new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
+        //        () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
     }
 
-    private void configureButtonBindingsRightJoy() {new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleMode, drivetrain));
+    private void configureButtonBindingsRightJoy() {
+        //new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleMode, drivetrain));
         // Align the robot and then shoots
-        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
+        //new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
     }
 
     private void configureButtonBindingsController() {
         // Intake toggle button
-        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
+        /*new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
             if (intake.isDeployed()) {
                 intake.retract();
                 intake.stop();
@@ -134,22 +117,23 @@ public class RobotContainer {
                 intake.doTheFlop();
                 intake.intake();
             }
-        }, intake));
+        }, intake));*/
 
         // Power cell regurgitate button
-        new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
+        //new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
 
         // Deploy climber button and allow for adjustment
-        new JoystickButton(controller, Constants.OI.Controller.kDeployClimberButton).whenPressed(new SequentialCommandGroup(
+        /*new JoystickButton(controller, Constants.OI.Controller.kDeployClimberButton).whenPressed(new SequentialCommandGroup(
             new DeployClimber(climber),
             new AdjustClimber(climber, controller)
-        ));
+        ));*/
 
         // climb button
-        new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
+        //new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
     }
 
     public Command getAutonomousCommand() {
+        /*
         try {
             final RobotPath path = paths[getPath().idx];
             if(path == null) {
@@ -161,9 +145,40 @@ public class RobotContainer {
                                          linearInterpol, (isBlue ? Target.BLUE_PORT.pos : Target.RED_PORT.pos));
         } catch(final Exception e) {
             return new InstantCommand();
+        }*/
+        return null;
+    }
+
+    /**
+     * Get the stick value of a joystick given its stick type (left side or right side) and its axis (X or Y).
+     * @param stick   The stick type of the joystick, either LEFT for left joystick or RIGHT for right joystick.
+     * @param dir     The direction, or axis, of the joystick, either X for the x-axis or Y for the y-axis.
+     * @return A double representing how far the joystick has been pushed, between -1.0 (all the way backwards) to 1.0 (all the way forwards).
+     */
+    private double getStickValue(Constants.OI.StickType stick, Constants.OI.StickDirection dir) {
+        switch (Constants.OI.CONTROL_TYPE) {
+            case JOYSTICKS:
+                if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return leftJoy.getX();
+                if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.Y) return -leftJoy.getY();
+                if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.X) return rightJoy.getX();
+                if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -rightJoy.getY();
+            case GAMEPAD:
+                if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(0);
+                if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(1);
+                if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(2);
+                if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(3);
+            default: return 0;
         }
     }
 
+    /**
+     * Squares a value and preserves its sign.
+     * @param value     The value to be squared.
+     * @return The signed squared value.
+     */
+    private double signedSquare(double value){
+        return value * Math.abs(value);
+    }
     
     /**
      * DIO Port 0 = Switch 1
@@ -178,6 +193,7 @@ public class RobotContainer {
      * off on = 2
      * on on = 3
      */
+    /*
     public Path getPath() {
         Path outPath = Path.OFF;
         // get() returns true if the circuit is open.
@@ -246,4 +262,5 @@ public class RobotContainer {
             pos = new Translation2d(x, y);
         }
       }
+    */
 }

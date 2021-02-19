@@ -5,8 +5,8 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.lib.MotorControllerFactory;
-import org.team199.robot2021.Constants;
+//import frc.robot.lib.MotorControllerFactory;
+//import org.team199.robot2021.Constants;
 
 public class Climber extends SubsystemBase {
     private static final double kLiftConversionFactor = 43.98 / 256; // TODO: confirm numbers (inches)
@@ -24,8 +24,8 @@ public class Climber extends SubsystemBase {
     public static final double kWinchEndHeight = 76.2;
     public static final double kWinchStartHeight = -90;
 
-    private final CANSparkMax liftMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberLift);
-    private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch);
+    private final CANSparkMax liftMotor = null;//MotorControllerFactory.createSparkMax(Constants.Drive.kClimberLift);
+    private final CANSparkMax winchMotor = null;//MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch);
 
     public Climber(){
         liftMotor.getEncoder().setPositionConversionFactor(kLiftConversionFactor);

@@ -7,7 +7,7 @@
 
 package org.team199.robot2021.commands;
 
-import org.team199.robot2021.Constants;
+//import org.team199.robot2021.Constants;
 import org.team199.robot2021.subsystems.Climber;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -15,14 +15,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class AdjustClimber extends CommandBase {
   private final Climber climber;
-  private final Joystick controller;
+  //private final Joystick controller;
 
   /**
    * Manually adjusting the climber hook position
    */
   public AdjustClimber(Climber climber, Joystick manipulator) {
     addRequirements(this.climber = climber);
-    this.controller = manipulator;
+    //this.controller = manipulator;
   }
 
   // Called when the command is initially scheduled.
@@ -33,13 +33,14 @@ public class AdjustClimber extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    /*
     if (controller.getRawButton(Constants.OI.Controller.kAdjustClimberUpButton)) { // up
       climber.runLift(Climber.kLiftKeepSpeed + Climber.kLiftAdjustSpeed);
     } else if (controller.getRawButton(Constants.OI.Controller.kAdjustClimberDownButton)){ // down
       climber.runLift(Climber.kLiftKeepSpeed - Climber.kLiftAdjustSpeed);
     } else { // neutral
       climber.runLift(Climber.kLiftKeepSpeed);
-    }
+    }*/
   }
 
   // Called once the command ends or is interrupted.

@@ -2,8 +2,8 @@ package org.team199.robot2021.subsystems;
 
 import com.revrobotics.CANSparkMax;
 
-import frc.robot.lib.MotorControllerFactory;
-import org.team199.robot2021.Constants;
+//import frc.robot.lib.MotorControllerFactory;
+//import org.team199.robot2021.Constants;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,9 +14,9 @@ public class Intake extends SubsystemBase {
     private static double kIntakeSpeed = 0.4;
     private static double kSlowSpeed = -0.1;
 
-    private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kIntakeRoller);
-    private final DoubleSolenoid intakePistons1 = new DoubleSolenoid(Constants.Drive.kIntakePistons[0], Constants.Drive.kIntakePistons[1]);
-    private final DoubleSolenoid intakePistons2 = new DoubleSolenoid(Constants.Drive.kIntakePistons[2], Constants.Drive.kIntakePistons[3]);
+    private final CANSparkMax rollerMotor = null;//MotorControllerFactory.createSparkMax(Constants.Drive.kIntakeRoller);
+    private final DoubleSolenoid intakePistons1 = null;//new DoubleSolenoid(Constants.Drive.kIntakePistons[0], Constants.Drive.kIntakePistons[1]);
+    private final DoubleSolenoid intakePistons2 = null;//new DoubleSolenoid(Constants.Drive.kIntakePistons[2], Constants.Drive.kIntakePistons[3]);
 
     private boolean deployed = false;
 

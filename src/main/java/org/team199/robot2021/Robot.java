@@ -30,8 +30,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    SmartDashboard.putBoolean("Arcade Drive", true);
-    SmartDashboard.putBoolean("Characterized Drive", false);
+    //SmartDashboard.putBoolean("Arcade Drive", true);
+    //SmartDashboard.putBoolean("Characterized Drive", false);
     robotContainer = new RobotContainer();
     Log.init();
   }
@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.drivetrain.toggleMode();
-    robotContainer.getAutonomousCommand().schedule();
+    //robotContainer.getAutonomousCommand().schedule();
     Log.setDataLoggingDisabled(false);
   }
 
@@ -64,7 +64,8 @@ public class Robot extends TimedRobot {
    * This function is called once each time the robot enters teleoperated mode.
    */
   @Override
-  public void teleopInit() {robotContainer.drivetrain.toggleMode();
+  public void teleopInit() {
+    robotContainer.drivetrain.toggleMode();
     Log.setDataLoggingDisabled(false);
   }
 

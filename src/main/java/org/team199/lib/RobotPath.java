@@ -13,19 +13,14 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 
 import org.team199.robot2021.subsystems.Drivetrain;
 
@@ -53,6 +48,7 @@ public class RobotPath {
     }
 
     public Command getPathCommand() {
+        /*
         RamseteCommand ram = new RamseteCommand(trajectory, 
                                                 () -> dt.getOdometry().getPoseMeters(), 
                                                 new RamseteController(), 
@@ -60,13 +56,16 @@ public class RobotPath {
                                                 dt::charDriveDirect,
                                                 dt);
         return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.charDriveTank(0, 0), dt)); //TODO: Configure Ramsete Controller Values
+        */
+        return new InstantCommand();
     }
 
     public void loadOdometry() {
-        dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
+        //dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
     }
 
     public static TrajectoryConfig createConfig(boolean isInverted, Drivetrain dt) {
+        /*
         TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
                                                        Drivetrain.kAutoMaxAccel);
         config.setKinematics(dt.getKinematics());
@@ -79,8 +78,8 @@ public class RobotPath {
         config.addConstraint(voltConstraint);
         
         if (isInverted) { config.setReversed(true); }
-        
-        return config;
+        */
+        return null;
     }
 
     public static List<Pose2d> getPointsFromFile(String pathName, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {

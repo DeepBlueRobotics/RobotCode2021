@@ -11,8 +11,8 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.playingwithfusion.TimeOfFlight;
 
-import frc.robot.lib.MotorControllerFactory;
-import org.team199.robot2021.Constants;
+//import frc.robot.lib.MotorControllerFactory;
+//import org.team199.robot2021.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,10 +29,10 @@ public class Feeder extends SubsystemBase {
   private static double kOutSensorMinDistance = 32;
   private static double kOutSensorMaxDistance = 45;
   
-  private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederBelt);
-  private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederEjector);
-  private final TimeOfFlight inSensor = new TimeOfFlight(Constants.Drive.kFeederInSensor);
-  private final TimeOfFlight outSensor = new TimeOfFlight(Constants.Drive.kFeederOutSensor);
+  private final WPI_TalonSRX beltMotor = null;//MotorControllerFactory.createTalon(Constants.Drive.kFeederBelt);
+  private final WPI_TalonSRX ejectMotor = null;//MotorControllerFactory.createTalon(Constants.Drive.kFeederEjector);
+  private final TimeOfFlight inSensor = null;//new TimeOfFlight(Constants.Drive.kFeederInSensor);
+  private final TimeOfFlight outSensor = null;//new TimeOfFlight(Constants.Drive.kFeederOutSensor);
   
   private double limitDistance = 7000;
   private int startPosition = 0;
@@ -62,7 +62,7 @@ public class Feeder extends SubsystemBase {
 
   public void periodic() {
     if (inSensor.getRange() <= kInSensorMaxDistance && inSensor.getRange() >= kInSensorMinDistance) {
-      startPosition = beltMotor.getSelectedSensorPosition(0);
+      //startPosition = beltMotor.getSelectedSensorPosition(0);
     }
 
     if (!reachedShooter) {
