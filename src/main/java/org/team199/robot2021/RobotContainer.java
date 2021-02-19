@@ -8,12 +8,15 @@
 
 package org.team199.robot2021;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+import org.team199.lib.RobotPath;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.subsystems.Drivetrain;
 
@@ -25,8 +28,8 @@ import org.team199.robot2021.subsystems.Drivetrain;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    //private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drive.kAutoPathSwitch1Port);
-    //private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
+    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch1Port);
+    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch2Port);
     final Drivetrain drivetrain = new Drivetrain();
     //private final Limelight lime = new Limelight();
     //private final Shooter shooter = new Shooter(lime);
@@ -36,7 +39,7 @@ public class RobotContainer {
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.port);
     private final Joystick controller = new Joystick(Constants.OI.Controller.port);
     //private final Climber climber = new Climber();
-    //private final RobotPath[] paths;
+    private final RobotPath[] paths;
     //private final LinearInterpolation linearInterpol;
 
     public RobotContainer() {
@@ -78,17 +81,17 @@ public class RobotContainer {
             }
         }, feeder, intake));*/
 
-        /*paths = new RobotPath[4];
+        paths = new RobotPath[4];
         if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
-            loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
+            /*loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
             loadPath(Path.PATH2, "OneBall", false, StartingPosition.BLUE_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.BLUE_RIGHT.pos);
+            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.BLUE_RIGHT.pos);*/
         } else {
-            loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.RED_LEFT.pos);
+            /*loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.RED_LEFT.pos);
             loadPath(Path.PATH2, "OneBall", false, StartingPosition.RED_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);
+            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);*/
         }
-        linearInterpol = new LinearInterpolation("ShooterData.csv");*/
+        //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
     private void configureButtonBindingsLeftJoy() {
@@ -195,7 +198,6 @@ public class RobotContainer {
      * off on = 2
      * on on = 3
      */
-    /*
     public Path getPath() {
         Path outPath = Path.OFF;
         // get() returns true if the circuit is open.
@@ -216,7 +218,6 @@ public class RobotContainer {
         }
         return outPath;
     }
-
         
     private void loadPath(final Path path, final String pathName, final boolean isInverted, final Translation2d initPos) {
         try {
@@ -238,7 +239,7 @@ public class RobotContainer {
     }
 
     public static enum StartingPosition {
-        // DO NOT CHANGE ANY OF THESE VALUES.
+        // TODO: Change starting positions to reflect FIRST At Home challenges
         BLUE_LEFT(12.61, -4.75), 
         BLUE_CENTER(12.61, -5.75), 
         BLUE_RIGHT(12.61, -6.75), 
@@ -252,9 +253,8 @@ public class RobotContainer {
             pos = new Translation2d(x, y);
         }
     }
-
+    /*
     public static enum Target {
-        // DO NOT CHANGE ANY OF THESE VALUES.
         BLUE_PORT(16, -5.75), 
         RED_PORT(0, -2.4); 
     

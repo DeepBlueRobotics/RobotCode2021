@@ -122,9 +122,12 @@ public class Drivetrain extends SubsystemBase {
   public SwerveDriveKinematics getKinematics() { return kinematics; }
 
   public void drive(double forward, double strafe, double rotation) {
-    SwerveModuleState[] moduleStates = getSwerveStates(forward, strafe, rotation);
-    SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);
+    drive(getSwerveStates(forward, strafe, rotation));
+  }
 
+  public void drive(SwerveModuleState[] moduleStates) {
+    SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);
+    
     // Move the modules based on desired (normalized) speed, desired angle, max speed, drive modifier, and whether or not to reverse turning.
     for (int i = 0; i < 4; i++) {
       modules[i].move(moduleStates[i].speedMetersPerSecond, moduleStates[i].angle.getRadians());

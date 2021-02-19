@@ -62,12 +62,9 @@ public final class Constants {
         public static final double[] kVels = {0.0, 0.0, 0.0, 0.0};
         public static final double[] kAccels = {0.0, 0.0, 0.0, 0.0};
 
-        //public static final double autoMaxSpeed = 1.0;  // Meters / second
-        //public static final double autoMaxAccel = 0.847;  // Meters / seconds^2
-        //public static final double maxAccel = 200;  // Inches / seconds^2
-        //public static final double maxSpeed = 5676 * Math.PI * 5 / 6.8 / 60; // Inches / seconds
-        //public static final double maxAngularSpeed = 4 * Math.PI; // Radians / second
-        //public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java      
+        public static final double autoMaxSpeed = 1.0;  // Meters / second
+        public static final double autoMaxAccel = 0.847;  // Meters / seconds^2
+        public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java      
     }
 
     public static final class DrivePorts {
@@ -108,8 +105,8 @@ public final class Constants {
         //public static final int kFeederInSensor = 11;
         //public static final int kFeederOutSensor = 10;
 
-        //public static final int kAutoPathSwitch1Port = 0;
-        //public static final int kAutoPathSwitch2Port = 1;
+        public static final int kAutoPathSwitch1Port = 0;
+        public static final int kAutoPathSwitch2Port = 1;
     }
 
     /**

@@ -13,15 +13,24 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.lib.SwerveDriveVoltageConstraint;
+import frc.robot.lib.SwerveRamseteCommand;
 
+import org.team199.robot2021.Constants;
 import org.team199.robot2021.subsystems.Drivetrain;
 
 //Findd Me
@@ -47,39 +56,56 @@ public class RobotPath {
         this.dt = dt;
     }
 
+    public SwerveModuleState[] convertToFieldRelative(SwerveModuleState[] swerveModuleStates, Translation2d centerOfRotation) {
+        if (SmartDashboard.getBoolean("Field Oriented", true)) {
+            ChassisSpeeds speeds = dt.getKinematics().toChassisSpeeds(swerveModuleStates);
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds.vxMetersPerSecond, 
+                                                           speeds.vyMetersPerSecond, 
+                                                           speeds.omegaRadiansPerSecond, 
+                                                           Rotation2d.fromDegrees(dt.getHeading()));
+            return dt.getKinematics().toSwerveModuleStates(speeds, centerOfRotation);
+        } else return swerveModuleStates;
+    }
+    
+
     public Command getPathCommand() {
-        /*
-        RamseteCommand ram = new RamseteCommand(trajectory, 
+        SwerveRamseteCommand ram = new SwerveRamseteCommand(trajectory, 
                                                 () -> dt.getOdometry().getPoseMeters(), 
                                                 new RamseteController(), 
                                                 dt.getKinematics(),
-                                                dt::charDriveDirect,
+                                                (swerveModuleStates) -> 
+                                                    dt.drive(convertToFieldRelative(swerveModuleStates, new Translation2d())),
                                                 dt);
-        return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.charDriveTank(0, 0), dt)); //TODO: Configure Ramsete Controller Values
-        */
-        return new InstantCommand();
+        return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.drive(0, 0, 0), dt));
     }
 
     public void loadOdometry() {
-        //dt.setOdometry(new DifferentialDriveOdometry(Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
+        dt.setOdometry(new SwerveDriveOdometry(dt.getKinematics(), Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
+    }
+
+    private static double average(double[] arr) {
+        double sum = 0;
+        for (double x : arr) sum += x;
+        return sum / arr.length;
     }
 
     public static TrajectoryConfig createConfig(boolean isInverted, Drivetrain dt) {
-        /*
-        TrajectoryConfig config = new TrajectoryConfig(Drivetrain.kAutoMaxSpeed, 
-                                                       Drivetrain.kAutoMaxAccel);
+        TrajectoryConfig config = new TrajectoryConfig(Constants.DriveConstants.autoMaxSpeed, 
+                                                       Constants.DriveConstants.autoMaxAccel);
         config.setKinematics(dt.getKinematics());
 
-        double kVoltAVG = 0.25 * (Drivetrain.kVolts[0] + Drivetrain.kVolts[1] + Drivetrain.kVolts[2] + Drivetrain.kVolts[3]);
-        double kVelsAVG = 0.25 * (Drivetrain.kVels[0] + Drivetrain.kVels[1] + Drivetrain.kVels[2] + Drivetrain.kVels[3]);
-        double kAccelAVG = 0.25 * (Drivetrain.kAccels[0] + Drivetrain.kAccels[1] + Drivetrain.kAccels[2] + Drivetrain.kAccels[3]);
-        DifferentialDriveVoltageConstraint voltConstraint = new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), dt.getKinematics(), Drivetrain.kAutoMaxVolt);
+        double kVoltAVG = average(Constants.DriveConstants.kVolts);
+        double kVelsAVG = average(Constants.DriveConstants.kVels);
+        double kAccelAVG = average(Constants.DriveConstants.kAccels);
+        SwerveDriveVoltageConstraint voltConstraint = new SwerveDriveVoltageConstraint(
+            new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), 
+            dt.getKinematics(),
+            Constants.DriveConstants.trackWidth,
+            Constants.DriveConstants.autoMaxVolt);
         config.addConstraint(voltConstraint);
         
         if (isInverted) { config.setReversed(true); }
-        */
-        return null;
+        return config;
     }
 
     public static List<Pose2d> getPointsFromFile(String pathName, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
