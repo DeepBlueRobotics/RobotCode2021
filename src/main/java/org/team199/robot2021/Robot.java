@@ -11,7 +11,6 @@ import frc.robot.lib.MotorErrors;
 import frc.robot.lib.logging.Log;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
@@ -48,7 +47,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    robotContainer.drivetrain.toggleMode();
+    robotContainer.drivetrain.brake();
     //robotContainer.getAutonomousCommand().schedule();
     Log.setDataLoggingDisabled(false);
   }
@@ -65,7 +64,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    robotContainer.drivetrain.toggleMode();
+    robotContainer.drivetrain.brake();
     Log.setDataLoggingDisabled(false);
   }
 
@@ -88,7 +87,7 @@ public class Robot extends TimedRobot {
     new Thread(() -> {
       try {
         Thread.sleep(1000);
-        robotContainer.drivetrain.toggleMode();
+        robotContainer.drivetrain.coast();
       } catch(InterruptedException e) {}
     }).start();
     Log.flush();

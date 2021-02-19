@@ -115,10 +115,6 @@ public class Drivetrain extends SubsystemBase {
     isOdometryInit = false;
   }
 
-  public void toggleMode() {
-    for (int i = 0; i < 4; i++) modules[i].toggleMode();
-  }
-
   public double getHeading() {
     return Math.IEEEremainder(gyro.getAngle(), 360) * (isGyroReversed ? -1.0 : 1.0);
   }
@@ -170,5 +166,17 @@ public class Drivetrain extends SubsystemBase {
   */
   private SwerveModuleState[] getSwerveStates(double forward, double strafe, double rotation) {
     return kinematics.toSwerveModuleStates(getChassisSpeeds(forward, -strafe, -rotation));
+  }
+
+  public void toggleMode() {
+    for (int i = 0; i < 4; i++) modules[i].toggleMode();
+  }
+
+  public void brake() {
+    for (int i = 0; i < 4; i++) modules[i].brake();
+  }
+
+  public void coast() {
+    for (int i = 0; i < 4; i++) modules[i].coast();
   }
 }

@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import frc.robot.lib.SwerveMath;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -180,6 +181,16 @@ public class SwerveModule {
     }
 
     public void toggleMode() {
-        drive.setIdleMode((drive.getIdleMode() == IdleMode.kBrake) ? IdleMode.kCoast : IdleMode.kBrake);
+        if (drive.getIdleMode() == IdleMode.kBrake) coast();
+        else brake();
+    }
+
+    public void brake() {
+        drive.setIdleMode(IdleMode.kBrake);
+    }
+    
+    public void coast() {
+        if (DriverStation.getInstance().isDisabled()) drive.setIdleMode(IdleMode.kCoast);
+        else drive.setIdleMode(IdleMode.kBrake);
     }
 }
