@@ -52,15 +52,23 @@ public final class Constants {
         public static final boolean[] reversed = {true, true, true, true};
         // TODO: Determine correct turnZero constants
         public static final int[] turnZero = {0, 0, 0, 0};
+        
         // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
         // TODO: Determine correct turn PID constants
         public static final double[] turnkP = {0.01, 0.01, 0.01, 0.01};
         public static final double[] turnkI = {0, 0, 0, 0};
-        public static final double[] turnkD = {0.0, 0.0, 0.0, 0.0};
+        public static final double[] turnkD = {0, 0, 0, 0};
 
-        public static final double[] kVolts = {0.0, 0.0, 0.0, 0.0};
-        public static final double[] kVels = {0.0, 0.0, 0.0, 0.0};
-        public static final double[] kAccels = {0.0, 0.0, 0.0, 0.0};
+        public static final double[] drivekP = {0, 0, 0, 0};
+        public static final double[] drivekI = {0, 0, 0, 0};
+        public static final double[] drivekD = {0, 0, 0, 0};
+
+        public static final double[] kForwardVolts = {0, 0, 0, 0.0};
+        public static final double[] kBackwardVolts = {0, 0, 0, 0};
+        public static final double[] kForwardVels = {0, 0, 0, 0};
+        public static final double[] kBackwardVels = {0, 0, 0, 0};
+        public static final double[] kForwardAccels = {0, 0, 0, 0};
+        public static final double[] kBackwardAccels = {0, 0, 0, 0};
 
         public static final double autoMaxSpeed = 1.0;  // Meters / second
         public static final double autoMaxAccel = 0.847;  // Meters / seconds^2

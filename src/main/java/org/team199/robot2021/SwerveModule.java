@@ -27,15 +27,15 @@ public class SwerveModule {
     private String moduleString;
     private CANSparkMax drive, turn;
     private CANCoder turnEncoder;
-    private PIDController turnPIDController;
+    private PIDController drivePIDController, turnPIDController;
     private double driveModifier, maxSpeed;
     private int turnZero;
     private boolean reversed;
     private Timer timer;
-    private SimpleMotorFeedforward simpleMotorFeedforward;
+    private SimpleMotorFeedforward forwardSimpleMotorFF, backwardSimpleMotorFF;
 
     public SwerveModule(ModuleType type, CANSparkMax drive, CANSparkMax turn, CANCoder turnEncoder, double driveModifier, 
-                        double maxSpeed, boolean reversed, int turnZero, double kVolt) {
+                        double maxSpeed, int arrIndex) {
         this.timer = new Timer();
         timer.start();
 
@@ -60,17 +60,27 @@ public class SwerveModule {
         drive.getEncoder().setPositionConversionFactor(Constants.DriveConstants.wheelDiameter * Math.PI / Constants.DriveConstants.driveGearing);
         
         this.turn = turn;
-        turnPIDController = new PIDController(0.01, 0.0, 0.0);
+        turnPIDController = new PIDController(Constants.DriveConstants.turnkP[arrIndex],
+                                              Constants.DriveConstants.turnkI[arrIndex],
+                                              Constants.DriveConstants.turnkD[arrIndex]);
 
         this.turnEncoder = turnEncoder;
         this.turnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
         this.driveModifier = driveModifier;
         this.maxSpeed = maxSpeed;
-        this.reversed = reversed;
-        this.turnZero = turnZero;
+        this.reversed = Constants.DriveConstants.reversed[arrIndex];
+        this.turnZero = Constants.DriveConstants.turnZero[arrIndex];
 
-        this.simpleMotorFeedforward = new SimpleMotorFeedforward(kVolt, 1 / maxSpeed);
+        this.forwardSimpleMotorFF = new SimpleMotorFeedforward(Constants.DriveConstants.kForwardVolts[arrIndex],
+                                                               Constants.DriveConstants.kForwardVels[arrIndex],
+                                                               Constants.DriveConstants.kForwardAccels[arrIndex]);
+        this.backwardSimpleMotorFF = new SimpleMotorFeedforward(Constants.DriveConstants.kBackwardVolts[arrIndex],
+                                                                Constants.DriveConstants.kBackwardVels[arrIndex],
+                                                                Constants.DriveConstants.kBackwardAccels[arrIndex]);
+        drivePIDController = new PIDController(Constants.DriveConstants.drivekP[arrIndex],
+                                               Constants.DriveConstants.drivekI[arrIndex],
+                                               Constants.DriveConstants.drivekD[arrIndex]);
     }
 
     public void periodic() {
@@ -98,26 +108,31 @@ public class SwerveModule {
      * @param speed     The desired speed, from -1.0 (maximum speed directed backwards) to 1.0 (maximum speed directed forwards).
      */
     private void setSpeed(double speed) {
+        // Get the change in time (for acceleration limiting calculations)
         double deltaTime = timer.get();
 
+        // Compute desired and actual speeds in m/s
         double desiredSpeed = maxSpeed * speed * Math.abs(driveModifier);
+        double actualSpeed = getCurrentSpeed();
 
         // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
-        double desiredAcceleration = (desiredSpeed - getCurrentSpeed()) / deltaTime;
+        double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime;
         double maxAcceleration = Constants.DriveConstants.mu * 9.8;
         double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
-        
-        double clippedDesiredSpeed = getCurrentSpeed() + clippedAcceleration * deltaTime;
-        double appliedVoltage = simpleMotorFeedforward.calculate(clippedDesiredSpeed); //percent of system (12v)
+
+        // Clip the speed based on the clipped desired acceleration
+        double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
+
+        // Use robot characterization as a simple physical model to account for internal resistance, frcition, etc.
+        double appliedVoltage = (clippedDesiredSpeed >= 0 ? forwardSimpleMotorFF :
+                                 backwardSimpleMotorFF).calculate(clippedDesiredSpeed, clippedAcceleration);
+        // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
+        appliedVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
+        appliedVoltage = MathUtil.clamp(appliedVoltage / 12, -1, 1);
+        drive.set(driveModifier * appliedVoltage);
 
         // Reset the timer so get() returns a change in time
         timer.reset();
-        timer.start();
-        SmartDashboard.putNumber(moduleString + " Expected Speed", desiredSpeed);
-        SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
-        SmartDashboard.putNumber(moduleString + " Clipped Speed", clippedDesiredSpeed);
-        
-        drive.set(driveModifier * appliedVoltage);
     }
 
     /**
@@ -126,18 +141,6 @@ public class SwerveModule {
      */
     private void setAngle(double angle) {
         turnPIDController.setSetpoint(180 * angle * (reversed ? -1 : 1));
-    }
-
-    /**
-     * Sets the PID constants for the turn motor controller.
-     * @param kP        The proportionality constant for the "P" (proportional) term.
-     * @param kI        The proportionality constant for the "I" (integral) term.
-     * @param kD        The proportionality constant for the "D" (derivative) term.
-     */
-    public void setTurnPID(double kP, double kI, double kD) {
-        turnPIDController.setP(kP);
-        turnPIDController.setI(kI);
-        turnPIDController.setD(kD);
     }
 
     private double getModuleAngle() {

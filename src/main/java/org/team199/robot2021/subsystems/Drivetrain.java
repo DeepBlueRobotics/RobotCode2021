@@ -50,37 +50,26 @@ public class Drivetrain extends SubsystemBase {
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.driveFrontLeft), 
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.turnFrontLeft), 
                                 new CANCoder(Constants.DrivePorts.canCoderPortFL), -Constants.DriveConstants.driveModifier, 
-                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[0],
-                                Constants.DriveConstants.turnZero[0], Constants.DriveConstants.kVolts[0]);
+                                Constants.DriveConstants.maxSpeed, 0);
     // Forward-Right
     SwerveModule moduleFR = new SwerveModule(SwerveModule.ModuleType.FR,
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.driveFrontRight), 
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.turnFrontRight),
                                 new CANCoder(Constants.DrivePorts.canCoderPortFR), Constants.DriveConstants.driveModifier,
-                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[1],
-                                Constants.DriveConstants.turnZero[1], Constants.DriveConstants.kVolts[1]);
+                                Constants.DriveConstants.maxSpeed, 1);
     // Backward-Left
     SwerveModule moduleBL = new SwerveModule(SwerveModule.ModuleType.BL,
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.driveBackLeft), 
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.turnBackLeft),
                                 new CANCoder(Constants.DrivePorts.canCoderPortBL), -Constants.DriveConstants.driveModifier,
-                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[2],
-                                Constants.DriveConstants.turnZero[2], Constants.DriveConstants.kVolts[2]);
+                                Constants.DriveConstants.maxSpeed, 2);
     // Backward-Right
     SwerveModule moduleBR = new SwerveModule(SwerveModule.ModuleType.BR,
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.driveBackRight), 
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.turnBackRight),
                                 new CANCoder(Constants.DrivePorts.canCoderPortBR), Constants.DriveConstants.driveModifier,
-                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[3],
-                                Constants.DriveConstants.turnZero[3], Constants.DriveConstants.kVolts[3]);
+                                Constants.DriveConstants.maxSpeed, 3);
     modules = new SwerveModule[]{moduleFL, moduleFR, moduleBL, moduleBR};
-
-    // Configure PID control constants for drive motor controllers
-    for (int i = 0; i < 4; i++) {
-        modules[i].setTurnPID(Constants.DriveConstants.turnkP[i], 
-                              Constants.DriveConstants.turnkI[i], 
-                              Constants.DriveConstants.turnkD[i]);
-    }
   }
 
   @Override

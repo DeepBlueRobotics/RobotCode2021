@@ -95,9 +95,12 @@ public class RobotPath {
                                                        Constants.DriveConstants.autoMaxAccel);
         config.setKinematics(dt.getKinematics());
 
-        double kVoltAVG = average(Constants.DriveConstants.kVolts);
-        double kVelsAVG = average(Constants.DriveConstants.kVels);
-        double kAccelAVG = average(Constants.DriveConstants.kAccels);
+        double kVoltAVG = 0.5 * (average(Constants.DriveConstants.kForwardVolts) 
+                                 + average(Constants.DriveConstants.kBackwardVolts));
+        double kVelsAVG = 0.5 * (average(Constants.DriveConstants.kForwardVels) 
+                                 + average(Constants.DriveConstants.kBackwardVels));
+        double kAccelAVG = 0.5 * (average(Constants.DriveConstants.kForwardAccels) 
+                                 + average(Constants.DriveConstants.kBackwardAccels));
         SwerveDriveVoltageConstraint voltConstraint = new SwerveDriveVoltageConstraint(
             new SimpleMotorFeedforward(kVoltAVG, kVelsAVG, kAccelAVG), 
             dt.getKinematics(),
