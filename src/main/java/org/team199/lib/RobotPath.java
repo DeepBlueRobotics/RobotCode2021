@@ -27,8 +27,9 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.lib.SwerveDriveVoltageConstraint;
-import frc.robot.lib.SwerveRamseteCommand;
+
+import frc.robot.lib.swerve.SwerveDriveVoltageConstraint;
+import frc.robot.lib.swerve.SwerveRamseteCommand;
 
 import org.team199.robot2021.Constants;
 import org.team199.robot2021.subsystems.Drivetrain;
