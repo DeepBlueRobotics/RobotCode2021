@@ -142,13 +142,12 @@ public class RobotContainer {
 
         // Deploy climber button and allow for adjustment
         new JoystickButton(controller, Constants.OI.Controller.kDeployClimberButton).whenPressed(new SequentialCommandGroup(
-            new DeployClimber(climber),
-            new AdjustClimber(climber, controller)
+            new DeployClimber(climber)
         ));
 
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new SequentialCommandGroup(
-            new DropLift(climber),
+            new AttachHook(climber, controller)
             new RaiseRobot(climber)
          ));
     }

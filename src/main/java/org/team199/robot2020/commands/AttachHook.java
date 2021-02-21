@@ -13,14 +13,14 @@ import org.team199.robot2020.subsystems.Climber;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class AdjustClimber extends CommandBase {
+public class AttachHook extends CommandBase {
   private final Climber climber;
   private final Joystick controller;
 
   /**
    * Manually adjusting the climber hook position
    */
-  public AdjustClimber(Climber climber, Joystick manipulator) {
+  public AttachHook(Climber climber, Joystick manipulator) {
     addRequirements(this.climber = climber);
     this.controller = manipulator;
   }
