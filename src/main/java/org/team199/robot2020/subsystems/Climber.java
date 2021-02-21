@@ -20,13 +20,16 @@ public class Climber extends SubsystemBase {
     public static double kLiftLowerSpeed = 1; //TODO: set correct speed
     public static double kLiftKeepSpeed = 0.06; //TODO: set correct speed
     public static double kLiftRetractSpeed = -0.3; //TODO: set correct speed
-    public static double kWinchRetractSpeed = 0.6; //TODO: set correct speed
+    public static double kWinchRetractSpeedFirst = 0.6; //TODO: set correct speed
+    public static double kWinchRetractSpeedSecond = 0.6; //TODO: set correct speed
     public static double kLiftAdjustSpeed = 0.2; //TODO: set correct speed
     public static double kWinchAdjustSpeed = 0.2; //TODO: set correct speed
     public static double kVoltage = 0.0; //TODO: find voltage
 
     public static final double kLiftHeight = 87; // TODO: set correct speed
+    public static final double kLiftLowerHeight = 0;  //TODO: set this one probably
     public static final double kWinchEndHeight = 60; // TODO: set correct speed
+    public static final double kWinchMidHeight = 60; //TODO: SET THIS ONE SPECIFICALLY 
     public static final double kWinchStartHeight = -80; // TODO: set correct speed
     private final CANSparkMax liftMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberLift); //TODO SparkMax Become 775
     private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch); //TODO SparkMax Become Neo

@@ -26,6 +26,7 @@ public class DeployClimber extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //Sends arm up to bar and gives slack from winch to do so
     climber.runLift(Climber.kLiftDeploySpeed);
     climber.runWinch(Climber.kWinchDeploySpeed);
     System.out.println("--RUNNING--");
@@ -34,7 +35,8 @@ public class DeployClimber extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      if (climber.getWinchHeight() >= 0) {
+      //In case the winch somehow gets faster than the arm and needs to be stopped before it extends farther than the max
+      if (climber.getWinchHeight() >= climber.kWinchEndHeight) {
         climber.runWinch(0);
       }
   }
@@ -42,7 +44,7 @@ public class DeployClimber extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    
+    //When it reaches the top this stops all of it
     climber.runLift(Climber.kLiftKeepSpeed);
     climber.runWinch(0);
     System.out.println("--ENDED--");
@@ -51,6 +53,7 @@ public class DeployClimber extends CommandBase {
   // returns true when the command should end.
   @Override
   public boolean isFinished() {
+    //Checks if arm has reached top
     return climber.getLiftHeight() >= Climber.kLiftHeight;
    // return climber.getWinchHeight() >= 0;
   }

@@ -26,23 +26,27 @@ public class RaiseRobot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //Retract winch to raise robot
     climber.runWinch(Climber.kWinchRetractSpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //No reason for something to change movement midway through this happening
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    //stops the winch when it reaches the top
     climber.runWinch(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    //checks if robot has reached top
     return climber.getWinchHeight() >= Climber.kWinchEndHeight;
   }
 }
