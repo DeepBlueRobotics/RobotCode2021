@@ -35,7 +35,7 @@ public class Feeder extends SubsystemBase {
   private final TimeOfFlight outSensor = new TimeOfFlight(Constants.Drive.kFeederOutSensor);
   
   private double limitDistance = 7000;
-  private int startPosition = 0;
+  private double startPosition = 0;
   private boolean reachedShooter = false;
 
   /**
