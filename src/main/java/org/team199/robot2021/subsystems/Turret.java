@@ -3,20 +3,23 @@ package org.team199.robot2021.subsystems;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 
+import org.team199.robot2021.Constants;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.MotorControllerFactory;
 
 public class Turret extends SubsystemBase {
     
-    private final DigitalInput homeSensor = new DigitalInput(0);
-    private final DigitalInput counterClockwiseLimit = new DigitalInput(0);
-    private final DigitalInput clockwiseLimit = new DigitalInput(0);
-    private final CANSparkMax motor = MotorControllerFactory.createSparkMax(0);
+    private final DigitalInput homeSensor = new DigitalInput(Constants.Drive.kTurretHomeSensor);
+    private final DigitalInput counterClockwiseLimit = new DigitalInput(Constants.Drive.kTurretCounterclockwiseLimit);
+    private final DigitalInput clockwiseLimit = new DigitalInput(Constants.Drive.kTurretClockwiseLimit);
+    private final CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Drive.kTurretMotor);
     private final CANEncoder encoder = motor.getEncoder();
+    private final double gearing = 1; //TODO: Set Correct Value
 
     public Turret() {
-        encoder.setPositionConversionFactor(0);
+        encoder.setPositionConversionFactor(gearing * 180 / (42 * 2 * Math.PI));
     }
 
     @Override
