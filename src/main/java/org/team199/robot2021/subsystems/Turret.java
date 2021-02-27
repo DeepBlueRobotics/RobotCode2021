@@ -1,18 +1,22 @@
 package org.team199.robot2021.subsystems;
 
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.lib.MotorControllerFactory;
 
 public class Turret extends SubsystemBase {
     
     private final DigitalInput homeSensor = new DigitalInput(0);
     private final DigitalInput counterClockwiseLimit = new DigitalInput(0);
     private final DigitalInput clockwiseLimit = new DigitalInput(0);
-    private final PlaceholderMotor motor = null;
-    private final PlaceholderEncoder encoder = null;
+    private final CANSparkMax motor = MotorControllerFactory.createSparkMax(0);
+    private final CANEncoder encoder = motor.getEncoder();
 
     public Turret() {
-        encoder.setDistancePerPulse(0);
+        encoder.setPositionConversionFactor(0);
     }
 
     @Override
@@ -59,26 +63,15 @@ public class Turret extends SubsystemBase {
     }
 
     public double getPosition() {
-        return encoder.getDistance();
+        return encoder.getPosition();
     }
 
     public void resetPosition() {
-        encoder.reset();
+        encoder.setPosition(0);
     }
 
     public boolean limited(double speed) {
         return (Math.signum(speed) == 1 ? counterClockwiseLimit : clockwiseLimit).get();
-    }
-
-    interface PlaceholderMotor {
-        void set(double speed);
-        double get();
-    }
-
-    interface PlaceholderEncoder {
-        double getDistance();
-        void setDistancePerPulse(double distancePerPulse);
-        void reset();
     }
 
 }
