@@ -5,48 +5,52 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.team199.robot2020.commands;
+package org.team199.robot2021.commands;
 
-import org.team199.robot2020.subsystems.Climber;
+import org.team199.robot2021.subsystems.Feeder;
+import org.team199.robot2021.subsystems.Intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class RaiseRobot extends CommandBase {
-  private final Climber climber;
-
+public class Regurgitate extends CommandBase {
+  private final Intake intake;
+  private final Feeder feeder;
+  
   /**
-   * Pulls the winch to raise the robot up to the switch
-   * Old needs to be fixed and updated for current
+   * Regurgitates the balls out of the feeder (and intake if it's deployed)
    */
-  public RaiseRobot(Climber climber) {
-    addRequirements(this.climber = climber);
+  public Regurgitate(Intake intake, Feeder feeder) {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(this.intake = intake, this.feeder = feeder);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //Retract winch to raise robot
-    climber.runWinch(Climber.kWinchRetractSpeed);
+    feeder.runBackward();
+    if (intake.isDeployed()) {
+      intake.outtake();
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //No reason for something to change movement midway through this happening
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //stops the winch when it reaches the top
-    climber.runWinch(0);
+    feeder.stop();
+    if (intake.isDeployed()) {
+      intake.intake();
+    }
+    feeder.reset();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //checks if robot has reached top
-    return climber.getWinchHeight() >= Climber.kWinchEndHeight;
+    return false;
   }
 }

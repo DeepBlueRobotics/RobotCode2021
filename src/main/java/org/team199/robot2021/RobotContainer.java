@@ -6,7 +6,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.team199.robot2020;
+package org.team199.robot2021;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -17,26 +17,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 
-import org.team199.lib.Limelight;
-import org.team199.lib.LinearInterpolation;
+import frc.robot.lib.Limelight;
+import frc.robot.lib.LinearInterpolation;
 import org.team199.lib.RobotPath;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import org.team199.robot2020.commands.Regurgitate;
-import org.team199.robot2020.commands.TeleopDrive;
-import org.team199.robot2020.commands.Shoot;
-import org.team199.robot2020.commands.ShooterHorizontalAim;
-import org.team199.robot2020.subsystems.Drivetrain;
-import org.team199.robot2020.subsystems.Shooter;
-import org.team199.robot2020.commands.AdjustClimber;
-import org.team199.robot2020.commands.AutoShootAndDrive;
-import org.team199.robot2020.commands.DeployClimber;
-import org.team199.robot2020.commands.DropLift;
-import org.team199.robot2020.commands.RaiseRobot;
-import org.team199.robot2020.subsystems.Feeder;
-import org.team199.robot2020.subsystems.Intake;
-import org.team199.robot2020.subsystems.Climber;
+import org.team199.robot2021.commands.Regurgitate;
+import org.team199.robot2021.commands.TeleopDrive;
+import org.team199.robot2021.commands.Shoot;
+import org.team199.robot2021.commands.ShooterHorizontalAim;
+import org.team199.robot2021.subsystems.Drivetrain;
+import org.team199.robot2021.subsystems.Shooter;
+import org.team199.robot2021.commands.AttachHook;
+import org.team199.robot2021.commands.AutoShootAndDrive;
+import org.team199.robot2021.commands.DeployClimber;
+import org.team199.robot2021.commands.RaiseRobot;
+import org.team199.robot2021.subsystems.Feeder;
+import org.team199.robot2021.subsystems.Intake;
+import org.team199.robot2021.subsystems.Climber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -120,7 +119,8 @@ public class RobotContainer {
                 () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
     }
 
-    private void configureButtonBindingsRightJoy() {new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleMode, drivetrain));
+    private void configureButtonBindingsRightJoy() {
+        new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleMode, drivetrain));
         // Align the robot and then shoots
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
     }

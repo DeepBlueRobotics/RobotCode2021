@@ -1,4 +1,4 @@
-package org.team199.robot2020.subsystems;
+package org.team199.robot2021.subsystems;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
@@ -7,8 +7,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import org.team199.lib.MotorControllerFactory;
-import org.team199.robot2020.Constants;
+import frc.robot.lib.MotorControllerFactory;
+import org.team199.robot2021.Constants;
 
 public class Climber extends SubsystemBase {
     private static final double kLiftConversionFactor =6.0/40 * Math.PI * 3; //TODO: confirm numbers (inches)
@@ -50,7 +50,7 @@ public class Climber extends SubsystemBase {
         SmartDashboard.putNumber("Climber.kWinchDeploySpeed", kWinchDeploySpeed);
         SmartDashboard.putNumber("Climber.kLiftKeepSpeed", kLiftKeepSpeed);
         SmartDashboard.putNumber("Climber.kLiftRetractSpeed", kLiftRetractSpeed);
-        SmartDashboard.putNumber("Climber.kWinchRetractSpeed", kWinchRetractSpeed);
+        SmartDashboard.putNumber("Climber.kWinchRetractSpeedFirst", kWinchRetractSpeedFirst);
         SmartDashboard.putNumber("Climber.kLiftAdjustSpeed", kLiftAdjustSpeed);
     }
 
@@ -59,7 +59,7 @@ public class Climber extends SubsystemBase {
         kWinchDeploySpeed = SmartDashboard.getNumber("Climber.kWinchDeploySpeed", kWinchDeploySpeed);
         kLiftKeepSpeed = SmartDashboard.getNumber("Climber.kLiftKeepSpeed", kLiftKeepSpeed);
         kLiftRetractSpeed = SmartDashboard.getNumber("Climber.kLiftRetractSpeed", kLiftRetractSpeed);
-        kWinchRetractSpeed = SmartDashboard.getNumber("Climber.kWinchRetractSpeed", kWinchRetractSpeed);
+        kWinchRetractSpeedFirst = SmartDashboard.getNumber("Climber.kWinchRetractSpeedFirst", kWinchRetractSpeedFirst);
         kLiftAdjustSpeed = SmartDashboard.getNumber("Climber.kLiftAdjustSpeed", kLiftAdjustSpeed);
         SmartDashboard.putNumber("Lift Position", getLiftHeight());
         SmartDashboard.putNumber("Winch Position", getWinchHeight());
@@ -108,5 +108,7 @@ public class Climber extends SubsystemBase {
 
     public boolean isOnBar() {
         //returns true if the hook is up on the bar
+        //TODO: is this necessary?
+        return false;
     }
 }

@@ -5,10 +5,10 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.team199.robot2020.commands;
+package org.team199.robot2021.commands;
 
-import org.team199.robot2020.Constants;
-import org.team199.robot2020.subsystems.Climber;
+import org.team199.robot2021.Constants;
+import org.team199.robot2021.subsystems.Climber;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -31,7 +31,7 @@ public class AttachHook extends CommandBase {
     //pulls lift and winch in, arm will go all the way down, winch will stop once hook reaches bar
     climber.runLift(climber.kLiftLowerSpeed);
     climber.runLift(climber.kWinchRetractSpeedFirst);
-    System.out.println("--ADJUST CLIMBER--");
+    System.out.println("--ATTACH HOOK--");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

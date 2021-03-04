@@ -1,12 +1,12 @@
-package org.team199.robot2020.commands;
+package org.team199.robot2021.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import com.playingwithfusion.TimeOfFlight;
 
-import org.team199.robot2020.subsystems.Feeder;
-import org.team199.robot2020.subsystems.Shooter;
+import org.team199.robot2021.subsystems.Feeder;
+import org.team199.robot2021.subsystems.Shooter;
 
 public class AutoShoot extends CommandBase {
     private final Feeder feeder;

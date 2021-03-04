@@ -1,12 +1,12 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2020.2.2"
+    id "edu.wpi.first.GradleRIO" version "2021.1.2"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
-def ROBOT_MAIN_CLASS = "org.team199.robot2020.Main"
+def ROBOT_MAIN_CLASS = "org.team199.robot2021.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
@@ -43,6 +43,8 @@ def includeDesktopSupport = false
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
+    implementation 'org.carlmontrobotics:lib199:unspecified'
+    
     implementation wpi.deps.wpilib()
     nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)

@@ -5,52 +5,44 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.team199.robot2020.commands;
+package org.team199.robot2021.commands;
 
-import org.team199.robot2020.subsystems.Feeder;
-import org.team199.robot2020.subsystems.Intake;
+import org.team199.robot2021.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class Regurgitate extends CommandBase {
-  private final Intake intake;
-  private final Feeder feeder;
-  
-  /**
-   * Regurgitates the balls out of the feeder (and intake if it's deployed)
-   */
-  public Regurgitate(Intake intake, Feeder feeder) {
+public class DropLift extends CommandBase {
+  private final Climber climber;
+
+  public DropLift(Climber climber) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(this.intake = intake, this.feeder = feeder);
+    addRequirements(this.climber = climber);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.runBackward();
-    if (intake.isDeployed()) {
-      intake.outtake();
-    }
+    climber.runLift(Climber.kLiftRetractSpeed);
   }
+      
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (climber.getLiftHeight() < 1) {
+      climber.runLift(0);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.stop();
-    if (intake.isDeployed()) {
-      intake.intake();
-    }
-    feeder.reset();
+    climber.runLift(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return climber.getLiftHeight() <= 0;
   }
 }
