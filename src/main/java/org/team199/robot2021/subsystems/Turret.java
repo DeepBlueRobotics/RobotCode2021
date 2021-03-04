@@ -21,7 +21,7 @@ public class Turret extends SubsystemBase {
     private final CANEncoder encoder = motor.getEncoder();
     private final double gearing = 1/50D;
 
-    private double simPos = 0;
+    private double simPos = 100;
     private long simLastUpdate = -1;
     private double simLastSpeed = 0;
     private DIOSim simHomeSensor;
@@ -39,6 +39,7 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Turret Position", encoder.getPosition());
         double speed = motor.get();
         if(speed == 0) {
             return;
@@ -49,14 +50,14 @@ public class Turret extends SubsystemBase {
     }
 
     public void turnCounterclockwise() {
-        if(!limited(1)) {
-            motor.set(1);
+        if(!limited(0.25)) {
+            motor.set(0.25);
         }
     }
 
     public void turnClockwise() {
-        if(!limited(-1)) {
-            motor.set(-1);
+        if(!limited(-0.25)) {
+            motor.set(-0.25);
         }
     }
 
@@ -104,7 +105,7 @@ public class Turret extends SubsystemBase {
             simPos += deltaPos;
             encoder.setPosition(encoder.getPosition()+deltaPos);
             SmartDashboard.putNumber("Simulated Turret Position", simPos);
-            simHomeSensor.setValue(isInRange(simPos, 0, 10));
+            simHomeSensor.setValue(isInRange(simPos, 0, 1));
             simCounterclockwiseLimit.setValue(isInRange(simPos, -170, 10));
             simClockwiseLimit.setValue(isInRange(simPos, 170, 10));
         }

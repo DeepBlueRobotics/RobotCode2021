@@ -11,7 +11,7 @@ public class CalibrateTurret extends CommandBase {
 
     public CalibrateTurret(Turret turret) {
         addRequirements(this.turret = turret);
-        speed = 1;
+        speed = 0.01;
     }
 
     @Override
@@ -29,8 +29,10 @@ public class CalibrateTurret extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        turret.stop();
-        turret.resetPosition();
+        if(!interrupted) {
+            turret.stop();
+            turret.resetPosition();
+        }
     }
     
 }
