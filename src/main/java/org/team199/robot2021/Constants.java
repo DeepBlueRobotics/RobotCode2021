@@ -44,7 +44,7 @@ public final class Constants {
         public static final int kClimberLift = 13;
 
         //TODO: Set Value
-        public static final int kTurretMotor = -1; //TODO: Set Correct Value
+        public static final int kTurretMotor = 20; //TODO: Set Correct Value
 
         // solenoids
         public static final int[] kIntakePistons = { 0, 1, 2, 5 };
@@ -54,9 +54,9 @@ public final class Constants {
         public static final int kFeederOutSensor = 10;
 
         //TODO: Set Values
-        public static final int kTurretCounterclockwiseLimit = -1; //TODO: Set Correct Value
-        public static final int kTurretClockwiseLimit = -1; //TODO: Set Correct Value
-        public static final int kTurretHomeSensor = -1; //TODO: Set Correct Value
+        public static final int kTurretCounterclockwiseLimit = 3; //TODO: Set Correct Value
+        public static final int kTurretClockwiseLimit = 4; //TODO: Set Correct Value
+        public static final int kTurretHomeSensor = 2; //TODO: Set Correct Value
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
@@ -109,9 +109,9 @@ public final class Constants {
             public static final int kRegurgitateButton = B;
 
             // turret
-            public static final int kTurnTurretCounterclockwiseButton = 0; // TODO: change button
-            public static final int kTurnTurretClockwiseButton = 0; // TODO: change button
-            public static final int kCalibrateTurret = 0; //TODO: change button
+            public static final int kTurnTurretCounterclockwiseButton = LT; // TODO: change button
+            public static final int kTurnTurretClockwiseButton = RT; // TODO: change button
+            public static final int kCalibrateTurret = START; //TODO: change button
         }
     }
 }

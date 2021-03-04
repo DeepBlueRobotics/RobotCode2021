@@ -97,6 +97,8 @@ public class RobotContainer {
             }
         }, feeder, intake));
 
+        turret.setDefaultCommand(new RunCommand(turret::stop, turret));
+
         paths = new RobotPath[4];
         if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
             loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
