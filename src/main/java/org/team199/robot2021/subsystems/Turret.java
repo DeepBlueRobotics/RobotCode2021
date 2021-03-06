@@ -21,7 +21,7 @@ public class Turret extends SubsystemBase {
     private final CANEncoder encoder = motor.getEncoder();
     private final double gearing = 1/50D;
 
-    private double simPos = 100;
+    private double simPos = 10;
     private long simLastUpdate = -1;
     private double simLastSpeed = 0;
     private DIOSim simHomeSensor;
@@ -89,8 +89,8 @@ public class Turret extends SubsystemBase {
         return encoder.getPosition();
     }
 
-    public void resetPosition() {
-        encoder.setPosition(0);
+    public void setPosition(double pos) {
+        encoder.setPosition(pos);
     }
 
     public boolean limited(double speed) {
@@ -105,7 +105,7 @@ public class Turret extends SubsystemBase {
             simPos += deltaPos;
             encoder.setPosition(encoder.getPosition()+deltaPos);
             SmartDashboard.putNumber("Simulated Turret Position", simPos);
-            simHomeSensor.setValue(isInRange(simPos, 0, 1));
+            simHomeSensor.setValue(isInRange(simPos, 0, 0.5));
             simCounterclockwiseLimit.setValue(isInRange(simPos, -170, 10));
             simClockwiseLimit.setValue(isInRange(simPos, 170, 10));
         }
