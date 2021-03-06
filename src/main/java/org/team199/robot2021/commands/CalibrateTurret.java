@@ -12,10 +12,10 @@ public class CalibrateTurret extends CommandBase {
     private double panSetpoint;
     private int state;
 
-    private static final byte PAN_LIMIT_MASK = 1 << 0;
-    private static final byte APROX_ALIGN_MASK = 1 << 1;
-    private static final byte FINAL_ALIGN_MASK = 1 << 2;
-    private static final byte SIGN_MASK = 1 << 4;
+    private static final int PAN_LIMIT_MASK = 1 << 0;
+    private static final int APROX_ALIGN_MASK = 1 << 1;
+    private static final int FINAL_ALIGN_MASK = 1 << 2;
+    private static final int SIGN_MASK = 1 << 4;
 
     public CalibrateTurret(Turret turret) {
         addRequirements(this.turret = turret);

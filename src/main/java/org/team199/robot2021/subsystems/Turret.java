@@ -105,7 +105,7 @@ public class Turret extends SubsystemBase {
             simPos += deltaPos;
             encoder.setPosition(encoder.getPosition()+deltaPos);
             SmartDashboard.putNumber("Simulated Turret Position", simPos);
-            simHomeSensor.setValue(isInRange(simPos, 0, 0.5));
+            simHomeSensor.setValue(isInRange(simPos, 0, 1));
             simCounterclockwiseLimit.setValue(isInRange(simPos, -170, 10));
             simClockwiseLimit.setValue(isInRange(simPos, 170, 10));
         }
