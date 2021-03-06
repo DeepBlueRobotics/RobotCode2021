@@ -51,7 +51,7 @@ public final class Constants {
 
         public static final boolean[] reversed = {true, true, true, true};
         // TODO: Determine correct turnZero constants
-        public static final int[] turnZero = {0, 0, 0, 0};
+        public static final int[] turnZero = {140, -154, 54, -45};
 
         // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
         // TODO: Determine correct turn PID constants
@@ -78,7 +78,7 @@ public final class Constants {
     public static final class DrivePorts {
         // CAN ids for each of the drive motor controllers.
         public static final int driveFrontLeft = 9;
-        public static final int driveFrontRight = 0;
+        public static final int driveFrontRight = 7;
         public static final int driveBackLeft = 4;
         public static final int driveBackRight = 2;
 
