@@ -28,8 +28,8 @@ import org.team199.robot2021.subsystems.Drivetrain;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch1Port);
-    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch2Port);
+    //private final DigitalInput autoSwitch1 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch1Port);
+    //private final DigitalInput autoSwitch2 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch2Port);
     final Drivetrain drivetrain = new Drivetrain();
     //private final Limelight lime = new Limelight();
     //private final Shooter shooter = new Shooter(lime);
@@ -39,11 +39,11 @@ public class RobotContainer {
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.port);
     private final Joystick controller = new Joystick(Constants.OI.Controller.port);
     //private final Climber climber = new Climber();
-    private final RobotPath[] paths;
+    //private final RobotPath[] paths;
     //private final LinearInterpolation linearInterpol;
 
     public RobotContainer() {
-        
+
         if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
             configureButtonBindingsLeftJoy();
         } else{
@@ -63,12 +63,12 @@ public class RobotContainer {
         }
 
         //shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
-        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, 
+        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain,
             () -> signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.Y)),
             () -> signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X)),
             () -> signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X))));
 
-        
+
         /*feeder.setDefaultCommand(new RunCommand(() -> {
             if (feeder.isCellEntering() && !feeder.isCellAtShooter()) {
                 feeder.runForward();
@@ -81,16 +81,16 @@ public class RobotContainer {
             }
         }, feeder, intake));*/
 
-        paths = new RobotPath[4];
-        if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
+        //paths = new RobotPath[4];
+        //if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
             /*loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
             loadPath(Path.PATH2, "OneBall", false, StartingPosition.BLUE_CENTER.pos);
             loadPath(Path.PATH3, "AutoRight", false, StartingPosition.BLUE_RIGHT.pos);*/
-        } else {
+        //} else {
             /*loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.RED_LEFT.pos);
             loadPath(Path.PATH2, "OneBall", false, StartingPosition.RED_CENTER.pos);
             loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);*/
-        }
+        //}
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
@@ -100,8 +100,8 @@ public class RobotContainer {
         //        () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
 
         // characterize drive button
-        
-        // Toggle Characterize Drive                
+
+        // Toggle Characterize Drive
         //new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
         //        () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
     }
@@ -145,8 +145,8 @@ public class RobotContainer {
                 throw new Exception();
             }
             boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
-            return new AutoShootAndDrive(drivetrain, intake, feeder, 
-                                         shooter, lime, path, 
+            return new AutoShootAndDrive(drivetrain, intake, feeder,
+                                         shooter, lime, path,
                                          linearInterpol, (isBlue ? Target.BLUE_PORT.pos : Target.RED_PORT.pos));
         } catch(final Exception e) {
             return new InstantCommand();
@@ -184,7 +184,7 @@ public class RobotContainer {
     private double signedSquare(double value){
         return value * Math.abs(value);
     }
-    
+
     /**
      * DIO Port 0 = Switch 1
      * DIO Port 1 = Switch 2
@@ -198,6 +198,7 @@ public class RobotContainer {
      * off on = 2
      * on on = 3
      */
+     /*
     public Path getPath() {
         Path outPath = Path.OFF;
         // get() returns true if the circuit is open.
@@ -218,7 +219,7 @@ public class RobotContainer {
         }
         return outPath;
     }
-        
+
     private void loadPath(final Path path, final String pathName, final boolean isInverted, final Translation2d initPos) {
         try {
             paths[path.idx] = new RobotPath(pathName, drivetrain, isInverted, initPos);
@@ -227,7 +228,7 @@ public class RobotContainer {
             e.printStackTrace(System.err);
         }
     }
-    
+
     public static enum Path {
         PATH1(0), PATH2(1), PATH3(2), OFF(-1);
 
@@ -240,11 +241,11 @@ public class RobotContainer {
 
     public static enum StartingPosition {
         // TODO: Change starting positions to reflect FIRST At Home challenges
-        BLUE_LEFT(12.61, -4.75), 
-        BLUE_CENTER(12.61, -5.75), 
-        BLUE_RIGHT(12.61, -6.75), 
-        RED_LEFT(3.39, -3.4), 
-        RED_CENTER(3.39, -2.4), 
+        BLUE_LEFT(12.61, -4.75),
+        BLUE_CENTER(12.61, -5.75),
+        BLUE_RIGHT(12.61, -6.75),
+        RED_LEFT(3.39, -3.4),
+        RED_CENTER(3.39, -2.4),
         RED_RIGHT(3.39, -1.4);
 
         public final Translation2d pos;
@@ -253,13 +254,12 @@ public class RobotContainer {
             pos = new Translation2d(x, y);
         }
     }
-    /*
     public static enum Target {
-        BLUE_PORT(16, -5.75), 
-        RED_PORT(0, -2.4); 
-    
+        BLUE_PORT(16, -5.75),
+        RED_PORT(0, -2.4);
+
         public final Translation2d pos;
-    
+
         private Target(double x, double y) {
             pos = new Translation2d(x, y);
         }

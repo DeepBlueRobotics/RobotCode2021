@@ -34,7 +34,7 @@ public class SwerveModule {
     private Timer timer;
     private SimpleMotorFeedforward forwardSimpleMotorFF, backwardSimpleMotorFF;
 
-    public SwerveModule(ModuleType type, CANSparkMax drive, CANSparkMax turn, CANCoder turnEncoder, double driveModifier, 
+    public SwerveModule(ModuleType type, CANSparkMax drive, CANSparkMax turn, CANCoder turnEncoder, double driveModifier,
                         double maxSpeed, int arrIndex) {
         this.timer = new Timer();
         timer.start();
@@ -58,7 +58,7 @@ public class SwerveModule {
 
         this.drive = drive;
         drive.getEncoder().setPositionConversionFactor(Constants.DriveConstants.wheelDiameter * Math.PI / Constants.DriveConstants.driveGearing);
-        
+
         this.turn = turn;
         turnPIDController = new PIDController(Constants.DriveConstants.turnkP[arrIndex],
                                               Constants.DriveConstants.turnkI[arrIndex],
@@ -109,30 +109,30 @@ public class SwerveModule {
      */
     private void setSpeed(double speed) {
         // Get the change in time (for acceleration limiting calculations)
-        double deltaTime = timer.get();
+        //double deltaTime = timer.get();
 
         // Compute desired and actual speeds in m/s
-        double desiredSpeed = maxSpeed * speed * Math.abs(driveModifier);
-        double actualSpeed = getCurrentSpeed();
+        //double desiredSpeed = maxSpeed * speed * Math.abs(driveModifier);
+        //double actualSpeed = getCurrentSpeed();
 
         // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
-        double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime;
-        double maxAcceleration = Constants.DriveConstants.mu * 9.8;
-        double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
+        //double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime;
+        //double maxAcceleration = Constants.DriveConstants.mu * 9.8;
+        //double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
 
         // Clip the speed based on the clipped desired acceleration
-        double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
+        //double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
 
         // Use robot characterization as a simple physical model to account for internal resistance, frcition, etc.
-        double appliedVoltage = (clippedDesiredSpeed >= 0 ? forwardSimpleMotorFF :
-                                 backwardSimpleMotorFF).calculate(clippedDesiredSpeed, clippedAcceleration);
+        //double appliedVoltage = (clippedDesiredSpeed >= 0 ? forwardSimpleMotorFF :
+        //                         backwardSimpleMotorFF).calculate(clippedDesiredSpeed, clippedAcceleration);
         // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
-        appliedVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
-        appliedVoltage = MathUtil.clamp(appliedVoltage / 12, -1, 1);
-        drive.set(driveModifier * appliedVoltage);
+        //appliedVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
+        //appliedVoltage = MathUtil.clamp(appliedVoltage / 12, -1, 1);
+        drive.set(driveModifier * speed);//drive.set(driveModifier * appliedVoltage);
 
         // Reset the timer so get() returns a change in time
-        timer.reset();
+        //timer.reset();
     }
 
     /**
@@ -192,7 +192,7 @@ public class SwerveModule {
     public void brake() {
         drive.setIdleMode(IdleMode.kBrake);
     }
-    
+
     public void coast() {
         if (DriverStation.getInstance().isDisabled()) drive.setIdleMode(IdleMode.kCoast);
         else drive.setIdleMode(IdleMode.kBrake);

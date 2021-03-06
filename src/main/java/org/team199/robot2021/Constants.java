@@ -22,7 +22,7 @@ public final class Constants {
     /**
      * Constants for motor ports and IDs, solenoid ports, sensor numbers, etc.
      * Analagous to RobotMap.java in previous years.
-     * 
+     *
      * Put other constants (like motor speed and characterization constants) in the
      * subsystems themselves.
      */
@@ -48,11 +48,11 @@ public final class Constants {
         // Tangential speed of this point mass is maxSpeed and the radius of the circle is sqrt((wheelBase/2)^2 + (trackWidth/2)^2)
         // Angular velocity = Tangential speed / radius
         public static final double maxRCW = maxSpeed / Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
-        
+
         public static final boolean[] reversed = {true, true, true, true};
         // TODO: Determine correct turnZero constants
         public static final int[] turnZero = {0, 0, 0, 0};
-        
+
         // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
         // TODO: Determine correct turn PID constants
         public static final double[] turnkP = {0.01, 0.01, 0.01, 0.01};
@@ -65,35 +65,35 @@ public final class Constants {
 
         public static final double[] kForwardVolts = {0, 0, 0, 0.0};
         public static final double[] kBackwardVolts = {0, 0, 0, 0};
-        public static final double[] kForwardVels = {0, 0, 0, 0};
-        public static final double[] kBackwardVels = {0, 0, 0, 0};
+        public static final double[] kForwardVels = {1.0/maxSpeed, 1.0/maxSpeed, 1.0/maxSpeed, 1.0/maxSpeed};
+        public static final double[] kBackwardVels = {1.0/maxSpeed, 1.0/maxSpeed, 1.0/maxSpeed, 1.0/maxSpeed};
         public static final double[] kForwardAccels = {0, 0, 0, 0};
         public static final double[] kBackwardAccels = {0, 0, 0, 0};
 
         public static final double autoMaxSpeed = 1.0;  // Meters / second
         public static final double autoMaxAccel = 0.847;  // Meters / seconds^2
-        public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java      
+        public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java
     }
 
     public static final class DrivePorts {
         // CAN ids for each of the drive motor controllers.
-        public static final int driveFrontLeft = 0;
-        public static final int driveFrontRight = 15;
-        public static final int driveBackLeft = 1;
-        public static final int driveBackRight = 14;
-        
+        public static final int driveFrontLeft = 9;
+        public static final int driveFrontRight = 0;
+        public static final int driveBackLeft = 4;
+        public static final int driveBackRight = 2;
+
         // CAN ids for each of the turn motor controllers.
-        public static final int turnFrontLeft = 4;
+        public static final int turnFrontLeft = 1;
         public static final int turnFrontRight = 11;
-        public static final int turnBackLeft = 5;
-        public static final int turnBackRight = 10;
+        public static final int turnBackLeft = 3;
+        public static final int turnBackRight = 5;
 
         // CAN ids for each of the CANCoders
         // TODO: figure out correct ports
-        public static final int canCoderPortFL = 0;
-        public static final int canCoderPortFR = 0;
-        public static final int canCoderPortBL = 0;
-        public static final int canCoderPortBR = 0;
+        public static final int canCoderPortFL = 4;
+        public static final int canCoderPortFR = 3;
+        public static final int canCoderPortBL = 1;
+        public static final int canCoderPortBR = 2;
 
         //public static final int kIntakeRoller = 2;
 
@@ -163,7 +163,7 @@ public final class Constants {
             //public static final int kDeployClimberButton = Y;
             //public static final int kRaiseRobotButton = LB;
             //public static final int kAdjustClimberUpButton = 0; // TODO: change button
-            //public static final int kAdjustClimberDownButton = 0; // TODO: change button    
+            //public static final int kAdjustClimberDownButton = 0; // TODO: change button
 
             // intake/feeder
             //public static final int kIntakeButton = X;
