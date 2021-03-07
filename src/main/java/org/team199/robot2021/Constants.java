@@ -130,7 +130,7 @@ public final class Constants {
         public static ControlType CONTROL_TYPE = ControlType.GAMEPAD;
         public static final double JOY_THRESH = 0.01;
         public static final class LeftJoy {
-            public static final int port = 0;
+            public static final int port = 2;
 
             //public static final int toggleDriveModeButton = 4;
             //public static final int characterizedDriveButton = 5;
@@ -145,7 +145,7 @@ public final class Constants {
         }
 
         public static final class Controller {
-            public static final int port = 2;
+            public static final int port = 0;
 
             // Buttons and triggers
             public static final int X = 1;
