@@ -49,7 +49,7 @@ public final class Constants {
         // Angular velocity = Tangential speed / radius
         public static final double maxRCW = maxSpeed / Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
 
-        public static final boolean[] reversed = {true, true, true, true};
+        public static final boolean[] reversed = {false, false, false, false};
         // TODO: Determine correct turnZero constants
         public static final int[] turnZero = {140, -154, 54, -45};
 
