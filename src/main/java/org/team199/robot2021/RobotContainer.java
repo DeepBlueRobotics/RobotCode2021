@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.team199.lib.RobotPath;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.subsystems.Drivetrain;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -113,6 +114,7 @@ public class RobotContainer {
     }
 
     private void configureButtonBindingsController() {
+        new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
         /*new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
             if (intake.isDeployed()) {
