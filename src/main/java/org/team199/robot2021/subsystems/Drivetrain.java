@@ -55,7 +55,7 @@ public class Drivetrain extends SubsystemBase {
     SwerveModule moduleFR = new SwerveModule(SwerveModule.ModuleType.FR,
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.driveFrontRight), 
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.turnFrontRight),
-                                new CANCoder(Constants.DrivePorts.canCoderPortFR), Constants.DriveConstants.driveModifier,
+                                new CANCoder(Constants.DrivePorts.canCoderPortFR), -Constants.DriveConstants.driveModifier,
                                 Constants.DriveConstants.maxSpeed, 1);
     // Backward-Left
     SwerveModule moduleBL = new SwerveModule(SwerveModule.ModuleType.BL,
@@ -67,7 +67,7 @@ public class Drivetrain extends SubsystemBase {
     SwerveModule moduleBR = new SwerveModule(SwerveModule.ModuleType.BR,
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.driveBackRight), 
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.turnBackRight),
-                                new CANCoder(Constants.DrivePorts.canCoderPortBR), Constants.DriveConstants.driveModifier,
+                                new CANCoder(Constants.DrivePorts.canCoderPortBR), -Constants.DriveConstants.driveModifier,
                                 Constants.DriveConstants.maxSpeed, 3);
     modules = new SwerveModule[]{moduleFL, moduleFR, moduleBL, moduleBR};
   }
