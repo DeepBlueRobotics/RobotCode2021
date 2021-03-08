@@ -140,7 +140,7 @@ public class SwerveModule {
      * @param angle     The desired angle, between -0.5 (180 degrees counterclockwise) and 0.5 (180 degrees clockwise).
      */
     private void setAngle(double angle) {
-        turnPIDController.setSetpoint(180 * angle * (reversed ? -1 : 1));
+        turnPIDController.setSetpoint(360 * angle * (reversed ? -1 : 1));
     }
 
     private double getModuleAngle() {
