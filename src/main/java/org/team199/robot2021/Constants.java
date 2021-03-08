@@ -50,11 +50,11 @@ public final class Constants {
         public static final double maxRCW = maxSpeed / Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
 
         public static final boolean[] reversed = {false, false, false, false};
-        // TODO: Determine correct turnZero constants
-        public static final int[] turnZero = {140, -154, 54, -45};
+        // Determine correct turnZero constants (FL, FR, BL, BR)
+        public static final double[] turnZero = {141.24, -154.69, 50.8, -43.154};
 
         // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
-        // TODO: Determine correct turn PID constants
+        // Determine correct turn PID constants
         public static final double[] turnkP = {0.01, 0.01, 0.01, 0.01};
         public static final double[] turnkI = {0, 0, 0, 0};
         public static final double[] turnkD = {0, 0, 0, 0};

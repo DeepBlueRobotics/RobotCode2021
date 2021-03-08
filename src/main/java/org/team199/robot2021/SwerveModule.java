@@ -28,8 +28,7 @@ public class SwerveModule {
     private CANSparkMax drive, turn;
     private CANCoder turnEncoder;
     private PIDController drivePIDController, turnPIDController;
-    private double driveModifier, maxSpeed;
-    private int turnZero;
+    private double driveModifier, maxSpeed, turnZero;
     private boolean reversed;
     private Timer timer;
     private SimpleMotorFeedforward forwardSimpleMotorFF, backwardSimpleMotorFF;
@@ -98,7 +97,7 @@ public class SwerveModule {
      */
     public void move(double normalizedSpeed, double angle) {
         //SmartDashboard.putNumber(moduleString + " Compute Setpoints Angle:", angle / (2 * Math.PI));
-        //angle = SmartDashboard.getNumber("Target Angle (deg)", 0.0) * Math.PI / 180.0;
+        SmartDashboard.putNumber(moduleString + " Target Angle (deg)", 180 * angle / Math.PI);
         double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maxSpeed,
                                                          angle / (2 * Math.PI),
                                                          turnEncoder.getPosition(),
@@ -172,11 +171,12 @@ public class SwerveModule {
         // Display the position of the quadrature encoder.
         SmartDashboard.putNumber(moduleString + " Incremental Position", turnEncoder.getPosition());
         // Display the position of the analog encoder.
-        SmartDashboard.putNumber(moduleString + " Analog Position", turnEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber(moduleString + " Angle (degrees)", turnEncoder.getAbsolutePosition());
         // Display the module angle as calculated using the absolute encoder.
-        SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle());
+        SmartDashboard.putNumber(moduleString + " Angle (radians)", getModuleAngle());
         // Display the speed that the robot thinks it is travelling at.
         SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
+        SmartDashboard.putNumber(moduleString + " Setpoint Angle", turnPIDController.getSetpoint());
     }
 
     /**
