@@ -36,6 +36,7 @@ public class SwerveModule {
 
     public SwerveModule(ModuleType type, CANSparkMax drive, CANSparkMax turn, CANCoder turnEncoder, double driveModifier,
                         double maxSpeed, int arrIndex) {
+        //SmartDashboard.putNumber("Target Angle (deg)", 0.0);
         this.timer = new Timer();
         timer.start();
 
@@ -96,10 +97,13 @@ public class SwerveModule {
      * @param angle             The desired angle, in radians.
      */
     public void move(double normalizedSpeed, double angle) {
+        //SmartDashboard.putNumber(moduleString + " Compute Setpoints Angle:", angle / (2 * Math.PI));
+        //angle = SmartDashboard.getNumber("Target Angle (deg)", 0.0) * Math.PI / 180.0;
         double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maxSpeed,
-                                                         -angle / (2 * Math.PI),
+                                                         angle / (2 * Math.PI),
                                                          turnEncoder.getPosition(),
-                                                         1.0);
+                                                         360.0);
+        //SmartDashboard.putNumber(moduleString + " Setpoint Result: ", setpoints[1] * 360.0D);
         setSpeed(setpoints[0]);
         if(setpoints[0] != 0.0) setAngle(setpoints[1]);
     }
@@ -141,6 +145,7 @@ public class SwerveModule {
      * @param angle     The desired angle, between -0.5 (180 degrees counterclockwise) and 0.5 (180 degrees clockwise).
      */
     private void setAngle(double angle) {
+        //SmartDashboard.putNumber(moduleString + "Target Angle:", 360 * angle * (reversed ? -1 : 1));
         turnPIDController.setSetpoint(360 * angle * (reversed ? -1 : 1));
     }
 
