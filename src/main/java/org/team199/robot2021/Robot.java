@@ -9,6 +9,7 @@ package org.team199.robot2021;
 
 import frc.robot.lib.MotorErrors;
 import frc.robot.lib.logging.Log;
+import org.team199.robot2021.commands.HomeAbsolute;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -33,6 +34,7 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putBoolean("Characterized Drive", false);
     robotContainer = new RobotContainer();
     Log.init();
+    CommandScheduler.getInstance().schedule(new HomeAbsolute(robotContainer.drivetrain));
   }
 
   @Override
