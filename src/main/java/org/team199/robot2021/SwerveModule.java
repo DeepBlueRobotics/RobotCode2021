@@ -63,6 +63,7 @@ public class SwerveModule {
         turnPIDController = new PIDController(Constants.DriveConstants.turnkP[arrIndex],
                                               Constants.DriveConstants.turnkI[arrIndex],
                                               Constants.DriveConstants.turnkD[arrIndex]);
+        turnPIDController.enableContinuousInput(-180.0, 180.0);
 
         this.turnEncoder = turnEncoder;
         this.turnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
