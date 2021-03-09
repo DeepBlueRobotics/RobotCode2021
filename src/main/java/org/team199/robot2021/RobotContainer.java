@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import org.team199.lib.RobotPath;
+import org.team199.robot2021.Constants.OI;
+import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,19 +47,19 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-        if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
+        if(DriverStation.getInstance().getJoystickName(OI.LeftJoy.port).length() != 0) {
             configureButtonBindingsLeftJoy();
         } else{
             System.err.println("ERROR: Dude, you're missing the left joystick.");
         }
 
-        if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
+        if(DriverStation.getInstance().getJoystickName(OI.RightJoy.port).length() != 0) {
             configureButtonBindingsRightJoy();
         } else{
             System.err.println("ERROR: Dude, you're missing the right joystick.");
         }
 
-        if(DriverStation.getInstance().getJoystickName(2).length() != 0) {
+        if(DriverStation.getInstance().getJoystickName(OI.Controller.port).length() != 0) {
             configureButtonBindingsController();
         } else{
             System.err.println("ERROR: Dude, you're missing the controller.");
@@ -114,6 +116,7 @@ public class RobotContainer {
     }
 
     private void configureButtonBindingsController() {
+        new JoystickButton(controller, Constants.OI.Controller.A).whenPressed(new HomeAbsolute(drivetrain));
         new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
         /*new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
