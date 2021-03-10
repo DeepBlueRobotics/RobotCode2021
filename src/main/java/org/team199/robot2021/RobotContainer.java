@@ -31,8 +31,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    //private final DigitalInput autoSwitch1 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch1Port);
-    //private final DigitalInput autoSwitch2 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch2Port);
+    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch1Port);
+    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch2Port);
     final Drivetrain drivetrain = new Drivetrain();
     //private final Limelight lime = new Limelight();
     //private final Shooter shooter = new Shooter(lime);
@@ -42,7 +42,7 @@ public class RobotContainer {
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.port);
     private final Joystick controller = new Joystick(Constants.OI.Controller.port);
     //private final Climber climber = new Climber();
-    //private final RobotPath[] paths;
+    private final RobotPath[] paths;
     //private final LinearInterpolation linearInterpol;
 
     public RobotContainer() {
@@ -84,16 +84,16 @@ public class RobotContainer {
             }
         }, feeder, intake));*/
 
-        //paths = new RobotPath[4];
-        //if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
-            /*loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
+        paths = new RobotPath[4];
+        if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
+            loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
             loadPath(Path.PATH2, "OneBall", false, StartingPosition.BLUE_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.BLUE_RIGHT.pos);*/
-        //} else {
-            /*loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.RED_LEFT.pos);
+            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.BLUE_RIGHT.pos);
+        } else {
+            loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.RED_LEFT.pos);
             loadPath(Path.PATH2, "OneBall", false, StartingPosition.RED_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);*/
-        //}
+            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);
+        }
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
@@ -143,20 +143,16 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        /*
         try {
             final RobotPath path = paths[getPath().idx];
             if(path == null) {
                 throw new Exception();
             }
             boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
-            return new AutoShootAndDrive(drivetrain, intake, feeder,
-                                         shooter, lime, path,
-                                         linearInterpol, (isBlue ? Target.BLUE_PORT.pos : Target.RED_PORT.pos));
+            return path.getPathCommand();
         } catch(final Exception e) {
             return new InstantCommand();
-        }*/
-        return null;
+        }
     }
 
     /**
@@ -203,7 +199,6 @@ public class RobotContainer {
      * off on = 2
      * on on = 3
      */
-     /*
     public Path getPath() {
         Path outPath = Path.OFF;
         // get() returns true if the circuit is open.
@@ -268,6 +263,5 @@ public class RobotContainer {
         private Target(double x, double y) {
             pos = new Translation2d(x, y);
         }
-      }
-    */
+    }
 }

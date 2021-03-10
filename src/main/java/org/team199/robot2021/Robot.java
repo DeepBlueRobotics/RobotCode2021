@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.drivetrain.brake();
-    //robotContainer.getAutonomousCommand().schedule();
+    robotContainer.getAutonomousCommand().schedule();
     Log.setDataLoggingDisabled(false);
   }
 
