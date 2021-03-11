@@ -76,6 +76,18 @@ public final class Constants {
         public static final double autoMaxSpeed = 1.0;  // Meters / second
         public static final double autoMaxAccel = 0.847;  // Meters / seconds^2
         public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java
+
+        // for SwerveControllerCommand
+        public static final double xControllerkP = 0;
+        public static final double xControllerkI = 0;
+        public static final double xControllerkD = 0;
+        public static final double yControllerkP = 0;
+        public static final double yControllerkI = 0;
+        public static final double yControllerkD = 0;
+        public static final double thetaControllerkP = 0;
+        public static final double thetaControllerkI = 0;
+        public static final double thetaControllerkD = 0;
+
     }
 
     public static final class DrivePorts {

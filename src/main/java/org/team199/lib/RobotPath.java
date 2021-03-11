@@ -27,6 +27,10 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
 
 import frc.robot.lib.swerve.SwerveDriveVoltageConstraint;
 import frc.robot.lib.swerve.SwerveRamseteCommand;
@@ -70,13 +74,16 @@ public class RobotPath {
     
 
     public Command getPathCommand() {
-        SwerveRamseteCommand ram = new SwerveRamseteCommand(trajectory, 
-                                                () -> dt.getOdometry().getPoseMeters(), 
-                                                new RamseteController(), 
-                                                dt.getKinematics(),
-                                                (swerveModuleStates) -> 
-                                                    dt.drive(convertToFieldRelative(swerveModuleStates, new Translation2d())),
-                                                dt);
+        SwerveControllerCommand ram = new SwerveControllerCommand(
+            trajectory,
+            () -> dt.getOdometry().getPoseMeters(),
+            dt.getKinematics(),
+            new PIDController(Constants.DriveConstants.xControllerkP,Constants.DriveConstants.xControllerkI,Constants.DriveConstants.xControllerkD),
+            new PIDController(Constants.DriveConstants.yControllerkP,Constants.DriveConstants.yControllerkI,Constants.DriveConstants.yControllerkD),
+            new ProfiledPIDController(Constants.DriveConstants.thetaControllerkP,Constants.DriveConstants.thetaControllerkI,Constants.DriveConstants.thetaControllerkD, new Constraints(Constants.DriveConstants.autoMaxSpeed, Constants.DriveConstants.autoMaxAccel)),
+            (swerveModuleStates) -> dt.drive(convertToFieldRelative(swerveModuleStates, new Translation2d())),
+            dt
+            );
         return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.drive(0, 0, 0), dt));
     }
 
