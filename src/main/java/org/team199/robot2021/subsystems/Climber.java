@@ -20,8 +20,8 @@ public class Climber extends SubsystemBase {
     public static double kLiftLowerSpeed = 1; //TODO: set correct speed
     public static double kLiftKeepSpeed = 0.06; //TODO: set correct speed
     public static double kLiftRetractSpeed = -0.3; //TODO: set correct speed
-    public static double kWinchRetractSpeedFirst = 0.6; //TODO: set correct speed
-    public static double kWinchRetractSpeedSecond = 0.6; //TODO: set correct speed
+    public static double kWinchRetractSpeedFirst = 0.6; //TODO: set correct speed  KEEP THIS POSITIVE SO THAT WINCH GOES IN THE RIGHT DIRECTION
+    public static double kWinchRetractSpeedSecond = 0.6; //TODO: set correct speed KEEP THIS POSITIVE SO THAT WINCH GOES IN THE RIGHT DIRECTION
     public static double kLiftAdjustSpeed = 0.2; //TODO: set correct speed
     public static double kWinchAdjustSpeed = 0.2; //TODO: set correct speed
     public static double kVoltage = 0.0; //TODO: find voltage
