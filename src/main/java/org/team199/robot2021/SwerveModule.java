@@ -117,7 +117,7 @@ public class SwerveModule {
         double deltaTime = timer.get();
 
         // Compute desired and actual speeds in m/s
-        double desiredSpeed = maxSpeed * speed * Math.abs(driveModifier);
+        double desiredSpeed = maxSpeed * speed * driveModifier;
         double actualSpeed = getCurrentSpeed();
 
         // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
@@ -133,7 +133,7 @@ public class SwerveModule {
         // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
         appliedVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
         appliedVoltage = MathUtil.clamp(appliedVoltage / 12, -1, 1);
-        drive.set(driveModifier * appliedVoltage);
+        drive.set(appliedVoltage);
 
         // Reset the timer so get() returns a change in time
         timer.reset();
