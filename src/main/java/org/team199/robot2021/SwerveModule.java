@@ -126,11 +126,10 @@ public class SwerveModule {
         double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
 
         // Clip the speed based on the clipped desired acceleration
-        double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
+        //double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
 
         // Use robot characterization as a simple physical model to account for internal resistance, frcition, etc.
-        double appliedVoltage = (clippedDesiredSpeed >= 0 ? forwardSimpleMotorFF :
-                                 backwardSimpleMotorFF).calculate(clippedDesiredSpeed, clippedAcceleration);
+        double appliedVoltage = (desiredSpeed >= 0 ? forwardSimpleMotorFF :
         // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
         appliedVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
         appliedVoltage = MathUtil.clamp(appliedVoltage / 12, -1, 1);
