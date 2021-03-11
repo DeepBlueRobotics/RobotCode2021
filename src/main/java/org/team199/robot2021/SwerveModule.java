@@ -58,6 +58,7 @@ public class SwerveModule {
 
         this.drive = drive;
         drive.getEncoder().setPositionConversionFactor(Constants.DriveConstants.wheelDiameter * Math.PI / Constants.DriveConstants.driveGearing);
+        drive.getEncoder().setVelocityConversionFactor(Constants.DriveConstants.wheelDiameter * Math.PI / Constants.DriveConstants.driveGearing / 60);
 
         this.turn = turn;
         turnPIDController = new PIDController(Constants.DriveConstants.turnkP[arrIndex],
