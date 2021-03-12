@@ -11,6 +11,7 @@ package org.team199.robot2021;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -85,15 +86,8 @@ public class RobotContainer {
         }, feeder, intake));*/
 
         paths = new RobotPath[4];
-        if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
-            loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
-            loadPath(Path.PATH2, "OneBall", false, StartingPosition.BLUE_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.BLUE_RIGHT.pos);
-        } else {
-            loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.RED_LEFT.pos);
-            loadPath(Path.PATH2, "OneBall", false, StartingPosition.RED_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);
-        }
+        loadPath(Path.PATH1, "Figure8", false, new Translation2d(1.5, -1));
+        loadPath(Path.PATH2, "Square", false, new Translation2d(0, 0));
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
@@ -145,12 +139,13 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         try {
             final RobotPath path = paths[getPath().idx];
-            if(path == null) {
-                throw new Exception();
+            if (path == null) {
+                throw new Exception("Desired path is null.");
             }
             boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
-            return path.getPathCommand();
+            return path.getPathCommand(Rotation2d.fromDegrees(drivetrain.getHeading()));
         } catch(final Exception e) {
+            e.printStackTrace(System.err);
             return new InstantCommand();
         }
     }
@@ -222,9 +217,8 @@ public class RobotContainer {
 
     private void loadPath(final Path path, final String pathName, final boolean isInverted, final Translation2d initPos) {
         try {
-            paths[path.idx] = new RobotPath(pathName, drivetrain, isInverted, initPos);
+            paths[path.idx] = new RobotPath(pathName, drivetrain);
         } catch(final Exception e) {
-            System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
             e.printStackTrace(System.err);
         }
     }

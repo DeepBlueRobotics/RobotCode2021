@@ -13,8 +13,6 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -25,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -33,7 +32,6 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
 
 import frc.robot.lib.swerve.SwerveDriveVoltageConstraint;
-import frc.robot.lib.swerve.SwerveRamseteCommand;
 
 import org.team199.robot2021.Constants;
 import org.team199.robot2021.subsystems.Drivetrain;
@@ -43,6 +41,11 @@ public class RobotPath {
 
     private Trajectory trajectory;
     private Drivetrain dt;
+
+    public RobotPath(String pathName, Drivetrain dt) throws IOException {
+        trajectory = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve(Paths.get("PathWeaver/Paths/" + pathName + ".wpilib.json")));
+        this.dt = dt;
+    }
 
     public RobotPath(String pathName, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
         this(getPointsFromFile(pathName, dt, isInverted, initPos), isInverted, dt);
@@ -73,14 +76,23 @@ public class RobotPath {
     }
     
 
-    public Command getPathCommand() {
+    public Command getPathCommand(Rotation2d desiredHeading) {
+        ProfiledPIDController thetaController =  new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
+                                                                           Constants.DriveConstants.thetaPIDController[1],
+                                                                           Constants.DriveConstants.thetaPIDController[2],
+                                                                           new Constraints(Constants.DriveConstants.autoMaxSpeed, Constants.DriveConstants.autoMaxAccel));
         SwerveControllerCommand ram = new SwerveControllerCommand(
             trajectory,
             () -> dt.getOdometry().getPoseMeters(),
             dt.getKinematics(),
-            new PIDController(Constants.DriveConstants.xControllerkP,Constants.DriveConstants.xControllerkI,Constants.DriveConstants.xControllerkD),
-            new PIDController(Constants.DriveConstants.yControllerkP,Constants.DriveConstants.yControllerkI,Constants.DriveConstants.yControllerkD),
-            new ProfiledPIDController(Constants.DriveConstants.thetaControllerkP,Constants.DriveConstants.thetaControllerkI,Constants.DriveConstants.thetaControllerkD, new Constraints(Constants.DriveConstants.autoMaxSpeed, Constants.DriveConstants.autoMaxAccel)),
+            new PIDController(Constants.DriveConstants.xPIDController[0],
+                              Constants.DriveConstants.xPIDController[1],
+                              Constants.DriveConstants.xPIDController[2]),
+            new PIDController(Constants.DriveConstants.yPIDController[0],
+                              Constants.DriveConstants.yPIDController[1],
+                              Constants.DriveConstants.yPIDController[2]),
+            thetaController,
+            () -> desiredHeading,
             (swerveModuleStates) -> dt.drive(convertToFieldRelative(swerveModuleStates, new Translation2d())),
             dt
             );
@@ -102,6 +114,7 @@ public class RobotPath {
                                                        Constants.DriveConstants.autoMaxAccel);
         config.setKinematics(dt.getKinematics());
 
+        /*
         double kVoltAVG = 0.5 * (average(Constants.DriveConstants.kForwardVolts) 
                                  + average(Constants.DriveConstants.kBackwardVolts));
         double kVelsAVG = 0.5 * (average(Constants.DriveConstants.kForwardVels) 
@@ -114,6 +127,7 @@ public class RobotPath {
             Constants.DriveConstants.trackWidth,
             Constants.DriveConstants.autoMaxVolt);
         config.addConstraint(voltConstraint);
+        */
         
         if (isInverted) { config.setReversed(true); }
         return config;
