@@ -86,8 +86,8 @@ public class RobotContainer {
         }, feeder, intake));*/
 
         paths = new RobotPath[4];
-        loadPath(Path.PATH1, "Figure8", false, new Translation2d(1.5, 7.21055));
-        loadPath(Path.PATH2, "Square", false, new Translation2d(0, 8.21055));
+        loadPath(Path.PATH1, "Figure8", false, 0.0);
+        loadPath(Path.PATH2, "Square", false, 0.0);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
@@ -215,9 +215,9 @@ public class RobotContainer {
         return outPath;
     }
 
-    private void loadPath(final Path path, final String pathName, final boolean isInverted, final Translation2d initPos) {
+    private void loadPath(final Path path, final String pathName, final boolean isInverted, final double endVelocity) {
         try {
-            paths[path.idx] = new RobotPath(pathName, drivetrain);
+            paths[path.idx] = new RobotPath(pathName, drivetrain, isInverted, endVelocity);
         } catch(final Exception e) {
             e.printStackTrace(System.err);
         }

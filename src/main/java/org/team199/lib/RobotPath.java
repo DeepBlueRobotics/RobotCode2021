@@ -30,7 +30,8 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
-
+import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstraint;
+import edu.wpi.first.wpilibj.trajectory.constraint.SwerveDriveKinematicsConstraint;
 import frc.robot.lib.swerve.SwerveDriveVoltageConstraint;
 
 import org.team199.robot2021.Constants;
@@ -42,17 +43,19 @@ public class RobotPath {
     private Trajectory trajectory;
     private Drivetrain dt;
 
-    public RobotPath(String pathName, Drivetrain dt) throws IOException {
-        trajectory = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve(Paths.get("PathWeaver/Paths/" + pathName + ".wpilib.json")));
+    public RobotPath(String pathName, Drivetrain dt, boolean isInverted, double endVelocity) throws IOException {
+        Trajectory fileTrajectory = 
+            TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve(Paths.get("PathWeaver/Paths/" + pathName + ".wpilib.json")));
+        List<Trajectory.State> states = fileTrajectory.getStates();
+        List<Pose2d> poses = new ArrayList<>();
+        for (Trajectory.State state : states) poses.add(state.poseMeters);
+        
+        trajectory = TrajectoryGenerator.generateTrajectory(poses, createConfig(isInverted, dt, endVelocity));
         this.dt = dt;
     }
 
-    public RobotPath(String pathName, Drivetrain dt, boolean isInverted, Translation2d initPos) throws IOException {
-        this(getPointsFromFile(pathName, dt, isInverted, initPos), isInverted, dt);
-    }
-
-    public RobotPath(List<Pose2d> poses, boolean isInverted, Drivetrain dt) {
-        this(poses, createConfig(isInverted, dt), dt);
+    public RobotPath(List<Pose2d> poses, boolean isInverted, Drivetrain dt, double endVelocity) {
+        this(poses, createConfig(isInverted, dt, endVelocity), dt);
     }
 
     public RobotPath(List<Pose2d> poses, TrajectoryConfig config, Drivetrain dt) {
@@ -111,11 +114,15 @@ public class RobotPath {
         return sum / arr.length;
     }
 
-    public static TrajectoryConfig createConfig(boolean isInverted, Drivetrain dt) {
+    public static TrajectoryConfig createConfig(boolean isInverted, Drivetrain dt, double endVelocity) {
         TrajectoryConfig config = new TrajectoryConfig(Constants.DriveConstants.autoMaxSpeed, 
                                                        Constants.DriveConstants.autoMaxAccel);
-        config.setKinematics(dt.getKinematics());
-
+        // Limit the modules based on a maximum speed
+        config.addConstraint(new SwerveDriveKinematicsConstraint(dt.getKinematics(),
+                                                                 Constants.DriveConstants.autoMaxSpeed));
+        // Ensure that the robot turns slowly around tight turns and doesn't slip
+        config.addConstraint(new CentripetalAccelerationConstraint(Constants.DriveConstants.autoCentripetalAccel));
+        config.setEndVelocity(endVelocity);
         /*
         double kVoltAVG = 0.5 * (average(Constants.DriveConstants.kForwardVolts) 
                                  + average(Constants.DriveConstants.kBackwardVolts));
