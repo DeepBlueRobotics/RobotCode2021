@@ -86,8 +86,8 @@ public class RobotContainer {
         }, feeder, intake));*/
 
         paths = new RobotPath[4];
-        loadPath(Path.PATH1, "Figure8", false, new Translation2d(1.5, -1));
-        loadPath(Path.PATH2, "Square", false, new Translation2d(0, 0));
+        loadPath(Path.PATH1, "Figure8", false, new Translation2d(1.5, 7.21055));
+        loadPath(Path.PATH2, "Square", false, new Translation2d(0, 8.21055));
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
