@@ -22,6 +22,7 @@ import frc.robot.lib.LinearInterpolation;
 import org.team199.lib.RobotPath;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import org.team199.robot2021.commands.Regurgitate;
 import org.team199.robot2021.commands.TeleopDrive;
@@ -33,6 +34,8 @@ import org.team199.robot2021.commands.AttachHook;
 import org.team199.robot2021.commands.AutoShootAndDrive;
 import org.team199.robot2021.commands.DeployClimber;
 import org.team199.robot2021.commands.RaiseRobot;
+import org.team199.robot2021.commands.ClimberVoltageLowCheck;
+import org.team199.robot2021.commands.LowerArm;
 import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;
 import org.team199.robot2021.subsystems.Climber;
@@ -148,8 +151,11 @@ public class RobotContainer {
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new SequentialCommandGroup(
             new AttachHook(climber, controller),
-            new RaiseRobot(climber)
-         ));
+            new ClimberVoltageLowCheck(climber),
+            new ParallelCommandGroup(
+                new RaiseRobot(climber),
+                new LowerArm(climber)
+         )));
     }
 
     public Command getAutonomousCommand() {
