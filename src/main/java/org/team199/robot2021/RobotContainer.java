@@ -127,7 +127,7 @@ public class RobotContainer {
     private void configureButtonBindingsRightJoy() {
         new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleMode, drivetrain));
         // Align the robot and then shoots
-        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(turret, lime), new Shoot(feeder)));
     }
 
     private void configureButtonBindingsController() {
@@ -170,7 +170,7 @@ public class RobotContainer {
             }
             boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
             return new AutoShootAndDrive(drivetrain, intake, feeder, 
-                                         shooter, lime, path, 
+                                         shooter, turret, lime, path, 
                                          linearInterpol, (isBlue ? Target.BLUE_PORT.pos : Target.RED_PORT.pos));
         } catch(final Exception e) {
             return new InstantCommand();
