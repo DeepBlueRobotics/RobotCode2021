@@ -8,14 +8,10 @@ public class CalibrateTurret extends CommandBase {
     
     private final Turret turret;
     private double speed;
-    private double initialPosition;
-    private double panSetpoint;
     private int state;
 
-    private static final int PAN_LIMIT_MASK = 1 << 0;
-    private static final int APROX_ALIGN_MASK = 1 << 1;
-    private static final int FINAL_ALIGN_MASK = 1 << 2;
-    private static final int SIGN_MASK = 1 << 4;
+    private static final int APROX_ALIGN_MASK = 1 << 0;
+    private static final int FINAL_ALIGN_MASK = 1 << 1;
 
     public CalibrateTurret(Turret turret) {
         addRequirements(this.turret = turret);
@@ -24,8 +20,6 @@ public class CalibrateTurret extends CommandBase {
     @Override
     public void initialize() {
         state = 0;
-        initialPosition = turret.getPosition();
-        panSetpoint = 10;
         speed = 0.25;
     }
 
@@ -47,16 +41,9 @@ public class CalibrateTurret extends CommandBase {
                 speed = 0.01;
                 state = state | FINAL_ALIGN_MASK;
             } else if(turret.limited(speed)) {
-                turret.setPosition((state & SIGN_MASK) == SIGN_MASK ? -170 : 170);
+                turret.setPosition(170);
                 speed *= -1;
                 state = state | APROX_ALIGN_MASK;
-            } else if(Math.abs(turret.getPosition() - initialPosition) >= panSetpoint && Math.signum(turret.getPosition() - initialPosition) == Math.signum(speed)) {
-                System.out.println("test");
-                speed *= -1;
-                if((state & PAN_LIMIT_MASK) == PAN_LIMIT_MASK) {
-                    panSetpoint += 10;
-                }
-                state = state ^ (PAN_LIMIT_MASK | SIGN_MASK);
             }
         }
         turret.set(speed);
