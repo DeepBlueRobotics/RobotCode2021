@@ -79,13 +79,12 @@ public final class Constants {
         //public static final double[] kForwardAccels = {0, 0, 0, 0};
         //public static final double[] kBackwardAccels = {0, 0, 0, 0};
 
-        public static final double autoMaxSpeed = 4.4/4;  // Meters / second
-        public static final double autoMaxAccel = 1.47;  // Meters / seconds^2
+        public static final double autoMaxSpeed = 0.25 * 4.4;  // Meters / second
+        public static final double autoMaxAccel = mu * 9.8;  // Meters / seconds^2
         public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java
-        // The max centripetal acceleration of the robot is its max velocity squared
-        // Divided by its radius of curvature -- in this case the hypotenuse of the triangle
-        // with (wheelBase/2) and (trackWidth/2) as its legs. 
-        public static final double autoCentripetalAccel = Math.pow(autoMaxSpeed, 2) / Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
+        // The maximum acceleration the robot can achieve is equal to the coefficient of static friction times the gravitational acceleration
+        // a = mu * 9.8 m/s
+        public static final double autoCentripetalAccel = mu * 9.8;
 
         // PID values are listed in the order kP, kI, and kD
         public static final double[] xPIDController = {0.0, 0.0, 0.0};
