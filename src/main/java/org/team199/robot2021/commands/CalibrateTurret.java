@@ -50,9 +50,10 @@ public class CalibrateTurret extends CommandBase {
                 turret.setPosition((state & SIGN_MASK) == SIGN_MASK ? -170 : 170);
                 speed *= -1;
                 state = state | APROX_ALIGN_MASK;
-            } else if(Math.abs(turret.getPosition() - initialPosition) >= panSetpoint) {
+            } else if(Math.abs(turret.getPosition() - initialPosition) >= panSetpoint && Math.signum(turret.getPosition() - initialPosition) == Math.signum(speed)) {
+                System.out.println("test");
                 speed *= -1;
-                if((state | PAN_LIMIT_MASK) == PAN_LIMIT_MASK) {
+                if((state & PAN_LIMIT_MASK) == PAN_LIMIT_MASK) {
                     panSetpoint += 10;
                 }
                 state = state ^ (PAN_LIMIT_MASK | SIGN_MASK);
