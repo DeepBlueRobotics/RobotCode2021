@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.lib.MotorControllerFactory;
 import org.team199.robot2021.Constants;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 public class Climber extends SubsystemBase {
     private static final double kLiftConversionFactor =6.0/40 * Math.PI * 3; //TODO: confirm numbers (inches)
@@ -24,7 +25,8 @@ public class Climber extends SubsystemBase {
     public static double kWinchRetractSpeedSecond = 0.6; //TODO: set correct speed KEEP THIS POSITIVE SO THAT WINCH GOES IN THE RIGHT DIRECTION
     public static double kLiftAdjustSpeed = 0.2; //TODO: set correct speed
     public static double kWinchAdjustSpeed = 0.2; //TODO: set correct speed
-    public static double kVoltage = 0.0; //TODO: find voltage
+    public static double kHighVoltage = 0.1; //TODO: find voltage
+    public static double kLowVoltage = 0.2; //TODO: find voltage
 
     public static final double kLiftHeight = 87; // TODO: set correct speed
     public static final double kLiftLowerHeight = 0;  //TODO: set this one probably
@@ -35,6 +37,7 @@ public class Climber extends SubsystemBase {
     private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch); //TODO SparkMax Become Neo
     private final CANEncoder liftEnc = liftMotor.getEncoder();
     private final CANEncoder winchEnc = winchMotor.getEncoder();
+    private final PowerDistributionPanel powerDistributionPanel = new PowerDistributionPanel(1); //TODO: set correct module
 
     public Climber(){
         liftEnc.setPositionConversionFactor(kLiftConversionFactor);
@@ -110,5 +113,9 @@ public class Climber extends SubsystemBase {
         //returns true if the hook is up on the bar
         //TODO: is this necessary?
         return false;
+    }
+
+    public double getVoltage() {
+        return powerDistributionPanel.getVoltage();
     }
 }
