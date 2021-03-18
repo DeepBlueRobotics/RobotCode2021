@@ -22,10 +22,11 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
-  private final AHRS gyro = new AHRS(SerialPort.Port.kOnboard); //Also try kUSB and kUSB2
+  private final AHRS gyro = new AHRS(SerialPort.Port.kMXP); //Also try kUSB and kUSB2
 
   private SwerveDriveKinematics kinematics = null;
   private SwerveDriveOdometry odometry = null;
@@ -44,7 +45,7 @@ public class Drivetrain extends SubsystemBase {
     Translation2d locationBR = new Translation2d(-Constants.DriveConstants.wheelBase / 2, -Constants.DriveConstants.trackWidth / 2);
 
     kinematics = new SwerveDriveKinematics(locationFL, locationFR, locationBL, locationBR);
-    odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(getHeading()));
+    odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(Units.degreesToRadians(getHeading())));
 
     SwerveModule moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.driveFrontLeft), 
