@@ -57,8 +57,11 @@ public class SwerveModule {
         }
 
         this.drive = drive;
-        drive.getEncoder().setPositionConversionFactor(Constants.DriveConstants.wheelDiameter * Math.PI / Constants.DriveConstants.driveGearing);
-        drive.getEncoder().setVelocityConversionFactor(Constants.DriveConstants.wheelDiameter * Math.PI / Constants.DriveConstants.driveGearing / 60);
+        double positionConstant = Constants.DriveConstants.wheelDiameter * Math.PI / Constants.DriveConstants.driveGearing;
+        drive.getEncoder().setPositionConversionFactor(positionConstant);
+        drive.getEncoder().setVelocityConversionFactor(positionConstant / 60);
+
+        //System.out.println("Velocity Constant: " + (positionConstant / 60));
 
         this.turn = turn;
         turnPIDController = new PIDController(Constants.DriveConstants.turnkP[arrIndex],
@@ -115,32 +118,32 @@ public class SwerveModule {
     private void setSpeed(double speed) {
         // Get the change in time (for acceleration limiting calculations)
         double deltaTime = timer.get();
-        SmartDashboard.putNumber(moduleString + " Desired Speed (unitless)", speed);
+        //SmartDashboard.putNumber(moduleString + " Desired Speed (unitless)", speed);
 
         // Compute desired and actual speeds in m/s
         double desiredSpeed = maxSpeed * speed * driveModifier;
         double actualSpeed = getCurrentSpeed();
-        SmartDashboard.putNumber(moduleString + " Desired (mps)", desiredSpeed);
+        //SmartDashboard.putNumber(moduleString + " Desired (mps)", desiredSpeed);
 
         // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
         double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime;
         double maxAcceleration = Constants.DriveConstants.mu * 9.8;
         double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
-        SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
+        //SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
 
         // Clip the speed based on the clipped desired acceleration
         double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
-        SmartDashboard.putNumber(moduleString + " Clipped Desired Speed", clippedDesiredSpeed);
+        //SmartDashboard.putNumber(moduleString + " Clipped Desired Speed", clippedDesiredSpeed);
 
         // Use robot characterization as a simple physical model to account for internal resistance, frcition, etc.
         double appliedVoltage = (clippedDesiredSpeed >= 0 ? forwardSimpleMotorFF :
                                  backwardSimpleMotorFF).calculate(clippedDesiredSpeed, clippedAcceleration);
         // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
-        SmartDashboard.putNumber(moduleString + " Voltage no PID", appliedVoltage);
+        //SmartDashboard.putNumber(moduleString + " Voltage no PID", appliedVoltage);
         appliedVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
-        SmartDashboard.putNumber(moduleString + " Unclamped Voltage", appliedVoltage);
+        //SmartDashboard.putNumber(moduleString + " Unclamped Voltage", appliedVoltage);
         appliedVoltage = MathUtil.clamp(appliedVoltage / 12, -1, 1);
-        SmartDashboard.putNumber(moduleString + " Drive Speed", driveModifier * appliedVoltage);
+        //SmartDashboard.putNumber(moduleString + " Drive Speed", driveModifier * appliedVoltage);
         drive.set(appliedVoltage);
 
         // Reset the timer so get() returns a change in time
@@ -183,6 +186,7 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Angle (degrees)", turnEncoder.getAbsolutePosition());
         // Display the module angle as calculated using the absolute encoder.
         SmartDashboard.putNumber(moduleString + " Angle (radians)", getModuleAngle());
+        SmartDashboard.putNumber(moduleString + " Encoder Position", drive.getEncoder().getPosition());
         // Display the speed that the robot thinks it is travelling at.
         SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
         SmartDashboard.putNumber(moduleString + " Setpoint Angle", turnPIDController.getSetpoint());

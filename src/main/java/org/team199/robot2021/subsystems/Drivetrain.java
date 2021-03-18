@@ -81,7 +81,7 @@ public class Drivetrain extends SubsystemBase {
 
     // Update the odometry with current heading and encoder position
     odometry.update(Rotation2d.fromDegrees(getHeading()), modules[0].getCurrentState(), modules[1].getCurrentState(),
-                    modules[1].getCurrentState(), modules[2].getCurrentState());
+                    modules[2].getCurrentState(), modules[3].getCurrentState());
   
     SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());;

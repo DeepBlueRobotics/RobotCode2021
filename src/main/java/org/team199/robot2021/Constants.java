@@ -28,8 +28,9 @@ public final class Constants {
      */
     public static final class DriveConstants {
         // TODO: Determine more exact measurements for wheel base and track width
-        public static final double wheelBase = Units.inchesToMeters(23.5);
-        public static final double trackWidth = Units.inchesToMeters(20.5);
+        // 25, 21.5
+        public static final double wheelBase = Units.inchesToMeters(25.0);
+        public static final double trackWidth = Units.inchesToMeters(21.5);
         // The gearing reduction from the drive motor controller to the wheels
         // "Fast" gearing for the MK3 Swerve Module is 6.86 : 1
         public static final double driveGearing = 6.86;
@@ -79,7 +80,7 @@ public final class Constants {
         //public static final double[] kForwardAccels = {0, 0, 0, 0};
         //public static final double[] kBackwardAccels = {0, 0, 0, 0};
 
-        public static final double autoMaxSpeed = 0.75 * 4.4;  // Meters / second
+        public static final double autoMaxSpeed = 0.25 * 4.4;  // Meters / second
         public static final double autoMaxAccel = mu * 9.8;  // Meters / seconds^2
         public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java
         // The maximum acceleration the robot can achieve is equal to the coefficient of static friction times the gravitational acceleration
