@@ -12,6 +12,7 @@ import frc.robot.lib.logging.Log;
 import org.team199.robot2021.commands.HomeAbsolute;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
@@ -32,6 +33,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     //SmartDashboard.putBoolean("Arcade Drive", true);
     //SmartDashboard.putBoolean("Characterized Drive", false);
+    SmartDashboard.putBoolean("Field Oriented", false);
     robotContainer = new RobotContainer();
     Log.init();
     CommandScheduler.getInstance().schedule(new HomeAbsolute(robotContainer.drivetrain));

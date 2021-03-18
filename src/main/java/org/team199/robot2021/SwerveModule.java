@@ -183,9 +183,9 @@ public class SwerveModule {
         // Display the position of the quadrature encoder.
         SmartDashboard.putNumber(moduleString + " Incremental Position", turnEncoder.getPosition());
         // Display the position of the analog encoder.
-        SmartDashboard.putNumber(moduleString + " Angle (degrees)", turnEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber(moduleString + " Absolute Angle (degrees)", turnEncoder.getAbsolutePosition());
         // Display the module angle as calculated using the absolute encoder.
-        SmartDashboard.putNumber(moduleString + " Angle (radians)", getModuleAngle());
+        SmartDashboard.putNumber(moduleString + " Relative Angle (degrees)", getModuleAngle()/Math.PI*180);
         SmartDashboard.putNumber(moduleString + " Encoder Position", drive.getEncoder().getPosition());
         // Display the speed that the robot thinks it is travelling at.
         SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
