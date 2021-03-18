@@ -3,6 +3,9 @@ package org.team199.robot2021.subsystems;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
+import edu.wpi.first.wpilibj.PWMVictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import edu.wpi.first.wpilibj.Encoder;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,21 +36,20 @@ public class Climber extends SubsystemBase {
     public static final double kWinchEndHeight = 60; // TODO: set correct speed
     public static final double kWinchMidHeight = 60; //TODO: SET THIS ONE SPECIFICALLY 
     public static final double kWinchStartHeight = -80; // TODO: set correct speed
-    private final CANSparkMax liftMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberLift); //TODO SparkMax Become 775
+    private final WPI_VictorSPX liftMotor = MotorControllerFactory.createVictor(Constants.Drive.kClimberLift); //TODO SparkMax Become 775
     private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch); //TODO SparkMax Become Neo
-    private final CANEncoder liftEnc = liftMotor.getEncoder();
+    private final Encoder liftEnc = new Encoder(2, 3);
     private final CANEncoder winchEnc = winchMotor.getEncoder();
     private final PowerDistributionPanel powerDistributionPanel = new PowerDistributionPanel(1); //TODO: set correct module
 
     public Climber(){
-        liftEnc.setPositionConversionFactor(kLiftConversionFactor);
+        liftEnc.setDistancePerPulse(kLiftConversionFactor);
         winchEnc.setPositionConversionFactor(kWinchConversionFactor);
-        liftEnc.setVelocityConversionFactor(kLiftConversionFactor / 60);
         winchEnc.setVelocityConversionFactor(kWinchConversionFactor / 60);
-        liftEnc.setPosition(0);
+        liftEnc.reset();
         winchEnc.setPosition(kWinchStartHeight);
         winchMotor.setIdleMode(IdleMode.kCoast);
-        liftMotor.setSmartCurrentLimit(30);
+       // liftMotor.setSmartCurrentLimit(30);
 
         SmartDashboard.putNumber("Climber.kLiftDeploySpeed", kLiftDeploySpeed);
         SmartDashboard.putNumber("Climber.kWinchDeploySpeed", kWinchDeploySpeed);
@@ -72,9 +74,9 @@ public class Climber extends SubsystemBase {
 
     // OLD CHECK THAT STILL WORKS/REWRITE
     public void runLift(double speed) {
-        System.out.println("CARRY ME BOII IS SPEED " + liftMotor.getEncoder().getVelocity());
+        System.out.println("CARRY ME BOII IS SPEED " + liftEnc.getRate());
         liftMotor.set(speed);
-        if (liftMotor.getEncoder().getVelocity() == 0){
+        if (liftEnc.getRate() == 0){
             System.out.println("UNWIND WHEN DONE TESTING!!!");
             System.out.println("UNWIND WHEN DONE TESTING!!!");
             System.out.println("UNWIND WHEN DONE TESTING!!!");
@@ -91,7 +93,7 @@ public class Climber extends SubsystemBase {
 
     // OLD, CHECK THAT STILL WORKS/REWRITE
     public double getLiftHeight() {
-        return liftEnc.getPosition();
+        return liftEnc.getDistance();
     }
 
     // OLD, CHECK THAT STILL WORKS/REWRITE
@@ -101,7 +103,7 @@ public class Climber extends SubsystemBase {
 
     // OLD, CHECK THAT STILL WORKS/REWRITE
     public double getLiftSpeed() {
-        return liftEnc.getVelocity();
+        return liftEnc.getRate();
     }
 
     // OLD, CHECK THAT STILL WORKS/REWRITE 
