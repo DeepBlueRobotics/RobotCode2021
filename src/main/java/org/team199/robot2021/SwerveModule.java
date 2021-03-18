@@ -161,7 +161,7 @@ public class SwerveModule {
     }
 
     private double getModuleAngle() {
-        return Math.PI * turnEncoder.getAbsolutePosition() / 180;
+        return Math.PI * (turnEncoder.getAbsolutePosition() - turnZero) / 180;
     }
 
     /**
