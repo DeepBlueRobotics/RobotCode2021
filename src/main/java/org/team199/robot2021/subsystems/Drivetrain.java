@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
-  private final AHRS gyro = new AHRS(SerialPort.Port.kUSB1); //Also try kUSB and kUSB2
+  private final AHRS gyro = new AHRS(SerialPort.Port.kOnboard); //Also try kUSB and kUSB2
 
   private SwerveDriveKinematics kinematics = null;
   private SwerveDriveOdometry odometry = null;

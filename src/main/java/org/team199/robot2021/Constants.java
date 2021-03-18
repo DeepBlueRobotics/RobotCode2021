@@ -36,7 +36,7 @@ public final class Constants {
 
         public static final double driveModifier = 1;
         public static final double wheelDiameter = Units.inchesToMeters(4.0);
-        public static final double mu = 0;
+        public static final double mu = 0.1;
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
         // Angular speed to translational speed --> v = omega * r / gearing
@@ -79,21 +79,17 @@ public final class Constants {
         //public static final double[] kForwardAccels = {0, 0, 0, 0};
         //public static final double[] kBackwardAccels = {0, 0, 0, 0};
 
-        public static final double autoMaxSpeed = 1.0;  // Meters / second
-        public static final double autoMaxAccel = 0.847;  // Meters / seconds^2
+        public static final double autoMaxSpeed = 0.75 * 4.4;  // Meters / second
+        public static final double autoMaxAccel = mu * 9.8;  // Meters / seconds^2
         public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java
+        // The maximum acceleration the robot can achieve is equal to the coefficient of static friction times the gravitational acceleration
+        // a = mu * 9.8 m/s
+        public static final double autoCentripetalAccel = mu * 9.8;
 
-        // for SwerveControllerCommand
-        public static final double xControllerkP = 0;
-        public static final double xControllerkI = 0;
-        public static final double xControllerkD = 0;
-        public static final double yControllerkP = 0;
-        public static final double yControllerkI = 0;
-        public static final double yControllerkD = 0;
-        public static final double thetaControllerkP = 0;
-        public static final double thetaControllerkI = 0;
-        public static final double thetaControllerkD = 0;
-
+        // PID values are listed in the order kP, kI, and kD
+        public static final double[] xPIDController = {0.0, 0.0, 0.0};
+        public static final double[] yPIDController = {0.0, 0.0, 0.0};
+        public static final double[] thetaPIDController = {0.0, 0.0, 0.0};
     }
 
     public static final class DrivePorts {

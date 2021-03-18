@@ -129,12 +129,12 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
 
         // Clip the speed based on the clipped desired acceleration
-        //double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
-        //SmartDashboard.putNumber(moduleString + " Clipped Desired Speed", clippedDesiredSpeed);
+        double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
+        SmartDashboard.putNumber(moduleString + " Clipped Desired Speed", clippedDesiredSpeed);
 
         // Use robot characterization as a simple physical model to account for internal resistance, frcition, etc.
-        double appliedVoltage = (desiredSpeed >= 0 ? forwardSimpleMotorFF :
-                                 backwardSimpleMotorFF).calculate(desiredSpeed, clippedAcceleration);
+        double appliedVoltage = (clippedDesiredSpeed >= 0 ? forwardSimpleMotorFF :
+                                 backwardSimpleMotorFF).calculate(clippedDesiredSpeed, clippedAcceleration);
         // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
         SmartDashboard.putNumber(moduleString + " Voltage no PID", appliedVoltage);
         appliedVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
