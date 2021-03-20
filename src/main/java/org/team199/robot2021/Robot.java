@@ -45,8 +45,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Field Oriented", false);
     robotContainer = new RobotContainer();
     Log.init();
-    debugFile = new File("debug.txt");
+    debugFile = new File("/home/lvuser/debug.txt");
     try {
+      debugFile.createNewFile();
       writer = new FileWriter(debugFile);
     } catch (IOException e) {
       e.printStackTrace();
@@ -79,6 +80,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    /*
     double time = timer.get();
     if (time < robotContainer.trajectory.getTotalTimeSeconds()) {
       try {
@@ -87,7 +89,7 @@ public class Robot extends TimedRobot {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    }
+    }*/
   }
 
   /**

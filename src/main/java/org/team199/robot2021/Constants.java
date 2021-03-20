@@ -88,8 +88,8 @@ public final class Constants {
         public static final double autoCentripetalAccel = mu * 9.8;
 
         // PID values are listed in the order kP, kI, and kD
-        public static final double[] xPIDController = {0.0, 0.0, 0.0};
-        public static final double[] yPIDController = {0.0, 0.0, 0.0};
+        public static final double[] xPIDController = {2.5, 0.0, 0.0};
+        public static final double[] yPIDController = {2.5, 0.0, 0.0};
         public static final double[] thetaPIDController = {0.0, 0.0, 0.0};
     }
 
