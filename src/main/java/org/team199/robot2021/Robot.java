@@ -9,9 +9,15 @@ package org.team199.robot2021;
 
 import frc.robot.lib.MotorErrors;
 import frc.robot.lib.logging.Log;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.team199.robot2021.commands.HomeAbsolute;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -25,6 +31,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   
   private RobotContainer robotContainer;
+  private Timer timer;
+  private File debugFile;
+  private FileWriter writer;
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -36,6 +45,13 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Field Oriented", false);
     robotContainer = new RobotContainer();
     Log.init();
+    debugFile = new File("debug.txt");
+    try {
+      writer = new FileWriter(debugFile);
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
     CommandScheduler.getInstance().schedule(new HomeAbsolute(robotContainer.drivetrain));
   }
 
@@ -54,6 +70,8 @@ public class Robot extends TimedRobot {
     robotContainer.drivetrain.brake();
     robotContainer.getAutonomousCommand().schedule();
     Log.setDataLoggingDisabled(false);
+    timer = new Timer();
+    timer.start();
   }
 
   /**
@@ -61,6 +79,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    double time = timer.get();
+    if (time < robotContainer.trajectory.getTotalTimeSeconds()) {
+      try {
+        writer.write("Trajectory pose at t = " + time + ": " + robotContainer.trajectory.sample(time).poseMeters + "\n");
+        writer.write("Odometry pose at t = " + time + ": " + robotContainer.drivetrain.getOdometry().getPoseMeters() + "\n");
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   /**

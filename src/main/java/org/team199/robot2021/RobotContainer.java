@@ -23,6 +23,7 @@ import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -44,6 +45,7 @@ public class RobotContainer {
     private final Joystick controller = new Joystick(Constants.OI.Controller.port);
     //private final Climber climber = new Climber();
     private final RobotPath[] paths;
+    public Trajectory trajectory;
     //private final LinearInterpolation linearInterpol;
 
     public RobotContainer() {
@@ -87,6 +89,7 @@ public class RobotContainer {
 
         paths = new RobotPath[4];
         loadPath(Path.PATH2, "Figure8", false, 0.0);
+        
         //loadPath(Path.PATH2, "Square", false, 0.0);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
@@ -143,7 +146,9 @@ public class RobotContainer {
                 throw new Exception("Desired path is null.");
             }
             boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
-            return path.getPathCommand(Rotation2d.fromDegrees(drivetrain.getHeading()));
+            Command command = path.getPathCommand(Rotation2d.fromDegrees(drivetrain.getHeading()));
+            trajectory = paths[Path.PATH2.idx].trajectory;
+            return command;
         } catch(final Exception e) {
             e.printStackTrace(System.err);
             return new InstantCommand();
