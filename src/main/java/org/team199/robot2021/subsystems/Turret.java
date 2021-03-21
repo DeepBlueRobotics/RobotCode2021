@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax;
 
 import org.team199.robot2021.Constants;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
@@ -34,6 +35,8 @@ public class Turret extends SubsystemBase {
             simHomeSensor = new DIOSim(homeSensor);
             simCounterclockwiseLimit = new DIOSim(counterclockwiseLimit);
             simClockwiseLimit = new DIOSim(clockwiseLimit);
+
+            SmartDashboard.putNumber("Target Position", 0.0D);
         }
     }
 
@@ -99,18 +102,28 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        long currentTimeMillis = System.currentTimeMillis();
-        if(simLastUpdate != -1) {
-            double deltaPos = simLastSpeed * 360D * ((75D / 60D) / (1000D/(currentTimeMillis - simLastUpdate)));
-            simPos += deltaPos;
-            encoder.setPosition(encoder.getPosition()+deltaPos);
-            SmartDashboard.putNumber("Simulated Turret Position", simPos);
-            simHomeSensor.setValue(isInRange(simPos, 0, 1));
-            simCounterclockwiseLimit.setValue(isInRange(simPos, -170, 10));
-            simClockwiseLimit.setValue(isInRange(simPos, 170, 10));
+        {
+            long currentTimeMillis = System.currentTimeMillis();
+            if(simLastUpdate != -1) {
+                double deltaPos = simLastSpeed * 360D * ((75D / 60D) / (1000D/(currentTimeMillis - simLastUpdate)));
+                simPos += deltaPos;
+                encoder.setPosition(encoder.getPosition()+deltaPos);
+                SmartDashboard.putNumber("Simulated Turret Position", simPos);
+                simHomeSensor.setValue(isInRange(simPos, 0, 1));
+                simCounterclockwiseLimit.setValue(isInRange(simPos, -170, 10));
+                simClockwiseLimit.setValue(isInRange(simPos, 170, 10));
+            }
+            simLastUpdate = currentTimeMillis;
+            simLastSpeed = motor.get();
         }
-        simLastUpdate = currentTimeMillis;
-        simLastSpeed = motor.get();
+
+        {
+            double diff = simPos - SmartDashboard.getNumber("Target Position", 0.0D);
+            boolean tv = Math.abs(diff) <= 27.0;
+            NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").setDouble(tv ? diff : 0.0D);
+            NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").setDouble(tv ? 1.0D : 0.0D);
+            NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").setDouble(1.0D);
+        }
     }
 
     public static boolean isInRange(double d, double val, double delta) {

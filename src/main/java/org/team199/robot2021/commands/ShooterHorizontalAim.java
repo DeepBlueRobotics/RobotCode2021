@@ -52,6 +52,11 @@ public class ShooterHorizontalAim extends CommandBase {
         }
     }
 
+    @Override
+    public void end(boolean interrupted) {
+        turret.set(0);
+    }
+
     public boolean isFinished() {
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
