@@ -27,8 +27,6 @@ public final class Constants {
      * subsystems themselves.
      */
     public static final class DriveConstants {
-        // TODO: Determine more exact measurements for wheel base and track width
-        // 25, 21.5
         public static final double wheelBase = Units.inchesToMeters(25.0);
         public static final double trackWidth = Units.inchesToMeters(21.5);
         // The gearing reduction from the drive motor controller to the wheels
