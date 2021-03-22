@@ -88,8 +88,7 @@ public class RobotContainer {
         }, feeder, intake));*/
 
         paths = new RobotPath[4];
-        loadPath(Path.PATH1, "slalom", false, 0.0);
-        loadPath(Path.PATH2, "Slalomcircle", false, 0.0);
+        loadPath(Path.PATH2, "Slalomcircle", false, Constants.DriveConstants.autoMaxSpeed);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
