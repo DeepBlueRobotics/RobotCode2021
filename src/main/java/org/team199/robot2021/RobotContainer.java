@@ -22,6 +22,7 @@ import org.team199.robot2021.Constants.OI;
 import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.subsystems.Drivetrain;
+import org.team199.robot2021.subsystems.Intake;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
@@ -38,7 +39,7 @@ public class RobotContainer {
     final Drivetrain drivetrain = new Drivetrain();
     //private final Limelight lime = new Limelight();
     //private final Shooter shooter = new Shooter(lime);
-    //private final Intake intake = new Intake();
+    private final Intake intake = new Intake();
     //private final Feeder feeder = new Feeder();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.port);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.port);
@@ -116,15 +117,15 @@ public class RobotContainer {
         new JoystickButton(controller, Constants.OI.Controller.A).whenPressed(new HomeAbsolute(drivetrain));
         new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
-        /*new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
+        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
             if (intake.isDeployed()) {
                 intake.retract();
                 intake.stop();
             } else {
-                intake.doTheFlop();
+                intake.deploy();
                 intake.intake();
             }
-        }, intake));*/
+        }, intake));
 
         // Power cell regurgitate button
         //new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
