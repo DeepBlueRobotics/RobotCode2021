@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class RaiseRobot extends CommandBase {
   private final Climber climber;
 
+  public static double liftDeploySpeed;
+
   /**
    * Pulls the winch to raise the robot up to the switch
    * Old needs to be fixed and updated for current
@@ -34,7 +36,14 @@ public class RaiseRobot extends CommandBase {
   @Override
   public void execute() {
     //No reason for something to change movement midway through this happening
-  }
+    
+    double winchSpeed = climber.getWinchSpeed();
+    //this equation is random, it's not the final one- we made a placeholder equation with constants and a get method
+    liftDeploySpeed = 2 * winchSpeed + climber.kLiftHeight;
+
+    
+
+  } 
 
   // Called once the command ends or is interrupted.
   @Override

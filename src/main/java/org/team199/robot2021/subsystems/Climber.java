@@ -11,7 +11,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.lib.MotorControllerFactory;
+
 import org.team199.robot2021.Constants;
+import org.team199.robot2021.commands.RaiseRobot;
+
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 public class Climber extends SubsystemBase {
@@ -19,7 +22,9 @@ public class Climber extends SubsystemBase {
     private static final double kWinchConversionFactor = 1.0/9 * Math.PI; //TODO: confirm numbers (inches)
 
     //TODO: find good values and then set to final
-    public static double kLiftDeploySpeed = 0.3; //TODO: set correct speed
+    
+  
+    public static double kLiftDeploySpeed = RaiseRobot.liftDeploySpeed; //TODO: set correct speed
     public static double kWinchDeploySpeed = 1; //TODO: set correct speed
     public static double kLiftLowerSpeed = 1; //TODO: set correct speed
     public static double kLiftKeepSpeed = 0.06; //TODO: set correct speed
@@ -120,4 +125,6 @@ public class Climber extends SubsystemBase {
     public double getVoltage() {
         return powerDistributionPanel.getVoltage();
     }
+
+
 }
