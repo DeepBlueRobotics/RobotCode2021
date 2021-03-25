@@ -27,8 +27,6 @@ public final class Constants {
      * subsystems themselves.
      */
     public static final class DriveConstants {
-        // TODO: Determine more exact measurements for wheel base and track width
-        // 25, 21.5
         public static final double wheelBase = Units.inchesToMeters(25.0);
         public static final double trackWidth = Units.inchesToMeters(21.5);
         // The gearing reduction from the drive motor controller to the wheels
@@ -88,8 +86,8 @@ public final class Constants {
         public static final double autoCentripetalAccel = mu * 9.8;
 
         // PID values are listed in the order kP, kI, and kD
-        public static final double[] xPIDController = {0.0, 0.0, 0.0};
-        public static final double[] yPIDController = {0.0, 0.0, 0.0};
+        public static final double[] xPIDController = {2.5, 0.0, 0.0};
+        public static final double[] yPIDController = {2.5, 0.0, 0.0};
         public static final double[] thetaPIDController = {0.0, 0.0, 0.0};
     }
 

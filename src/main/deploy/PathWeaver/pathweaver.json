@@ -1,8 +1,9 @@
 {
   "lengthUnit": "Meter",
+  "exportUnit": "Same as Project",
   "maxVelocity": 1.27,
   "maxAcceleration": 0.9144,
   "wheelBase": 0.6477,
-  "gameName": "Infinite Recharge",
+  "gameName": "Slalom with Circles",
   "outputDir": ""
 }

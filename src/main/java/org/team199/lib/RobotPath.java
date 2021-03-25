@@ -39,7 +39,7 @@ import org.team199.robot2021.subsystems.Drivetrain;
 //Findd Me
 public class RobotPath {
 
-    private Trajectory trajectory;
+    public Trajectory trajectory;
     private Drivetrain dt;
 
     /*
@@ -73,7 +73,7 @@ public class RobotPath {
     }
 
     public SwerveModuleState[] convertToFieldRelative(SwerveModuleState[] swerveModuleStates, Translation2d centerOfRotation) {
-        if (SmartDashboard.getBoolean("Field Oriented", true)) {
+        if (SmartDashboard.getBoolean("Field Oriented", false)) {
             ChassisSpeeds speeds = dt.getKinematics().toChassisSpeeds(swerveModuleStates);
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds.vxMetersPerSecond, 
                                                            speeds.vyMetersPerSecond, 

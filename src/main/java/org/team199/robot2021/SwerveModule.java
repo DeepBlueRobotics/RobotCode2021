@@ -169,7 +169,7 @@ public class SwerveModule {
      * @return A SwerveModuleState object representing the speed and angle of the module.
      */
     public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(getCurrentSpeed(), new Rotation2d(getModuleAngle()));
+        return new SwerveModuleState(getCurrentSpeed(), new Rotation2d(getModuleAngle()).rotateBy(Rotation2d.fromDegrees(180)));
     }
 
     public double getCurrentSpeed() {
