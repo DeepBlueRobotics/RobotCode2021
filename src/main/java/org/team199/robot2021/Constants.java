@@ -113,7 +113,7 @@ public final class Constants {
         public static final int canCoderPortBL = 1;
         public static final int canCoderPortBR = 2;
 
-        //public static final int kIntakeRoller = 2;
+        public static final int kIntakeRoller = 13;
 
         //public static final int kFeederEjector = 7;
         //public static final int kFeederBelt = 8;
@@ -125,7 +125,7 @@ public final class Constants {
         //public static final int kClimberLift = 13;
 
         // solenoids
-        //public static final int[] kIntakePistons = { 0, 1, 2, 5 };
+        public static final int[] kIntakePistons = { 0, 1, 2, 5 };
 
         // other
         //public static final int kFeederInSensor = 11;
@@ -184,8 +184,8 @@ public final class Constants {
             //public static final int kAdjustClimberDownButton = 0; // TODO: change button
 
             // intake/feeder
-            //public static final int kIntakeButton = X;
-            //public static final int kOuttakeButton = A;
+            public static final int kIntakeButton = X;
+            public static final int kOuttakeButton = Y;
             //public static final int kRegurgitateButton = B;
         }
     }

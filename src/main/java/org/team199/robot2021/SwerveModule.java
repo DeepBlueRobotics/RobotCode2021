@@ -151,7 +151,7 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Desired (mps)", desiredSpeed);
 
         // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
-        double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime + calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get());
+        double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime; //+ calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get());
         double maxAcceleration = Constants.DriveConstants.mu * Constants.g;
         double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
         //SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
