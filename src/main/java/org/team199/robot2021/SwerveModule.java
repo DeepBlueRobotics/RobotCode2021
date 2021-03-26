@@ -1,5 +1,9 @@
 package org.team199.robot2021;
 
+import org.team199.robot2021.Constants;
+
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
@@ -29,12 +33,13 @@ public class SwerveModule {
     private CANCoder turnEncoder;
     private PIDController drivePIDController, turnPIDController;
     private double driveModifier, maxSpeed, turnZero;
+    private Supplier<Float> pitchDegSupplier, rollDegSupplier;
     private boolean reversed;
     private Timer timer;
     private SimpleMotorFeedforward forwardSimpleMotorFF, backwardSimpleMotorFF;
 
     public SwerveModule(ModuleType type, CANSparkMax drive, CANSparkMax turn, CANCoder turnEncoder, double driveModifier,
-                        double maxSpeed, int arrIndex) {
+                        double maxSpeed, int arrIndex, Supplier<Float> pitchDegSupplier, Supplier<Float> rollDegSupplier) {
         //SmartDashboard.putNumber("Target Angle (deg)", 0.0);
         this.timer = new Timer();
         timer.start();
@@ -58,6 +63,7 @@ public class SwerveModule {
 
         this.drive = drive;
         double positionConstant = Constants.DriveConstants.wheelDiameter * Math.PI / Constants.DriveConstants.driveGearing;
+        drive.setInverted(Constants.DriveConstants.driveInversion[arrIndex]);
         drive.getEncoder().setPositionConversionFactor(positionConstant);
         drive.getEncoder().setVelocityConversionFactor(positionConstant / 60);
 
@@ -76,6 +82,9 @@ public class SwerveModule {
         this.maxSpeed = maxSpeed;
         this.reversed = Constants.DriveConstants.reversed[arrIndex];
         this.turnZero = Constants.DriveConstants.turnZero[arrIndex];
+
+        this.rollDegSupplier = rollDegSupplier;
+        this.pitchDegSupplier = pitchDegSupplier;
 
         this.forwardSimpleMotorFF = new SimpleMotorFeedforward(Constants.DriveConstants.kForwardVolts[arrIndex],
                                                                Constants.DriveConstants.kForwardVels[arrIndex],
@@ -112,22 +121,38 @@ public class SwerveModule {
     }
 
     /**
+     * Calculates the amount of additional forward accelration needed to combat gravity
+     * @param gyroPitchDeg Pitch of gyro in degrees
+     * @param gyroRollDeg  Roll of gyro in degrees
+     * @return the amount of additional forward accelration needed to combat gravity in m/s^2
+     */
+    private double calculateAntiGravitationalA(Float gyroPitchDeg, Float gyroRollDeg)
+    {
+        double moduleAngle = getModuleAngle();
+        double moduleRollComponent = Math.sin(moduleAngle);
+        double modulePitchComponent = Math.cos(moduleAngle);
+        // gravitationalA is estimated to work for small angles, not 100% accurate at large angles
+        double antiGravitationalA = Constants.g * (modulePitchComponent * Math.sin(Math.PI * gyroPitchDeg / 180) - moduleRollComponent * Math.sin(Math.PI * gyroRollDeg / 180));
+        SmartDashboard.putNumber("AntiGravitational accelration", antiGravitationalA);
+        return antiGravitationalA;
+    }
+    /**
      * Sets the speed for the drive motor controller.
      * @param speed     The desired speed, from -1.0 (maximum speed directed backwards) to 1.0 (maximum speed directed forwards).
      */
     private void setSpeed(double speed) {
         // Get the change in time (for acceleration limiting calculations)
         double deltaTime = timer.get();
-        //SmartDashboard.putNumber(moduleString + " Desired Speed (unitless)", speed);
+        SmartDashboard.putNumber(moduleString + " Desired Speed (unitless)", speed);
 
         // Compute desired and actual speeds in m/s
         double desiredSpeed = maxSpeed * speed * driveModifier;
         double actualSpeed = getCurrentSpeed();
-        //SmartDashboard.putNumber(moduleString + " Desired (mps)", desiredSpeed);
+        SmartDashboard.putNumber(moduleString + " Desired (mps)", desiredSpeed);
 
         // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
-        double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime;
-        double maxAcceleration = Constants.DriveConstants.mu * 9.8;
+        double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime + calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get());
+        double maxAcceleration = Constants.DriveConstants.mu * Constants.g;
         double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
         //SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
 
@@ -169,7 +194,7 @@ public class SwerveModule {
      * @return A SwerveModuleState object representing the speed and angle of the module.
      */
     public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(getCurrentSpeed(), new Rotation2d(getModuleAngle()).rotateBy(Rotation2d.fromDegrees(180)));
+        return new SwerveModuleState(getCurrentSpeed(), new Rotation2d(getModuleAngle()));
     }
 
     public double getCurrentSpeed() {
@@ -190,6 +215,9 @@ public class SwerveModule {
         // Display the speed that the robot thinks it is travelling at.
         SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
         SmartDashboard.putNumber(moduleString + " Setpoint Angle", turnPIDController.getSetpoint());
+        SmartDashboard.putNumber("Gyro Pitch", pitchDegSupplier.get());
+        SmartDashboard.putNumber("Gyro Roll", rollDegSupplier.get());
+        SmartDashboard.putNumber(moduleString + "Antigravitational Acceleration", calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get()));
     }
 
     /**
