@@ -157,17 +157,42 @@ public class RobotPath {
 
         try {
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(file));
-            double x, y, tanx, tany;
+            double x, y, tanx, tany, ddx, ddy;
+            double nextX, nextY, nextTanX, nextTanY;
             List<CSVRecord> records = csvParser.getRecords();
+            CSVRecord record, nextRecord;
 
-            for (int i = 1; i < records.size(); i++) {
-                CSVRecord record = records.get(i);
+            for (int i = 1; i < records.size() - 1; i++) {
+                record = records.get(i);
+                nextRecord = records.get(i + 1);
+
+                // Get the information about the current waypoint
                 x = Double.parseDouble(record.get(0));
                 y = Double.parseDouble(record.get(1));
                 tanx = Double.parseDouble(record.get(2));
                 tany = Double.parseDouble(record.get(3));
-                vectors.add(new ControlVector(new double[]{x, tanx, 0}, new double[]{y, tany, 0}));
+
+                // Get the information about the next waypoint
+                nextX = Double.parseDouble(nextRecord.get(0));
+                nextY = Double.parseDouble(nextRecord.get(1));
+                nextTanX = Double.parseDouble(nextRecord.get(2));
+                nextTanY = Double.parseDouble(nextRecord.get(3));
+
+                // Approximate the second derivative components at this waypoint by finding the
+                // average rate of change of the tangent components (secant approximation).
+                ddx = (nextTanX - tanx) / (nextX - x);
+                ddy = (nextTanY - tany) / (nextY - y);
+                vectors.add(new ControlVector(new double[]{x, tanx, ddx}, new double[]{y, tany, ddy}));
             }
+            // Add the end control vector
+            record = records.get(records.size() - 1);
+            x = Double.parseDouble(record.get(0));
+            y = Double.parseDouble(record.get(1));
+            tanx = Double.parseDouble(record.get(2));
+            tany = Double.parseDouble(record.get(3));
+            // Just set the second derivative to zero for the last control vector
+            vectors.add(new ControlVector(new double[]{x, tanx, 0}, new double[]{y, tany, 0}));
+
             csvParser.close();
         } catch (FileNotFoundException e) {
             System.out.println("File named: " + file.getAbsolutePath() + " not found.");
