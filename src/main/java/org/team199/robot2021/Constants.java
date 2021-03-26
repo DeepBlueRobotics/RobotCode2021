@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.util.Units;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final double g = 9.81; //meters per second squared
     /**
      * Constants for motor ports and IDs, solenoid ports, sensor numbers, etc.
      * Analagous to RobotMap.java in previous years.
@@ -65,6 +66,7 @@ public final class Constants {
         //public static final double[] drivekP = {0, 0, 0, 0};
         public static final double[] drivekI = {0, 0, 0, 0};
         public static final double[] drivekD = {0, 0, 0, 0};
+        public static final boolean[] driveInversion = {true, true, true, true};
 
         public static final double[] kForwardVolts = {0.129, 0.108, 0.14, 0.125};
         public static final double[] kBackwardVolts = {0.115, 0.169, 0.13, 0.148};
@@ -79,15 +81,15 @@ public final class Constants {
         //public static final double[] kBackwardAccels = {0, 0, 0, 0};
 
         public static final double autoMaxSpeed = 0.75 * 4.4;  // Meters / second
-        public static final double autoMaxAccel = mu * 9.8;  // Meters / seconds^2
+        public static final double autoMaxAccel = mu * g;  // Meters / seconds^2
         public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java
         // The maximum acceleration the robot can achieve is equal to the coefficient of static friction times the gravitational acceleration
-        // a = mu * 9.8 m/s
-        public static final double autoCentripetalAccel = mu * 9.8;
+        // a = mu * 9.8 m/s^2
+        public static final double autoCentripetalAccel = mu * g;
 
         // PID values are listed in the order kP, kI, and kD
-        public static final double[] xPIDController = {6, 0.0, 0.0};
-        public static final double[] yPIDController = {6, 0.0, 0.0};
+        public static final double[] xPIDController = {4, 0.0, 0.0};
+        public static final double[] yPIDController = {4, 0.0, 0.0};
         public static final double[] thetaPIDController = {0.0, 0.0, 0.0};
     }
 
