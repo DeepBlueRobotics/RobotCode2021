@@ -71,12 +71,13 @@ public class RobotContainer {
 
         //shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain,
-            () -> signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.Y)),
+
+        () -> signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.Y)),
             () -> signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X)),
             () -> signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X))));
 
 
-        /*feeder.setDefaultCommand(new RunCommand(() -> {
+        feeder.setDefaultCommand(new RunCommand(() -> {
             if (feeder.isCellEntering() && !feeder.isCellAtShooter()) {
                 feeder.runForward();
                 if(intake.isDeployed())
@@ -86,7 +87,7 @@ public class RobotContainer {
                 if(intake.isDeployed())
                     intake.intake();
             }
-        }, feeder, intake));*/
+        }, feeder, intake));
 
         paths = new RobotPath[4];
         loadPath(Path.PATH1, "barrelRacing", false, Constants.DriveConstants.autoMaxSpeed);

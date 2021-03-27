@@ -161,8 +161,8 @@ public class RobotPath {
             double nextTanX, nextTanY;
             List<CSVRecord> records = csvParser.getRecords();
             CSVRecord record, nextRecord;
-            double deltaT = 1.0 / (records.size() - 1);
-            boolean zeroConcavity = true;
+            double deltaT = 1;
+            boolean zeroConcavity = false;
 
             for (int i = 1; i < records.size() - 1; i++) {
                 record = records.get(i);

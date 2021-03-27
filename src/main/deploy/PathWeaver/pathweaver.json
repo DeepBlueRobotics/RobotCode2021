@@ -4,6 +4,6 @@
   "maxVelocity": 1.27,
   "maxAcceleration": 0.9144,
   "wheelBase": 0.6477,
-  "gameName": "Barrel Racing with Circles",
+  "gameName": "Slalom with Circles",
   "outputDir": ""
 }
