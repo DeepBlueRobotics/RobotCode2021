@@ -158,9 +158,11 @@ public class RobotPath {
         try {
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(file));
             double x, y, tanx, tany, ddx, ddy;
-            double nextX, nextY, nextTanX, nextTanY;
+            double nextTanX, nextTanY;
             List<CSVRecord> records = csvParser.getRecords();
             CSVRecord record, nextRecord;
+            double deltaT = 1.0 / (records.size() - 1);
+            boolean zeroConcavity = true;
 
             for (int i = 1; i < records.size() - 1; i++) {
                 record = records.get(i);
@@ -173,15 +175,18 @@ public class RobotPath {
                 tany = Double.parseDouble(record.get(3));
 
                 // Get the information about the next waypoint
-                nextX = Double.parseDouble(nextRecord.get(0));
-                nextY = Double.parseDouble(nextRecord.get(1));
                 nextTanX = Double.parseDouble(nextRecord.get(2));
                 nextTanY = Double.parseDouble(nextRecord.get(3));
 
                 // Approximate the second derivative components at this waypoint by finding the
                 // average rate of change of the tangent components (secant approximation).
-                ddx = (nextTanX - tanx) / (nextX - x);
-                ddy = (nextTanY - tany) / (nextY - y);
+                if (!zeroConcavity) {
+                    ddx = (nextTanX - tanx) / deltaT;
+                    ddy = (nextTanY - tany) / deltaT;
+                } else {
+                    ddx = 0;
+                    ddy = 0;
+                }
                 vectors.add(new ControlVector(new double[]{x, tanx, ddx}, new double[]{y, tany, ddy}));
             }
             // Add the end control vector

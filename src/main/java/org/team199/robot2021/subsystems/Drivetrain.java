@@ -7,6 +7,8 @@
 
 package org.team199.robot2021.subsystems;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.sensors.CANCoder;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -48,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
     odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(Units.degreesToRadians(getHeading())));
 
     Supplier<Float> pitchSupplier = () -> gyro.getPitch();
-    Sypplier<Float> rollSupplier = () -> gyro.getRoll();
+    Supplier<Float> rollSupplier = () -> gyro.getRoll();
     SwerveModule moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.driveFrontLeft), 
                                 MotorControllerFactory.createSparkMax(Constants.DrivePorts.turnFrontLeft), 
