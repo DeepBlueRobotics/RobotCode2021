@@ -13,7 +13,7 @@ public class Shoot extends CommandBase {
     }
 
     public void initialize() {
-        feeder.eject();
+        feeder.shoot();
     }
 
     public boolean isFinished() {
@@ -22,6 +22,5 @@ public class Shoot extends CommandBase {
 
     public void end(boolean interrupted) {
         feeder.stop();
-        feeder.reset();
     }
 }

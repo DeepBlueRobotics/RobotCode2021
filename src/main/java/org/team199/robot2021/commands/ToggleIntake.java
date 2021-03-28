@@ -7,28 +7,37 @@
 
 package org.team199.robot2021.commands;
 
-import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class Regurgitate extends CommandBase {
-  private final Intake intake;
-  private final Feeder feeder;
-  
+public class ToggleIntake extends CommandBase {
   /**
-   * Regurgitates the balls out of the feeder (and intake if it's deployed)
+   * Creates a new ToggleIntake.
    */
-  public Regurgitate(Intake intake, Feeder feeder) {
+  private Intake intake;
+  private Timer timer;
+  private boolean beingDeployed;
+
+  public ToggleIntake(Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(this.intake = intake, this.feeder = feeder);
+    addRequirements(this.intake = intake);
+    timer = new Timer();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.outtake();
-    intake.outtake();
+    if (intake.isDeployed()) {
+      intake.stop();
+      intake.retract();
+      beingDeployed = false;
+    } else {
+      intake.doTheFlop();
+      timer.start();
+      beingDeployed = true;
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,15 +48,15 @@ public class Regurgitate extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.stop();
-    if (intake.isDeployed()) {
+    if(beingDeployed){
       intake.intake();
+      timer.stop();
     }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return timer.hasElapsed(Intake.kTimeToDeploy) || !beingDeployed;
   }
 }

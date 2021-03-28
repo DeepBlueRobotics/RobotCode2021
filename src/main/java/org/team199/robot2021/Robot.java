@@ -11,6 +11,8 @@ import frc.robot.lib.MotorErrors;
 import frc.robot.lib.logging.Log;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -24,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   
   private RobotContainer robotContainer;
+  private final Object queueAsyncLock = new Object();
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -34,13 +37,39 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Characterized Drive", false);
     robotContainer = new RobotContainer();
     Log.init();
+    Thread asyncUpdater = new Thread(() -> {
+      while(true) {
+        synchronized(queueAsyncLock) {
+          try {
+            queueAsyncLock.wait();
+          } catch(InterruptedException e) {}
+        }
+        MotorErrors.printSparkMaxErrorMessages();
+      }
+    });
+    asyncUpdater.setDaemon(true);
+    asyncUpdater.start();
   }
 
   @Override
   public void robotPeriodic() {
+    try(Watchdog timer = new Watchdog(0.01D, () -> {})) {
+      Timer tmr = new Timer();
+      tmr.start();
     CommandScheduler.getInstance().run();
+    timer.addEpoch("CommandScheduler");
     Log.logData();
-    MotorErrors.printSparkMaxErrorMessages();
+    timer.addEpoch("Log");
+    synchronized(queueAsyncLock) {
+      queueAsyncLock.notifyAll();
+    }
+    timer.addEpoch("Async");
+    tmr.stop();
+    if(tmr.get() >= 0.01D) {
+      System.out.println("HEHEHEHEHEHEHHEHEHE");
+      timer.printEpochs();
+    }
+    }
   }
 
   /**
