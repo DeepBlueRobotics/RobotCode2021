@@ -34,7 +34,7 @@ import org.team199.robot2021.commands.AttachHook;
 import org.team199.robot2021.commands.AutoShootAndDrive;
 import org.team199.robot2021.commands.DeployClimber;
 import org.team199.robot2021.commands.RaiseRobot;
-import org.team199.robot2021.commands.ClimberVoltageLowCheck;
+import org.team199.robot2021.commands.ClimberAttachedCheck;
 import org.team199.robot2021.commands.LowerArm;
 import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;
@@ -151,12 +151,14 @@ public class RobotContainer {
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new SequentialCommandGroup(
             new AttachHook(climber, controller),
-            new ClimberVoltageLowCheck(climber),
+           new ClimberAttachedCheck(climber),
             new ParallelCommandGroup(
                 new RaiseRobot(climber),
                 new LowerArm(climber)
          )));
+        
     }
+       
 
     public Command getAutonomousCommand() {
         try {
