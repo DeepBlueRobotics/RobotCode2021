@@ -21,6 +21,7 @@ import org.team199.lib.RobotPath;
 import org.team199.robot2021.Constants.OI;
 import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.TeleopDrive;
+import org.team199.robot2021.commands.ToggleIntake;
 import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Intake;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -76,8 +77,8 @@ public class RobotContainer {
             () -> signedSquare(signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X))),
             () -> signedSquare(signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X)))));
 
-
-        /*feeder.setDefaultCommand(new RunCommand(() -> {
+        /*
+        feeder.setDefaultCommand(new RunCommand(() -> {
             if (feeder.isCellEntering() && !feeder.isCellAtShooter()) {
                 feeder.runForward();
                 if(intake.isDeployed())
@@ -90,9 +91,9 @@ public class RobotContainer {
         }, feeder, intake));*/
 
         paths = new RobotPath[4];
-        loadPath(Path.PATH1, "barrelRacing", false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath(Path.PATH2, "GalacticSearchAllPoints", false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath(Path.PATH3, "bounce", false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath(Path.PATH1, "barrelRacing", false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath(Path.PATH2, "slalom", false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath(Path.PATH3, "bounce", false, false, Constants.DriveConstants.autoMaxSpeed);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
@@ -118,15 +119,7 @@ public class RobotContainer {
         new JoystickButton(controller, Constants.OI.Controller.A).whenPressed(new HomeAbsolute(drivetrain));
         new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
-        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
-            if (intake.isDeployed()) {
-                intake.retract();
-                intake.stop();
-            } else {
-                intake.deploy();
-                intake.intake();
-            }
-        }, intake));
+        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
 
         // Power cell regurgitate button
         //new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
@@ -222,9 +215,9 @@ public class RobotContainer {
         return outPath;
     }
 
-    private void loadPath(final Path path, final String pathName, final boolean isInverted, final double endVelocity) {
+    private void loadPath(final Path path, final String pathName, final boolean deployIntake, final boolean isInverted, final double endVelocity) {
         try {
-            paths[path.idx] = new RobotPath(pathName, drivetrain, isInverted, endVelocity);
+            paths[path.idx] = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity);
         } catch(final Exception e) {
             e.printStackTrace(System.err);
         }

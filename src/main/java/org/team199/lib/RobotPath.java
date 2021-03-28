@@ -35,12 +35,15 @@ import frc.robot.lib.swerve.SwerveDriveVoltageConstraint;
 
 import org.team199.robot2021.Constants;
 import org.team199.robot2021.subsystems.Drivetrain;
+import org.team199.robot2021.subsystems.Intake;
+import org.team199.robot2021.commands.ToggleIntake;
 
-//Findd Me
 public class RobotPath {
 
     public Trajectory trajectory;
     private Drivetrain dt;
+    private Intake intake;
+    private boolean deployIntake;
 
     /*
     public RobotPath(String pathName, Drivetrain dt, boolean isInverted, double endVelocity) throws IOException {
@@ -55,21 +58,23 @@ public class RobotPath {
         this.dt = dt;
     }
     */
-    public RobotPath(String pathName, Drivetrain dt, boolean isInverted, double endVelocity) throws IOException {
-       this(getPointsFromFile(pathName, dt), isInverted, dt, endVelocity);
+    public RobotPath(String pathName, Drivetrain dt, Intake intake, boolean deployIntake, boolean isInverted, double endVelocity) throws IOException {
+       this(getPointsFromFile(pathName, dt), isInverted, dt, intake, deployIntake, endVelocity);
     }
 
-    public RobotPath(ControlVectorList vectors, boolean isInverted, Drivetrain dt, double endVelocity) {
-        this(vectors, createConfig(isInverted, dt, endVelocity), dt);
+    public RobotPath(ControlVectorList vectors, boolean isInverted, Drivetrain dt, Intake intake, boolean deployIntake, double endVelocity) {
+        this(vectors, createConfig(isInverted, dt, endVelocity), dt, intake, deployIntake);
     }
 
-    public RobotPath(ControlVectorList vectors, TrajectoryConfig config, Drivetrain dt) {
-        this(TrajectoryGenerator.generateTrajectory(vectors, config), dt);
+    public RobotPath(ControlVectorList vectors, TrajectoryConfig config, Drivetrain dt, Intake intake, boolean deployIntake) {
+        this(TrajectoryGenerator.generateTrajectory(vectors, config), dt, intake, deployIntake);
     }
 
-    public RobotPath(Trajectory trajectory, Drivetrain dt) {
+    public RobotPath(Trajectory trajectory, Drivetrain dt, Intake intake, boolean deployIntake) {
         this.trajectory = trajectory;
         this.dt = dt;
+        this.intake = intake;
+        this.deployIntake = deployIntake;
     }
 
     public SwerveModuleState[] convertToFieldRelative(SwerveModuleState[] swerveModuleStates, Translation2d centerOfRotation) {
@@ -107,7 +112,11 @@ public class RobotPath {
             dt
             );
 
-        return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.drive(0, 0, 0), dt));
+        if (deployIntake) {
+            return new InstantCommand(this::loadOdometry).andThen(new ToggleIntake(intake)).andThen(ram, new InstantCommand(() -> dt.drive(0, 0, 0), dt));
+        } else {
+            return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.drive(0, 0, 0), dt));
+        }
     }
 
     public void loadOdometry() {
