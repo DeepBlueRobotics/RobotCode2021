@@ -116,9 +116,11 @@ public class RobotPath {
         ProfiledPIDController thetaController =  new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
                                                                            Constants.DriveConstants.thetaPIDController[1],
                                                                            Constants.DriveConstants.thetaPIDController[2],
-                                                                           new Constraints(Constants.DriveConstants.autoMaxSpeed, Constants.DriveConstants.autoMaxAccel));
+                                                                           new Constraints(Constants.DriveConstants.autoMaxSpeed / Constants.DriveConstants.swerveRadius, 
+                                                                                           Constants.DriveConstants.autoMaxAccel / Constants.DriveConstants.swerveRadius));
         trajectory = trajectory.relativeTo(trajectory.getInitialPose());
-        Supplier<Rotation2d> headingSupplierFunction = (faceInPathDirection) ? () -> Rotation2d.fromDegrees(dt.getHeading())
+        double heading = dt.getHeading();
+        Supplier<Rotation2d> headingSupplierFunction = (!faceInPathDirection) ? () -> Rotation2d.fromDegrees(heading)
                                                                              : () -> hs.sample();
         SwerveControllerCommand ram = new SwerveControllerCommand(
             trajectory,
@@ -197,6 +199,7 @@ public class RobotPath {
             CSVRecord record, nextRecord;
             double deltaT = 1;
             boolean zeroConcavity = true;
+            System.out.println("zeroConcavity:" + zeroConcavity);
 
             for (int i = 1; i < records.size() - 1; i++) {
                 record = records.get(i);
@@ -221,6 +224,7 @@ public class RobotPath {
                     ddx = 0;
                     ddy = 0;
                 }
+                System.out.println("ddx: " + ddx + ", ddy: " + ddy);
                 vectors.add(new ControlVector(new double[]{x, tanx, ddx}, new double[]{y, tany, ddy}));
             }
             // Add the end control vector

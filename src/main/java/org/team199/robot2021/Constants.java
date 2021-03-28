@@ -30,6 +30,8 @@ public final class Constants {
     public static final class DriveConstants {
         public static final double wheelBase = Units.inchesToMeters(25.0);
         public static final double trackWidth = Units.inchesToMeters(21.5);
+        // "swerveRadius" is the distance from the center of the robot to one of the modules
+        public static final double swerveRadius = Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
         // The gearing reduction from the drive motor controller to the wheels
         // "Fast" gearing for the MK3 Swerve Module is 6.86 : 1
         public static final double driveGearing = 6.86;
@@ -47,7 +49,7 @@ public final class Constants {
         // Calculated by looking at one of the motors and treating it as a point mass moving around in a circle.
         // Tangential speed of this point mass is maxSpeed and the radius of the circle is sqrt((wheelBase/2)^2 + (trackWidth/2)^2)
         // Angular velocity = Tangential speed / radius
-        public static final double maxRCW = maxSpeed / Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
+        public static final double maxRCW = maxSpeed / swerveRadius;
 
         public static final boolean[] reversed = {false, false, false, false};
         // Determine correct turnZero constants (FL, FR, BL, BR)
@@ -90,7 +92,7 @@ public final class Constants {
         // PID values are listed in the order kP, kI, and kD
         public static final double[] xPIDController = {4, 0.0, 0.0};
         public static final double[] yPIDController = {4, 0.0, 0.0};
-        public static final double[] thetaPIDController = {0.0, 0.0, 0.0};
+        public static final double[] thetaPIDController = {5, 0.0, 0.0};
     }
 
     public static final class DrivePorts {

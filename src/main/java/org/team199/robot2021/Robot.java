@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     //SmartDashboard.putBoolean("Arcade Drive", true);
     //SmartDashboard.putBoolean("Characterized Drive", false);
-    SmartDashboard.putBoolean("Field Oriented", true);
+    SmartDashboard.putBoolean("Field Oriented", false);
     robotContainer = new RobotContainer();
     Log.init();
     debugFile = new File("/home/lvuser/debug.txt");
@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.drivetrain.brake();
-    robotContainer.getAutonomousCommand(false).schedule();
+    robotContainer.getAutonomousCommand(true).schedule();
     Log.setDataLoggingDisabled(false);
 
     try {
