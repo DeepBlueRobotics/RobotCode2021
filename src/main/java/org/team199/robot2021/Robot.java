@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -71,6 +72,15 @@ public class Robot extends TimedRobot {
     robotContainer.drivetrain.brake();
     robotContainer.getAutonomousCommand().schedule();
     Log.setDataLoggingDisabled(false);
+
+    try {
+      for (Trajectory.State state : robotContainer.trajectory.getStates()) {
+        writer.write("Trajectory pose at t = " + state.timeSeconds + ": " + state.poseMeters + "\n");
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
     timer = new Timer();
     timer.start();
   }
@@ -80,16 +90,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    /*
     double time = timer.get();
-    if (time < robotContainer.trajectory.getTotalTimeSeconds()) {
-      try {
-        writer.write("Trajectory pose at t = " + time + ": " + robotContainer.trajectory.sample(time).poseMeters + "\n");
-        writer.write("Odometry pose at t = " + time + ": " + robotContainer.drivetrain.getOdometry().getPoseMeters() + "\n");
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }*/
+    try {
+      writer.write("Odometry pose at t = " + time + ": " + robotContainer.drivetrain.getOdometry().getPoseMeters() + "\n");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
