@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     //SmartDashboard.putBoolean("Arcade Drive", true);
     //SmartDashboard.putBoolean("Characterized Drive", false);
-    SmartDashboard.putBoolean("Field Oriented", false);
+    SmartDashboard.putBoolean("Field Oriented", true);
     robotContainer = new RobotContainer();
     Log.init();
     debugFile = new File("/home/lvuser/debug.txt");
@@ -80,7 +80,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    /*
     double time = timer.get();
     if (time < robotContainer.trajectory.getTotalTimeSeconds()) {
       try {
@@ -89,7 +88,7 @@ public class Robot extends TimedRobot {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    }*/
+    }
   }
 
   /**
