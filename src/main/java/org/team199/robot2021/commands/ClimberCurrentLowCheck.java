@@ -11,14 +11,14 @@ import org.team199.robot2021.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class ClimberVoltageLowCheck extends CommandBase {
+public class ClimberCurrentLowCheck extends CommandBase {
   private final Climber climber;
-  private double voltage;
+  private double current;
 
 
-  public ClimberVoltageLowCheck(Climber climber) {
+  public ClimberCurrentLowCheck(Climber climber) {
     addRequirements(this.climber = climber);
-    voltage = climber.getVoltage();
+    current = climber.getCurrent();
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -41,6 +41,6 @@ public class ClimberVoltageLowCheck extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return voltage <= climber.kLowVoltage;
+    return current <= climber.kLowCurrent;
   }
 }

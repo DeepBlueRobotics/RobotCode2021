@@ -47,6 +47,6 @@ public class RaiseRobot extends CommandBase {
   @Override
   public boolean isFinished() {
     //checks if robot has reached top
-    return climber.getWinchHeight() >= Climber.kWinchEndHeight;
+    return climber.getWinchHeight() >= Climber.kWinchFinalHeight;
   }
 }

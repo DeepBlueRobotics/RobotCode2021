@@ -15,29 +15,30 @@ import org.team199.robot2021.Constants;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 public class Climber extends SubsystemBase {
-    private static final double kLiftConversionFactor =6.0/40 * Math.PI * 3; //TODO: confirm numbers (inches)
-    private static final double kWinchConversionFactor = 1.0/9 * Math.PI; //TODO: confirm numbers (inches)
+    private static final double kLiftConversionFactor =  1; //pulse resolution * 2pi * gear ratio (1.0/12  * 2 * Math.PI * 100) = distance lift has traveled, included later (in big trig function)  TODO find r
+    private static final double kWinchConversionFactor = 1.0/42 * 2 * Math.PI * 0.5 * 13.2; //pulse resolution * 2*pi*r * gear ratio (1.0/42 * r * 2 * pi) = distance of rope extended
 
     //TODO: find good values and then set to final
     public static double kLiftDeploySpeed = 0.3; //TODO: set correct speed
-    public static double kWinchDeploySpeed = 1; //TODO: set correct speed
-    public static double kLiftLowerSpeed = 1; //TODO: set correct speed
-    public static double kLiftKeepSpeed = 0.06; //TODO: set correct speed
+    public static double kWinchDeploySpeed = 1; //TODO : set correct speed
+    public static double kLiftLowerSpeed = -0.1; //Vaguely arbitrary, but also not important might wanna ask others
+    public static double kLiftKeepSpeed = 0.06; //TODO: set correct speed (trial and error) (make changeable through smartDashboard)
     public static double kLiftRetractSpeed = -0.3; //TODO: set correct speed
     public static double kWinchRetractSpeedFirst = 0.6; //TODO: set correct speed  KEEP THIS POSITIVE SO THAT WINCH GOES IN THE RIGHT DIRECTION
-    public static double kWinchRetractSpeedSecond = 0.6; //TODO: set correct speed KEEP THIS POSITIVE SO THAT WINCH GOES IN THE RIGHT DIRECTION
-    public static double kLiftAdjustSpeed = 0.2; //TODO: set correct speed
-    public static double kWinchAdjustSpeed = 0.2; //TODO: set correct speed
-    public static double kHighVoltage = 0.1; //TODO: find voltage
-    public static double kLowVoltage = 0.2; //TODO: find voltage
+    public static double kWinchRetractSpeedSecond = 1;
+    //public static double kLiftAdjustSpeed = 0.2; //vestigial from perevious iteration
+    //public static double kWinchAdjustSpeed = 0.2; //vestigial from perevious iteration
+    public static double kHighCurrent = 83; //based on current budget? may have to be changed (number is in amps?)
+    public static double kLowCurrent = 0.2; //TODO: find Current
 
     public static final double kLiftHeight = 87; // TODO: set correct speed
-    public static final double kLiftLowerHeight = 0;  //TODO: set this one probably
-    public static final double kWinchEndHeight = 60; // TODO: set correct speed
-    public static final double kWinchMidHeight = 60; //TODO: SET THIS ONE SPECIFICALLY 
-    public static final double kWinchStartHeight = -80; // TODO: set correct speed
-    private final WPI_VictorSPX liftMotor = MotorControllerFactory.createVictor(Constants.Drive.kClimberLift); //TODO SparkMax Become 775
-    private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch); //TODO SparkMax Become Neo
+    public static final double kLiftLowerHeight = 0;  //TODO: set this one probably (could be double max height depending on if scalar or vector)
+    public static final double kWinchMaxHeight = 59; //Winch height for fully extended arm
+    public static final double kWinchStartHeight = 0; //Winch height for arm before extension
+    public static final double kWinchFinalHeight = -80; //TODO change this 
+    // Winch height for after extension
+    private final WPI_VictorSPX liftMotor = MotorControllerFactory.createVictor(Constants.Drive.kClimberLift); //this is a 775
+    private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch);
     private final Encoder liftEnc = new Encoder(2, 3);
     private final CANEncoder winchEnc = winchMotor.getEncoder();
     private final PowerDistributionPanel powerDistributionPanel = new PowerDistributionPanel(1); //TODO: set correct module
@@ -47,7 +48,7 @@ public class Climber extends SubsystemBase {
         winchEnc.setPositionConversionFactor(kWinchConversionFactor);
         winchEnc.setVelocityConversionFactor(kWinchConversionFactor / 60);
         liftEnc.reset();
-        winchEnc.setPosition(kWinchStartHeight);
+        winchEnc.setPosition(kWinchFinalHeight);
         winchMotor.setIdleMode(IdleMode.kCoast);
        // liftMotor.setSmartCurrentLimit(30);
 
@@ -117,7 +118,7 @@ public class Climber extends SubsystemBase {
         return false;
     }
 
-    public double getVoltage() {
-        return powerDistributionPanel.getVoltage();
+    public double getCurrent() {
+        return liftMotor.getOutputCurrent();
     }
 }

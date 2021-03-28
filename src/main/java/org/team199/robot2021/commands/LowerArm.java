@@ -13,12 +13,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class LowerArm extends CommandBase {
   private final Climber climber;
-  private double voltage;
+  private double current;
 
 
   public LowerArm(Climber climber) {
     addRequirements(this.climber = climber);
-    voltage = climber.getVoltage();
+    current = climber.getCurrent();
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
