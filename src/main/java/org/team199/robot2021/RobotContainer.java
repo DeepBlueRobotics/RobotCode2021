@@ -91,7 +91,7 @@ public class RobotContainer {
 
         paths = new RobotPath[4];
         loadPath(Path.PATH1, "barrelRacing", false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath(Path.PATH2, "slalom", false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath(Path.PATH2, "GalacticSearchAllPoints", false, Constants.DriveConstants.autoMaxSpeed);
         loadPath(Path.PATH3, "bounce", false, Constants.DriveConstants.autoMaxSpeed);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }

@@ -162,7 +162,7 @@ public class RobotPath {
             List<CSVRecord> records = csvParser.getRecords();
             CSVRecord record, nextRecord;
             double deltaT = 1;
-            boolean zeroConcavity = false;
+            boolean zeroConcavity = true;
 
             for (int i = 1; i < records.size() - 1; i++) {
                 record = records.get(i);
