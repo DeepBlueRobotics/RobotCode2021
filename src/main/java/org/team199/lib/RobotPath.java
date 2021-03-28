@@ -6,11 +6,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -39,11 +41,31 @@ import org.team199.robot2021.subsystems.Intake;
 import org.team199.robot2021.commands.ToggleIntake;
 
 public class RobotPath {
+    class HeadingSupplier {
+        private Trajectory trajectory;
+        private Timer timer;
+        private boolean timerStarted;
+
+        public HeadingSupplier(Trajectory trajectory) {
+            this.trajectory = trajectory;
+            timer = new Timer();
+            timerStarted = false;
+        }
+
+        public Rotation2d sample() {
+            if (!timerStarted) {
+                timerStarted = true;
+                timer.start();
+            }
+            return trajectory.sample(timer.get()).poseMeters.getRotation();
+        }
+    }
 
     public Trajectory trajectory;
     private Drivetrain dt;
     private Intake intake;
     private boolean deployIntake;
+    private HeadingSupplier hs;
 
     /*
     public RobotPath(String pathName, Drivetrain dt, boolean isInverted, double endVelocity) throws IOException {
@@ -72,6 +94,7 @@ public class RobotPath {
 
     public RobotPath(Trajectory trajectory, Drivetrain dt, Intake intake, boolean deployIntake) {
         this.trajectory = trajectory;
+        hs = new HeadingSupplier(trajectory);
         this.dt = dt;
         this.intake = intake;
         this.deployIntake = deployIntake;
@@ -89,12 +112,14 @@ public class RobotPath {
     }
     
 
-    public Command getPathCommand(Rotation2d desiredHeading) {
+    public Command getPathCommand(boolean faceInPathDirection) {
         ProfiledPIDController thetaController =  new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
                                                                            Constants.DriveConstants.thetaPIDController[1],
                                                                            Constants.DriveConstants.thetaPIDController[2],
                                                                            new Constraints(Constants.DriveConstants.autoMaxSpeed, Constants.DriveConstants.autoMaxAccel));
         trajectory = trajectory.relativeTo(trajectory.getInitialPose());
+        Supplier<Rotation2d> headingSupplierFunction = (faceInPathDirection) ? () -> Rotation2d.fromDegrees(dt.getHeading())
+                                                                             : () -> hs.sample();
         SwerveControllerCommand ram = new SwerveControllerCommand(
             trajectory,
             () -> dt.getOdometry().getPoseMeters(),
@@ -107,7 +132,7 @@ public class RobotPath {
                               Constants.DriveConstants.yPIDController[1],
                               Constants.DriveConstants.yPIDController[2]),
             thetaController,
-            () -> desiredHeading,
+            headingSupplierFunction,
             (swerveModuleStates) -> dt.drive(convertToFieldRelative(swerveModuleStates, new Translation2d())),
             dt
             );

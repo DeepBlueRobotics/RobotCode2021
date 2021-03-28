@@ -134,14 +134,14 @@ public class RobotContainer {
         //new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
     }
 
-    public Command getAutonomousCommand() {
+    public Command getAutonomousCommand(boolean faceInPathDirection) {
         try {
             final RobotPath path = paths[getPath().idx];
             if (path == null) {
                 throw new Exception("Desired path is null.");
             }
             boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
-            Command command = path.getPathCommand(Rotation2d.fromDegrees(drivetrain.getHeading()));
+            Command command = path.getPathCommand(faceInPathDirection);
             trajectory = paths[Path.PATH2.idx].trajectory;
             return command;
         } catch(final Exception e) {
