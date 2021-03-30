@@ -73,9 +73,9 @@ public class RobotContainer {
         //shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain,
 
-        () -> signedSquare(signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.Y))),
-            () -> signedSquare(signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X))),
-            () -> signedSquare(signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X)))));
+        () -> signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.Y)),
+            () -> signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X)),
+            () -> signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X))));
 
         /*
         feeder.setDefaultCommand(new RunCommand(() -> {
