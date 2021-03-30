@@ -81,7 +81,7 @@ public class RobotPath {
     }
     */
     public RobotPath(String pathName, Drivetrain dt, Intake intake, boolean deployIntake, boolean isInverted, double endVelocity) throws IOException {
-       this(getPointsFromFile(pathName, dt), isInverted, dt, intake, deployIntake, endVelocity);
+       this(getVectorsFromFile(pathName, dt), isInverted, dt, intake, deployIntake, endVelocity);
     }
 
     public RobotPath(ControlVectorList vectors, boolean isInverted, Drivetrain dt, Intake intake, boolean deployIntake, double endVelocity) {
@@ -113,11 +113,13 @@ public class RobotPath {
     
 
     public Command getPathCommand(boolean faceInPathDirection) {
-        ProfiledPIDController thetaController =  new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
-                                                                           Constants.DriveConstants.thetaPIDController[1],
-                                                                           Constants.DriveConstants.thetaPIDController[2],
-                                                                           new Constraints(Constants.DriveConstants.autoMaxSpeed / Constants.DriveConstants.swerveRadius, 
-                                                                                           Constants.DriveConstants.autoMaxAccel / Constants.DriveConstants.swerveRadius));
+        ProfiledPIDController thetaController = new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
+                                                                          Constants.DriveConstants.thetaPIDController[1],
+                                                                          Constants.DriveConstants.thetaPIDController[2],
+                                                                          new Constraints(Constants.DriveConstants.autoMaxSpeed / Constants.DriveConstants.swerveRadius,
+                                                                                          Constants.DriveConstants.autoMaxAccel / Constants.DriveConstants.swerveRadius));
+        thetaController.enableContinuousInput(0, 2 * Math.PI);
+
         trajectory = trajectory.relativeTo(trajectory.getInitialPose());
         double heading = dt.getHeading();
         Supplier<Rotation2d> headingSupplierFunction = (!faceInPathDirection) ? () -> Rotation2d.fromDegrees(heading)
@@ -184,13 +186,13 @@ public class RobotPath {
         return config;
     }
 
-    public static ControlVectorList getPointsFromFile(String pathName, Drivetrain dt) throws IOException {
+    public static ControlVectorList getVectorsFromFile(String pathName, Drivetrain dt) throws IOException {
         return getVectorsFromFile(getPathFile(pathName), dt);
     }
 
     public static ControlVectorList getVectorsFromFile(File file, Drivetrain dt) throws IOException {
         ControlVectorList vectors = new ControlVectorList();
-
+        
         try {
             CSVParser csvParser = CSVFormat.DEFAULT.parse(new FileReader(file));
             double x, y, tanx, tany, ddx, ddy;
@@ -199,7 +201,7 @@ public class RobotPath {
             CSVRecord record, nextRecord;
             double deltaT = 1;
             boolean zeroConcavity = true;
-            System.out.println("zeroConcavity:" + zeroConcavity);
+            //System.out.println("zeroConcavity:" + zeroConcavity);
 
             for (int i = 1; i < records.size() - 1; i++) {
                 record = records.get(i);
@@ -224,7 +226,7 @@ public class RobotPath {
                     ddx = 0;
                     ddy = 0;
                 }
-                System.out.println("ddx: " + ddx + ", ddy: " + ddy);
+                //System.out.println("ddx: " + ddx + ", ddy: " + ddy);
                 vectors.add(new ControlVector(new double[]{x, tanx, ddx}, new double[]{y, tany, ddy}));
             }
             // Add the end control vector

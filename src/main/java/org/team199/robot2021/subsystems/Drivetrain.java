@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
+  private final double gyroOffset;
   private final AHRS gyro = new AHRS(SerialPort.Port.kMXP); //Also try kUSB and kUSB2
 
   private SwerveDriveKinematics kinematics = null;
@@ -38,6 +39,7 @@ public class Drivetrain extends SubsystemBase {
 
   public Drivetrain() {
     gyro.reset();
+    gyroOffset = gyro.getCompassHeading();
 
     // Define the corners of the robot relative to the center of the robot using Translation2d objects.
     // Positive x-values represent moving toward the front of the robot whereas positive y-values represent moving toward the left of the robot.
@@ -110,7 +112,11 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getHeading() {
-    return Math.IEEEremainder(gyro.getAngle(), 360) * (isGyroReversed ? -1.0 : 1.0);
+    if (SmartDashboard.getBoolean("Field Oriented", false)) {
+      return Math.IEEEremainder(gyro.getCompassHeading() - gyroOffset, 360) * (isGyroReversed ? -1.0 : 1.0);
+    } else {
+      return Math.IEEEremainder(gyro.getAngle(), 360) * (isGyroReversed ? -1.0 : 1.0);
+    }
   }
 
   public SwerveDriveKinematics getKinematics() { return kinematics; }
@@ -145,7 +151,7 @@ public class Drivetrain extends SubsystemBase {
   */
   private ChassisSpeeds getChassisSpeeds(double forward, double strafe, double rotation) {
     ChassisSpeeds speeds;
-    if (SmartDashboard.getBoolean("Field Oriented", true)) {
+    if (SmartDashboard.getBoolean("Field Oriented", false)) {
       speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Rotation2d.fromDegrees(getHeading()));
     } else {
       speeds = new ChassisSpeeds(forward, strafe, rotation);

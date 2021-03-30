@@ -8,11 +8,16 @@
 
 package org.team199.robot2021;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -24,8 +29,6 @@ import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.commands.ToggleIntake;
 import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Intake;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -35,8 +38,6 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch1Port);
-    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.DrivePorts.kAutoPathSwitch2Port);
     final Drivetrain drivetrain = new Drivetrain();
     //private final Limelight lime = new Limelight();
     //private final Shooter shooter = new Shooter(lime);
@@ -46,7 +47,7 @@ public class RobotContainer {
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.port);
     private final Joystick controller = new Joystick(Constants.OI.Controller.port);
     //private final Climber climber = new Climber();
-    private final RobotPath[] paths;
+    private final SendableChooser<Command> autoCommandChooser;
     public Trajectory trajectory;
     //private final LinearInterpolation linearInterpol;
 
@@ -90,10 +91,16 @@ public class RobotContainer {
             }
         }, feeder, intake));*/
 
-        paths = new RobotPath[4];
-        loadPath(Path.PATH1, "barrelRacing", false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath(Path.PATH2, "slalom", false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath(Path.PATH3, "bounce", false, false, Constants.DriveConstants.autoMaxSpeed);
+        autoCommandChooser = new SendableChooser<Command>();
+        autoCommandChooser.setDefaultOption("No autonomous", new InstantCommand());
+        loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("AutoNav: Slalom","slalom", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic Search: All Points", "GalacticSearchAllPoints", true, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        SmartDashboard.putData(autoCommandChooser);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
@@ -134,19 +141,26 @@ public class RobotContainer {
         //new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
     }
 
-    public Command getAutonomousCommand(boolean faceInPathDirection) {
+    public Command getAutonomousCommand() {
         try {
-            final RobotPath path = paths[getPath().idx];
-            if (path == null) {
-                throw new Exception("Desired path is null.");
+            final Command autoCommand = autoCommandChooser.getSelected();
+            if (autoCommand == null) {
+                throw new Exception("No path was selected.");
             }
-            boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
-            Command command = path.getPathCommand(faceInPathDirection);
-            trajectory = paths[Path.PATH2.idx].trajectory;
-            return command;
+            return autoCommand;
         } catch(final Exception e) {
             e.printStackTrace(System.err);
             return new InstantCommand();
+        }
+    }
+
+    private void loadPath(final String chooserName, final String pathName, final boolean faceInPathDirection, final boolean deployIntake, 
+                          final boolean isInverted, final double endVelocity) {
+        try {
+            RobotPath path = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity);
+            autoCommandChooser.addOption(chooserName, path.getPathCommand(faceInPathDirection));
+        } catch(final Exception e) {
+            e.printStackTrace(System.err);
         }
     }
 
@@ -181,73 +195,7 @@ public class RobotContainer {
         return value * Math.abs(value);
     }
 
-    /**
-     * DIO Port 0 = Switch 1
-     * DIO Port 1 = Switch 2
-     * on = jumper in
-     * off= jumper out
-     * Red/Blue determined by DS
-     * Switch states
-     * 1    2
-     * off off = off
-     * on off = 1
-     * off on = 2
-     * on on = 3
-     */
-    public Path getPath() {
-        Path outPath = Path.OFF;
-        // get() returns true if the circuit is open.
-        if(!autoSwitch1.get()) {
-            if(!autoSwitch2.get()) {
-                outPath = Path.PATH3;
-                System.out.println("Path3 loaded.");
-            } else {
-                outPath = Path.PATH1;
-                System.out.println("Path1 loaded.");
-            }
-        } else if(!autoSwitch2.get()) {
-            outPath = Path.PATH2;
-            System.out.println("Path2 loaded.");
-        } else {
-            outPath = Path.OFF;
-            System.out.println("No path loaded.");
-        }
-        return outPath;
-    }
-
-    private void loadPath(final Path path, final String pathName, final boolean deployIntake, final boolean isInverted, final double endVelocity) {
-        try {
-            paths[path.idx] = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity);
-        } catch(final Exception e) {
-            e.printStackTrace(System.err);
-        }
-    }
-
-    public static enum Path {
-        PATH1(0), PATH2(1), PATH3(2), OFF(-1);
-
-        public final int idx;
-
-        private Path(final int idx) {
-            this.idx = idx;
-        }
-    }
-
-    public static enum StartingPosition {
-        // TODO: Change starting positions to reflect FIRST At Home challenges
-        BLUE_LEFT(12.61, -4.75),
-        BLUE_CENTER(12.61, -5.75),
-        BLUE_RIGHT(12.61, -6.75),
-        RED_LEFT(3.39, -3.4),
-        RED_CENTER(3.39, -2.4),
-        RED_RIGHT(3.39, -1.4);
-
-        public final Translation2d pos;
-
-        private StartingPosition(double x, double y) {
-            pos = new Translation2d(x, y);
-        }
-    }
+    /*
     public static enum Target {
         BLUE_PORT(16, -5.75),
         RED_PORT(0, -2.4);
@@ -258,4 +206,5 @@ public class RobotContainer {
             pos = new Translation2d(x, y);
         }
     }
+    */
 }

@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 public class Robot extends TimedRobot {
   
   private RobotContainer robotContainer;
-  private Timer timer;
+  //private Timer timer;
   private File debugFile;
   private FileWriter writer;
   /**
@@ -46,6 +46,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Field Oriented", false);
     robotContainer = new RobotContainer();
     Log.init();
+    /*
     debugFile = new File("/home/lvuser/debug.txt");
     try {
       debugFile.createNewFile();
@@ -53,7 +54,7 @@ public class Robot extends TimedRobot {
     } catch (IOException e) {
       e.printStackTrace();
       System.exit(1);
-    }
+    }*/
     CommandScheduler.getInstance().schedule(new HomeAbsolute(robotContainer.drivetrain));
   }
 
@@ -70,9 +71,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.drivetrain.brake();
-    robotContainer.getAutonomousCommand(true).schedule();
+    robotContainer.getAutonomousCommand().schedule();
     Log.setDataLoggingDisabled(false);
 
+    /*
     try {
       for (Trajectory.State state : robotContainer.trajectory.getStates()) {
         writer.write("Trajectory pose at t = " + state.timeSeconds + ": " + state.poseMeters + "\n");
@@ -83,6 +85,7 @@ public class Robot extends TimedRobot {
 
     timer = new Timer();
     timer.start();
+    */
   }
 
   /**
@@ -90,12 +93,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    /*
     double time = timer.get();
     try {
       writer.write("Odometry pose at t = " + time + ": " + robotContainer.drivetrain.getOdometry().getPoseMeters() + "\n");
     } catch (IOException e) {
       e.printStackTrace();
-    }
+    }*/
   }
 
   /**
