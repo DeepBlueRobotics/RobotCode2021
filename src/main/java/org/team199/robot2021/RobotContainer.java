@@ -92,10 +92,14 @@ public class RobotContainer {
         }, feeder, intake));*/
 
         autoCommandChooser = new SendableChooser<Command>();
-        autoCommandChooser.addDefault("No autonomous", new InstantCommand());
-        loadPath("barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("slalom", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        autoCommandChooser.setDefaultOption("No autonomous", new InstantCommand());
+        loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("AutoNav: Slalom","slalom", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic Search: All Points", "GalacticSearchAllPoints", true, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         SmartDashboard.putData(autoCommandChooser);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
@@ -150,10 +154,11 @@ public class RobotContainer {
         }
     }
 
-    private void loadPath(final String pathName, final boolean faceInPathDirection, final boolean deployIntake, final boolean isInverted, final double endVelocity) {
+    private void loadPath(final String chooserName, final String pathName, final boolean faceInPathDirection, final boolean deployIntake, 
+                          final boolean isInverted, final double endVelocity) {
         try {
             RobotPath path = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity);
-            autoCommandChooser.addOption(pathName, path.getPathCommand(faceInPathDirection));
+            autoCommandChooser.addOption(chooserName, path.getPathCommand(faceInPathDirection));
         } catch(final Exception e) {
             e.printStackTrace(System.err);
         }
