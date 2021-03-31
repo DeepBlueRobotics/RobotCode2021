@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import org.team199.robot2021.Constants;
 import org.team199.robot2021.subsystems.Drivetrain;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class TeleopDrive extends CommandBase {
@@ -42,15 +43,19 @@ public class TeleopDrive extends CommandBase {
   @Override
   public void execute() {
     double forward, strafe, rotateClockwise;
-
     // Sets all values less than or equal to a very small value (determined by the idle joystick state) to zero.
     // Used to make sure that the robot does not try to change its angle unless it is moving,
     if (Math.abs(fwd.get()) <= Constants.OI.JOY_THRESH) forward = 0.0;
     else forward = Constants.DriveConstants.maxForward * fwd.get();
     if (Math.abs(str.get()) <= Constants.OI.JOY_THRESH) strafe = 0.0;
     else strafe = Constants.DriveConstants.maxStrafe * str.get();
-    if (Math.abs(rcw.get()) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
-    else rotateClockwise = Constants.DriveConstants.maxRCW * rcw.get();
+
+    if (!SmartDashboard.getBoolean("Teleop Face Direction of Travel", false)) {
+      if (Math.abs(rcw.get()) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
+      else rotateClockwise = Constants.DriveConstants.maxRCW * rcw.get();
+    } else {
+      rotateClockwise = Math.atan2(strafe, forward);
+    }
     
     drivetrain.drive(forward, strafe, rotateClockwise);
   }
