@@ -92,7 +92,7 @@ public final class Constants {
         // PID values are listed in the order kP, kI, and kD
         public static final double[] xPIDController = {4, 0.0, 0.0};
         public static final double[] yPIDController = {4, 0.0, 0.0};
-        public static final double[] thetaPIDController = {5, 0.0, 0.0};
+        public static final double[] thetaPIDController = {7, 0.0, 0.0};
     }
 
     public static final class DrivePorts {
@@ -177,6 +177,7 @@ public final class Constants {
             public static int RT;
             public static int BACK;
             public static int START;
+            //TODO: mode button setting to teletop init
             static {
                 if (controller.getName().equals("Logitech Dual Action")) {
                     // Buttons and triggers

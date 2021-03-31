@@ -215,8 +215,8 @@ public class SwerveModule {
         // Display the speed that the robot thinks it is travelling at.
         SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
         SmartDashboard.putNumber(moduleString + " Setpoint Angle", turnPIDController.getSetpoint());
-        SmartDashboard.putNumber("Gyro Pitch", pitchDegSupplier.get());
-        SmartDashboard.putNumber("Gyro Roll", rollDegSupplier.get());
+        //SmartDashboard.putNumber("Gyro Pitch", pitchDegSupplier.get());
+        //SmartDashboard.putNumber("Gyro Roll", rollDegSupplier.get());
         SmartDashboard.putNumber(moduleString + "Antigravitational Acceleration", calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get()));
     }
     
