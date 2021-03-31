@@ -78,6 +78,8 @@ public class Drivetrain extends SubsystemBase {
                                 new CANCoder(Constants.DrivePorts.canCoderPortBR), Constants.DriveConstants.driveModifier,
                                 Constants.DriveConstants.maxSpeed, 3, pitchSupplier, rollSupplier);
     modules = new SwerveModule[]{moduleFL, moduleFR, moduleBL, moduleBR};
+
+    SmartDashboard.putBoolean("Teleop Face Direction of Travel", false);
   }
 
   @Override
