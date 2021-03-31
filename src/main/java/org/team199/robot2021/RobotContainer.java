@@ -74,9 +74,9 @@ public class RobotContainer {
         //shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
         drivetrain.setDefaultCommand(new TeleopDrive(drivetrain,
 
-        () -> signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.Y)),
-            () -> signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X)),
-            () -> signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X))));
+        () -> inputProcessing(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.Y)),
+            () -> inputProcessing(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X)),
+            () -> inputProcessing(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X))));
 
         /*
         feeder.setDefaultCommand(new RunCommand(() -> {
@@ -179,10 +179,10 @@ public class RobotContainer {
                 if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -rightJoy.getY();
             case GAMEPAD:
                 if (controller.getName().equals("Logitech Dual Action")) {
-                if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(0);
-                if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(1);
-                if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(2);
-                if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(3);
+                    if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(0);
+                    if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(1);
+                    if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(2);
+                    if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(3);
                 } else {
                     if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(0);
                     if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(1);
@@ -194,12 +194,15 @@ public class RobotContainer {
     }
 
     /**
-     * Squares a value and preserves its sign.
-     * @param value     The value to be squared.
-     * @return The signed squared value.
+     * Processes an input from the joystick into a value between -1 and 1
+     * @param value     The value to be processed.
+     * @return The processed value.
      */
-    private double signedSquare(double value){
-        return value * Math.abs(value);
+    private double inputProcessing(double value){
+        double processedInput;
+        //processedInput = (((1-Math.cos(value*Math.PI))/2)*((1-Math.cos(value*Math.PI))/2))*(value/Math.abs(value));
+        processedInput = Math.copySign(((1-Math.cos(value*Math.PI))/2)*((1-Math.cos(value*Math.PI))/2),value);
+        return processedInput;
     }
 
     /*
