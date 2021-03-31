@@ -7,7 +7,7 @@
 
 package org.team199.robot2021;
 import edu.wpi.first.wpilibj.util.Units;
-
+import edu.wpi.first.wpilibj.Joystick;
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants. This class should not be used for any other
@@ -166,18 +166,46 @@ public final class Constants {
 
         public static final class Controller {
             public static final int port = 0;
-
-            // Buttons and triggers
-            public static final int X = 1;
-            public static final int A = 2;
-            public static final int B = 3;
-            public static final int Y = 4;
-            public static final int LB = 5;
-            public static final int RB = 6;
-            public static final int LT = 7;
-            public static final int RT = 8;
-            public static final int BACK = 9;
-            public static final int START = 10;
+            public static Joystick controller = new Joystick(port);
+            public static int X;
+            public static int A;
+            public static int B;
+            public static int Y;
+            public static int LB;
+            public static int RB;
+            public static int LT;
+            public static int RT;
+            public static int BACK;
+            public static int START;
+            static {
+                if (controller.getName().equals("Logitech Dual Action")) {
+                    // Buttons and triggers
+                    X = 1;
+                    A = 2;
+                    B = 3;
+                    Y = 4;
+                    LB = 5;
+                    RB = 6;
+                    LT = 7;
+                    RT = 8;
+                    BACK = 9;
+                    START = 10;
+                } else {
+                    // Buttons and triggers for xbox controller
+                    X = 3;
+                    A = 1;
+                    B = 2;
+                    Y = 4;
+                    LB = 5;
+                    RB = 6;
+                    LT = 7;
+                    RT = 8;
+                    BACK = 9;
+                    START = 10;    
+                }
+            }
+            //driving
+            static final int kSlowMode = RB;
 
             // climber
             //public static final int kDeployClimberButton = Y;
