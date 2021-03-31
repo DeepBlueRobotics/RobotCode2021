@@ -38,7 +38,7 @@ public final class Constants {
 
         public static final double driveModifier = 1;
         public static final double wheelDiameter = Units.inchesToMeters(4.0);
-        public static final double mu = 0.1;
+        public static final double mu = 0.07;
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
         // Angular speed to translational speed --> v = omega * r / gearing
@@ -92,7 +92,7 @@ public final class Constants {
         // PID values are listed in the order kP, kI, and kD
         public static final double[] xPIDController = {4, 0.0, 0.0};
         public static final double[] yPIDController = {4, 0.0, 0.0};
-        public static final double[] thetaPIDController = {7, 0.0, 0.0};
+        public static final double[] thetaPIDController = {4, 0.0, 0.0};
     }
 
     public static final class DrivePorts {

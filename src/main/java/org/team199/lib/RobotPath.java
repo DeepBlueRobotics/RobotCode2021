@@ -57,7 +57,7 @@ public class RobotPath {
                 timerStarted = true;
                 timer.start();
             }
-            return trajectory.sample(timer.get()+2).poseMeters.getRotation();
+            return trajectory.sample(timer.get()).poseMeters.getRotation();
         }
     }
 
@@ -116,8 +116,8 @@ public class RobotPath {
         ProfiledPIDController thetaController = new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
                                                                           Constants.DriveConstants.thetaPIDController[1],
                                                                           Constants.DriveConstants.thetaPIDController[2],
-                                                                          new Constraints(Constants.DriveConstants.autoMaxSpeed / Constants.DriveConstants.swerveRadius,
-                                                                                          Constants.DriveConstants.autoMaxAccel / Constants.DriveConstants.swerveRadius));
+                                                                          new Constraints(Double.POSITIVE_INFINITY,
+                                                                                          Double.POSITIVE_INFINITY));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         trajectory = trajectory.relativeTo(trajectory.getInitialPose());
