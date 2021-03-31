@@ -96,6 +96,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
     SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());;
     SmartDashboard.putNumber("Gyro Heading", getHeading());
+    SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
   }
 
   public void setOdometry(SwerveDriveOdometry odometry) {
