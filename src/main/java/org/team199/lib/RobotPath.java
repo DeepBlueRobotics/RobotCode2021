@@ -116,8 +116,10 @@ public class RobotPath {
         ProfiledPIDController thetaController = new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
                                                                           Constants.DriveConstants.thetaPIDController[1],
                                                                           Constants.DriveConstants.thetaPIDController[2],
-                                                                          new Constraints(Constants.DriveConstants.autoMaxSpeed / Constants.DriveConstants.swerveRadius,
-                                                                                          Constants.DriveConstants.autoMaxAccel / Constants.DriveConstants.swerveRadius));
+                                                                          // Set the max speed and max acceleration constraints above the auto max speed/accel
+                                                                          // Because wheel slippage is permissible.
+                                                                          new Constraints(Constants.DriveConstants.maxSpeed / Constants.DriveConstants.swerveRadius,
+                                                                                          Constants.g / Constants.DriveConstants.swerveRadius));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         trajectory = trajectory.relativeTo(trajectory.getInitialPose());
