@@ -3,7 +3,6 @@ package org.team199.lib;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -15,12 +14,11 @@ import org.apache.commons.csv.CSVRecord;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Transform2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.spline.Spline.ControlVector;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
@@ -140,7 +138,9 @@ public class RobotPath {
     }
 
     public void loadOdometry() {
-        dt.setOdometry(new SwerveDriveOdometry(dt.getKinematics(), Rotation2d.fromDegrees(dt.getHeading()), trajectory.getInitialPose()));
+        Rotation2d heading = Rotation2d.fromDegrees(dt.getHeading());
+        Pose2d initPose = new Pose2d(trajectory.getInitialPose().getTranslation(), heading);
+        dt.setOdometry(new SwerveDriveOdometry(dt.getKinematics(), heading, initPose));
     }
 
     private static double average(double[] arr) {
