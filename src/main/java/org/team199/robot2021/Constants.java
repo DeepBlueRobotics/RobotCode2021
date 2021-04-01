@@ -117,8 +117,8 @@ public final class Constants {
 
         public static final int kIntakeRoller = 13;
 
-        //public static final int kFeederEjector = 7;
-        //public static final int kFeederBelt = 8;
+        public static final int kFeederEjector = 7;
+        public static final int kFeederBelt = 8;
 
         //public static final int kShooterMaster = 1;     // Left
         //public static final int kShooterSlave = 14;     // Right
@@ -130,8 +130,8 @@ public final class Constants {
         public static final int[] kIntakePistons = { 0, 1, 2, 5 };
 
         // other
-        //public static final int kFeederInSensor = 11;
-        //public static final int kFeederOutSensor = 10;
+        public static final int kFeederInSensor = 11;
+        public static final int kFeederOutSensor = 10;
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
