@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
+  // compassOffset is magnetic north relative to the current heading
   private final double compassOffset;
   private final AHRS gyro = new AHRS(SerialPort.Port.kMXP); //Also try kUSB and kUSB2
 
@@ -38,8 +39,20 @@ public class Drivetrain extends SubsystemBase {
   private static final boolean isGyroReversed = true;
 
   public Drivetrain() {
+    gyro.calibrate();
+    while (gyro.isCalibrating()) {
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+        break;
+      }
+      System.out.println("Calibrating the gyro...");
+    }
     gyro.reset();
-    compassOffset = gyro.getCompassHeading();
+    SmartDashboard.putBoolean("Magnetic Field Disturbance", gyro.isMagneticDisturbance());
+    System.out.println("Magnetometer is calibrated: " + gyro.isMagnetometerCalibrated());
+    compassOffset = -gyro.getCompassHeading();
     SmartDashboard.putNumber("Field Offset from North (degrees)", 62);
 
     // Define the corners of the robot relative to the center of the robot using Translation2d objects.
@@ -116,12 +129,11 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getHeading() {
+    double x = gyro.getAngle();
     if (SmartDashboard.getBoolean("Field Oriented", false)) {
-      double x = gyro.getAngle() + compassOffset + SmartDashboard.getNumber("Field Offset from North (degrees)", 62);
-      return Math.IEEEremainder(x, 360) * (isGyroReversed ? -1.0 : 1.0);
-    } else {
-      return Math.IEEEremainder(gyro.getAngle(), 360) * (isGyroReversed ? -1.0 : 1.0);
+      x += compassOffset + SmartDashboard.getNumber("Field Offset from North (degrees)", 62);
     }
+    return Math.IEEEremainder(x * (isGyroReversed ? -1.0 : 1.0), 360);
   }
 
   public SwerveDriveKinematics getKinematics() { return kinematics; }
