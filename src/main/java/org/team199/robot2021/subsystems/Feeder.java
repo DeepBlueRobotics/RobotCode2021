@@ -11,9 +11,13 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.playingwithfusion.TimeOfFlight;
 
-//import frc.robot.lib.MotorControllerFactory;
-//import org.team199.robot2021.Constants;
+import frc.robot.lib.MotorControllerFactory;
 
+import org.mockito.Mockito;
+import org.mockito.internal.stubbing.defaultanswers.ReturnsSmartNulls;
+import org.team199.robot2021.Constants;
+
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -29,13 +33,13 @@ public class Feeder extends SubsystemBase {
   private static double kOutSensorMinDistance = 32;
   private static double kOutSensorMaxDistance = 45;
   
-  private final WPI_TalonSRX beltMotor = null;//MotorControllerFactory.createTalon(Constants.Drive.kFeederBelt);
-  private final WPI_TalonSRX ejectMotor = null;//MotorControllerFactory.createTalon(Constants.Drive.kFeederEjector);
-  private final TimeOfFlight inSensor = null;//new TimeOfFlight(Constants.Drive.kFeederInSensor);
-  private final TimeOfFlight outSensor = null;//new TimeOfFlight(Constants.Drive.kFeederOutSensor);
+  private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederBelt);
+  private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederEjector);
+  private final TimeOfFlight inSensor = createTimeOfFlight(Constants.Drive.kFeederInSensor);
+  private final TimeOfFlight outSensor = createTimeOfFlight(Constants.Drive.kFeederOutSensor);
   
   private double limitDistance = 7000;
-  private int startPosition = 0;
+  private double startPosition = 0;
   private boolean reachedShooter = false;
 
   /**
@@ -123,4 +127,9 @@ public class Feeder extends SubsystemBase {
   public TimeOfFlight getShooterDistanceSensor() {
     return outSensor;
   }
+
+  public static TimeOfFlight createTimeOfFlight(int port) {
+    return RobotBase.isReal() ? new TimeOfFlight(port) : Mockito.mock(TimeOfFlight.class, new ReturnsSmartNulls());
+  }
+
 }
