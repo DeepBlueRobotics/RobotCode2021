@@ -56,7 +56,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putBoolean("Magnetic Field Disturbance", gyro.isMagneticDisturbance());
     System.out.println("Magnetometer is calibrated: " + gyro.isMagnetometerCalibrated());
     compassOffset = gyro.getCompassHeading();
-    SmartDashboard.putNumber("Field Offset from North (degrees)", 139.1);
+    SmartDashboard.putNumber("Field Offset from North (degrees)", 134.1);
 
     // Define the corners of the robot relative to the center of the robot using Translation2d objects.
     // Positive x-values represent moving toward the front of the robot whereas positive y-values represent moving toward the left of the robot.
@@ -115,6 +115,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Robot Heading", getHeading());
     SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
     SmartDashboard.putNumber("Compass Offset", compassOffset);
+    SmartDashboard.putBoolean("Current Magnetic Field Disturbance", gyro.isMagneticDisturbance());
   }
 
   public void setOdometry(SwerveDriveOdometry odometry) {
@@ -136,7 +137,7 @@ public class Drivetrain extends SubsystemBase {
   public double getHeading() {
     double x = gyro.getAngle();
     if (SmartDashboard.getBoolean("Field Oriented", false)) {
-      x += compassOffset - SmartDashboard.getNumber("Field Offset from North (degrees)", 139.1);
+      x += compassOffset - SmartDashboard.getNumber("Field Offset from North (degrees)", 134.1);
     }
     return Math.IEEEremainder(x * (isGyroReversed ? -1.0 : 1.0), 360);
   }
