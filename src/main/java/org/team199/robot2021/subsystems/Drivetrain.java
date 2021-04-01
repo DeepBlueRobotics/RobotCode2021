@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
-  private final double gyroOffset;
+  private final double compassOffset;
   private final AHRS gyro = new AHRS(SerialPort.Port.kMXP); //Also try kUSB and kUSB2
 
   private SwerveDriveKinematics kinematics = null;
@@ -39,8 +39,8 @@ public class Drivetrain extends SubsystemBase {
 
   public Drivetrain() {
     gyro.reset();
-    gyroOffset = gyro.getCompassHeading() - gyro.getAngle();
-    SmartDashboard.putNumber("Heading Adjustment (degrees)", 0);
+    compassOffset = gyro.getCompassHeading();
+    SmartDashboard.putNumber("Field Offset from North (degrees)", 62);
 
     // Define the corners of the robot relative to the center of the robot using Translation2d objects.
     // Positive x-values represent moving toward the front of the robot whereas positive y-values represent moving toward the left of the robot.
@@ -117,7 +117,7 @@ public class Drivetrain extends SubsystemBase {
 
   public double getHeading() {
     if (SmartDashboard.getBoolean("Field Oriented", false)) {
-      double x = gyro.getAngle() + gyroOffset + SmartDashboard.getNumber("Heading Adjustment (degrees)", 0);
+      double x = gyro.getAngle() + compassOffset + SmartDashboard.getNumber("Field Offset from North (degrees)", 62);
       return Math.IEEEremainder(x, 360) * (isGyroReversed ? -1.0 : 1.0);
     } else {
       return Math.IEEEremainder(gyro.getAngle(), 360) * (isGyroReversed ? -1.0 : 1.0);

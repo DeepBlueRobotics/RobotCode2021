@@ -3,6 +3,7 @@ package org.team199.lib;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.apache.commons.csv.CSVRecord;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Transform2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
@@ -100,18 +102,6 @@ public class RobotPath {
         this.deployIntake = deployIntake;
     }
 
-    public SwerveModuleState[] convertToFieldRelative(SwerveModuleState[] swerveModuleStates, Translation2d centerOfRotation) {
-        if (SmartDashboard.getBoolean("Field Oriented", false)) {
-            ChassisSpeeds speeds = dt.getKinematics().toChassisSpeeds(swerveModuleStates);
-            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds.vxMetersPerSecond, 
-                                                           speeds.vyMetersPerSecond, 
-                                                           speeds.omegaRadiansPerSecond, 
-                                                           Rotation2d.fromDegrees(dt.getHeading()));
-            return dt.getKinematics().toSwerveModuleStates(speeds, centerOfRotation);
-        } else return swerveModuleStates;
-    }
-    
-
     public Command getPathCommand(boolean faceInPathDirection) {
         ProfiledPIDController thetaController = new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
                                                                           Constants.DriveConstants.thetaPIDController[1],
@@ -119,25 +109,26 @@ public class RobotPath {
                                                                           new Constraints(Double.POSITIVE_INFINITY,
                                                                                           Double.POSITIVE_INFINITY));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        PIDController xPIDController = new PIDController(Constants.DriveConstants.xPIDController[0],
+                                                         Constants.DriveConstants.xPIDController[1],
+                                                         Constants.DriveConstants.xPIDController[2]);
+        PIDController yPIDController = new PIDController(Constants.DriveConstants.yPIDController[0],
+                                                         Constants.DriveConstants.yPIDController[1],
+                                                         Constants.DriveConstants.yPIDController[2]);
 
-        trajectory = trajectory.relativeTo(trajectory.getInitialPose());
-        double heading = dt.getHeading();
-        Supplier<Rotation2d> headingSupplierFunction = (!faceInPathDirection) ? () -> Rotation2d.fromDegrees(heading)
-                                                                             : () -> hs.sample();
+        trajectory = trajectory.transformBy(new Transform2d(trajectory.getInitialPose().getTranslation().times(-1),
+                                                            new Rotation2d()));
+        Rotation2d heading = Rotation2d.fromDegrees(dt.getHeading());
+        Supplier<Rotation2d> headingSupplierFunction = (!faceInPathDirection) ? () -> heading : () -> hs.sample();
         SwerveControllerCommand ram = new SwerveControllerCommand(
             trajectory,
             () -> dt.getOdometry().getPoseMeters(),
             dt.getKinematics(),
-            new PIDController(Constants.DriveConstants.xPIDController[0],
-                              Constants.DriveConstants.xPIDController[1],
-                              Constants.DriveConstants.xPIDController[2]),
-
-            new PIDController(Constants.DriveConstants.yPIDController[0],
-                              Constants.DriveConstants.yPIDController[1],
-                              Constants.DriveConstants.yPIDController[2]),
+            xPIDController,
+            yPIDController,
             thetaController,
             headingSupplierFunction,
-            (swerveModuleStates) -> dt.drive(convertToFieldRelative(swerveModuleStates, new Translation2d())),
+            (swerveModuleStates) -> dt.drive(swerveModuleStates),
             dt
             );
 
