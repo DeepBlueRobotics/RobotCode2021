@@ -93,6 +93,8 @@ public final class Constants {
         public static final double[] xPIDController = {4, 0.0, 0.0};
         public static final double[] yPIDController = {4, 0.0, 0.0};
         public static final double[] thetaPIDController = {4, 0.0, 0.0};
+
+        public static final double intakeCurrentDraw = 0.0;
     }
 
     public static final class DrivePorts {
@@ -116,6 +118,9 @@ public final class Constants {
         public static final int canCoderPortBR = 2;
 
         public static final int kIntakeRoller = 13;
+
+        public static final int kPDPCANPort = 0;
+        public static final int kIntakeRollerPDP = 0;
 
         public static final int kFeederEjector = 7;
         public static final int kFeederBelt = 8;
