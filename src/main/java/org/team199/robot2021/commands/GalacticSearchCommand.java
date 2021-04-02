@@ -15,31 +15,33 @@ public class GalacticSearchCommand extends SequentialCommandGroup {
 
         addCommands(
             new ToggleIntake(intake),
-            new DriveToBall(dt, intake, lime, cameraHeight),
-            new DriveToBall(dt, intake, lime, cameraHeight),
-            new DriveToBall(dt, intake, lime, cameraHeight),
+            new DriveToBalls(dt, intake, lime, cameraHeight, 3),
             /* Drive to finish command */ new InstantCommand()
         );
     }
 }
 
-class DriveToBall extends CommandBase {
+class DriveToBalls extends CommandBase {
     private Drivetrain dt;
     private Intake intake;
     private Limelight lime;
     private double cameraHeight;
+    private int ballsToCollect, ballCounter;
 
     private ProfiledPIDController thetaController;
     private PIDController xPIDController, yPIDController;
 
-    public DriveToBall(Drivetrain dt, Intake intake, Limelight lime, double cameraHeight) {
+    public DriveToBalls(Drivetrain dt, Intake intake, Limelight lime, double cameraHeight, int ballsToCollect) {
         this.dt = dt;
         this.intake = intake;
         this.lime = lime;
         this.cameraHeight = cameraHeight;
+        this.ballsToCollect = ballsToCollect;
         addRequirements(dt, intake);
 
-        // Use the same PID Controllers as RobotPath
+        ballCounter = 0;
+
+        // Use the same PID Controllers as in RobotPath
         thetaController = new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
                                                     Constants.DriveConstants.thetaPIDController[1],
                                                     Constants.DriveConstants.thetaPIDController[2],
@@ -57,11 +59,13 @@ class DriveToBall extends CommandBase {
     public void execute() {
         // Search for the ball using the limelight
         // Once found, compute distances to the ball and use PID to drive to the ball
+        // Check the current draw on the roller motor to see if we have intaked the ball
+        // If so, start again from the beginning until all balls have been collected.
+        // Otherwise, keep trying to drive toward the ball
     }
 
     public boolean isFinished() {
-        // Check the current draw on the roller motor to see if we have intaked the ball
-        return false;
+        return ballCounter == ballsToCollect;
     }
 
     public void end(boolean interrupted) {
