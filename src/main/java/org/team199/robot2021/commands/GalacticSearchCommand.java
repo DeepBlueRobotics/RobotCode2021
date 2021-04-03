@@ -33,7 +33,7 @@ public class GalacticSearchCommand extends SequentialCommandGroup {
             new ToggleIntake(intake),
             new DriveToBalls(dt, intake, lime, cameraHeight, 3),
             // It is best to set the x-component to be farther than it needs to be
-            new DriveToEnd(dt, new Pose2d(Units.inchesToMeters(300), 0, new Rotation2d()))
+            new DriveToEnd(dt, new Pose2d(Units.inchesToMeters(300), dt.getOdometry().getPoseMeters().getTranslation().getY(), new Rotation2d()))
         );
     }
 }
