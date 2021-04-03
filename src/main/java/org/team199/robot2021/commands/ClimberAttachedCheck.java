@@ -11,14 +11,14 @@ import org.team199.robot2021.subsystems.Climber;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class ClimberCurrentLowCheck extends CommandBase {
+public class ClimberAttachedCheck extends CommandBase {
   private final Climber climber;
-  private double current;
+  private boolean buttonPressed;
 
 
-  public ClimberCurrentLowCheck(Climber climber) {
+  public ClimberAttachedCheck(Climber climber) {
     addRequirements(this.climber = climber);
-    current = climber.getCurrent();
+    buttonPressed = climber.isButtonPressed();
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -41,6 +41,6 @@ public class ClimberCurrentLowCheck extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return current <= climber.kLowCurrent;
+    return buttonPressed;
   }
 }

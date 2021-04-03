@@ -6,6 +6,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.Joystick;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,6 +46,8 @@ public class Climber extends SubsystemBase {
     private final Encoder liftEnc = new Encoder(2, 3);
     private final CANEncoder winchEnc = winchMotor.getEncoder();
     private final PowerDistributionPanel powerDistributionPanel = new PowerDistributionPanel(1); //TODO: set correct module
+    private final Joystick placeholder = new Joystick(1);
+    private final JoystickButton buttonCheck = new JoystickButton(placeholder, 1);
 
     public Climber(){
         liftEnc.setDistancePerPulse(kLiftConversionFactor);
@@ -121,6 +126,11 @@ public class Climber extends SubsystemBase {
 
     public double getCurrent() {
         return liftMotor.getOutputCurrent();
+    }
+
+    public boolean isButtonPressed() {
+        boolean isButtonPressed = buttonCheck.get();
+       return isButtonPressed;
     }
 
 

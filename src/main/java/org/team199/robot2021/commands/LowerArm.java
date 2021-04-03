@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class LowerArm extends CommandBase {
   private final Climber climber;
-  private double current;
+  //change voltage to isButtonPressed
+  private double isButtonPressed;
+  
 
 
   public LowerArm(Climber climber) {
@@ -31,6 +33,7 @@ public class LowerArm extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //make while loop that constantly checks if isbuttonpressed, cancel this command if it ever becomes false
   }
 
   // Called once the command ends or is interrupted.
