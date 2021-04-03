@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.lib.MotorControllerFactory;
 import org.team199.robot2021.Constants;
+import org.team199.robot2021.commands.RaiseRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 public class Climber extends SubsystemBase {
@@ -20,7 +21,7 @@ public class Climber extends SubsystemBase {
 
     //TODO: find good values and then set to final
     public static double kLiftDeploySpeed = 0.3; //TODO: set correct speed
-    public static double kWinchDeploySpeed = 1; //TODO : set correct speed
+    public static double kWinchDeploySpeed = 1; //TODO : set correct speed 
     public static double kLiftLowerSpeed = -0.1; //Vaguely arbitrary, but also not important might wanna ask others
     public static double kLiftKeepSpeed = 0.06; //TODO: set correct speed (trial and error) (make changeable through smartDashboard)
     public static double kLiftRetractSpeed = -0.3; //TODO: set correct speed
@@ -28,8 +29,8 @@ public class Climber extends SubsystemBase {
     public static double kWinchRetractSpeedSecond = 1;
     //public static double kLiftAdjustSpeed = 0.2; //vestigial from perevious iteration
     //public static double kWinchAdjustSpeed = 0.2; //vestigial from perevious iteration
-    public static double kHighCurrent = 83; //based on current budget? may have to be changed (number is in amps?)
-    public static double kLowCurrent = 0.2; //TODO: find Current
+    //public static double kHighCurrent = 83; //based on current budget? may have to be changed (number is in amps?)
+    //public static double kLowCurrent = 0.2;
 
     public static final double kLiftHeight = 87; // TODO: set correct speed
     public static final double kLiftLowerHeight = 0;  //TODO: set this one probably (could be double max height depending on if scalar or vector)
@@ -121,4 +122,6 @@ public class Climber extends SubsystemBase {
     public double getCurrent() {
         return liftMotor.getOutputCurrent();
     }
+
+
 }
