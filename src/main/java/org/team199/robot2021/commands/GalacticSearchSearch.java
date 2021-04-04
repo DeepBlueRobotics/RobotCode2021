@@ -47,14 +47,17 @@ public class GalacticSearchSearch extends CommandBase {
     drivetrain.drive(0, 1, 0);
     double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
     double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
+    /* adds a ball position to the list of ball positions if the ball is directly in front of the limelight or close to it*/
     if(tv == 1.0 && Math.abs(tx) <= 0.1) {
       boolean hasLogged = false;
       for(Translation2d pos: ballPositions) {
+        /* if the limelight is locating a ball that has already been logged and does not need to be logged again*/
         if(Math.abs(pos.getY() - drivetrain.getOdometry().getPoseMeters().getTranslation().getY()) <= 0.5) {
           hasLogged = true;
           break;
         }
       }
+      /*if a ball has not been logged into the list of ball positions, log it */
       if(!hasLogged) {
         double[] dist = limelight.determineObjectDist(40, 3.5);
         ballPositions.add(new Translation2d(dist[0], drivetrain.getOdometry().getPoseMeters().getY() + (dist[1] / 39.37)));
@@ -69,6 +72,9 @@ public class GalacticSearchSearch extends CommandBase {
       return;
     }
     drivetrain.drive(0, 0, 0);
+    /* in the case that only 2 balls have been found, that means a 
+    ball is obstructing another ball, so add a new ball that is the
+    proper distance away from the obstructing ball */
     if(ballPositions.size() == 2) {
       Translation2d oldPos = null;
       for(Translation2d pos: ballPositions) {
@@ -80,6 +86,7 @@ public class GalacticSearchSearch extends CommandBase {
       newPos.plus(new Translation2d(3, 0));
       ballPositions.add(newPos);
     }
+    /* locates the end zone by adding 7.5 meters forward to the current position of the robot, which places the end position inside the end zone */
     Pose2d currentPosition = drivetrain.getOdometry().getPoseMeters();
     Translation2d currentTranslation = new Translation2d(currentPosition.getTranslation().getX(), currentPosition.getTranslation().getY());
     currentTranslation.plus(new Translation2d(7.5, 0));
@@ -88,6 +95,7 @@ public class GalacticSearchSearch extends CommandBase {
 
   // Returns true when the command should end.
   @Override
+  /*the command ends when either all 3 balls have been logged or the robot has moved to the very bottom of the field */
   public boolean isFinished() {
     return ballPositions.size() >= 3 || Math.abs(drivetrain.getOdometry().getPoseMeters().getY()) >= 4.5;
   }

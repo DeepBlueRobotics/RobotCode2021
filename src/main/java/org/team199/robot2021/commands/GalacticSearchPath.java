@@ -27,6 +27,8 @@ public class GalacticSearchPath extends SequentialCommandGroup {
 
   @Override
   public void initialize() {
+    /* gets the path from GalacticSearchSearch.java and have the
+    robot take that path */
     command = new RobotPath(search.getTrajectory(), drivetrain, intake, false).getPathCommand(true);
     command.initialize();
   }

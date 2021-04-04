@@ -18,6 +18,7 @@ public class GalacticSearchSetup extends CommandBase {
     }
 
     @Override
+    //resets odometry
     public void initialize() {
         isForward = false;
         Rotation2d rotation = new Rotation2d(drivetrain.getHeading());
@@ -25,6 +26,8 @@ public class GalacticSearchSetup extends CommandBase {
     }
 
     @Override
+    /*Moves the robot forward 1 meter and the moves upward */
+    /* This is done because there are cones on the start zone boundary that would obstruct balls, so the robot moves forward out of the way of the cones */
     public void execute() {
         if(isForward) {
             drivetrain.drive(0, -1, 0);
@@ -42,6 +45,7 @@ public class GalacticSearchSetup extends CommandBase {
     }
     
     @Override
+    /*finishes command when the robot has moved to the top of the field*/
     public boolean isFinished() {
         return Math.abs(drivetrain.getOdometry().getPoseMeters().getY()) >= 2;
     }
