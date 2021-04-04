@@ -162,10 +162,10 @@ public class SwerveModule {
 
         // Use robot characterization as a simple physical model to account for internal resistance, frcition, etc.
         double appliedVoltage = (clippedDesiredSpeed >= 0 ? forwardSimpleMotorFF :
-                                 backwardSimpleMotorFF).calculate(clippedDesiredSpeed, clippedAcceleration);
+                                 backwardSimpleMotorFF).calculate(clippedDesiredSpeed, 0);//clippedAcceleration);
         // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
         //SmartDashboard.putNumber(moduleString + " Voltage no PID", appliedVoltage);
-        appliedVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
+        appliedVoltage += drivePIDController.calculate(actualSpeed, clippedDesiredSpeed);
         //SmartDashboard.putNumber(moduleString + " Unclamped Voltage", appliedVoltage);
         appliedVoltage = MathUtil.clamp(appliedVoltage / 12, -1, 1);
         //SmartDashboard.putNumber(moduleString + " Drive Speed", driveModifier * appliedVoltage);
