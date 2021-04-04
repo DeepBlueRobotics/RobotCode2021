@@ -27,8 +27,11 @@ import org.team199.robot2021.Constants.OI;
 import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.commands.ToggleIntake;
+import org.team199.robot2021.commands.GalacticSearchCommand;
 import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Intake;
+
+import frc.robot.lib.Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -39,7 +42,7 @@ import org.team199.robot2021.subsystems.Intake;
  */
 public class RobotContainer {
     final Drivetrain drivetrain = new Drivetrain();
-    //private final Limelight lime = new Limelight();
+    private final Limelight lime = new Limelight();
     //private final Shooter shooter = new Shooter(lime);
     private final Intake intake = new Intake();
     //private final Feeder feeder = new Feeder();
@@ -96,10 +99,10 @@ public class RobotContainer {
         loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Galactic Search: All Points", "GalacticSearchAllPoints", true, true, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        autoCommandChooser.addOption("Galactic Search: All Points", new GalacticSearchCommand(drivetrain, intake, lime, Constants.DriveConstants.cameraHeight));
         SmartDashboard.putData(autoCommandChooser);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }

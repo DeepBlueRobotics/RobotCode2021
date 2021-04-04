@@ -94,7 +94,10 @@ public final class Constants {
         public static final double[] yPIDController = {4, 0.0, 0.0};
         public static final double[] thetaPIDController = {4, 0.0, 0.0};
 
-        public static final double intakeCurrentDraw = 0.0;
+        // TODO: Find experimental value for current draw
+        public static final double intakeCurrentDraw = 8.0;
+
+        public static final double cameraHeight = Units.inchesToMeters(40.0);
     }
 
     public static final class DrivePorts {
