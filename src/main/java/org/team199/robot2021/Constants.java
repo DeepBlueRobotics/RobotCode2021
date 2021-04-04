@@ -210,6 +210,11 @@ public final class Constants {
                     START = 10;    
                 }
             }
+
+            public static final class GameConstants {
+                //TODO: find actual value
+                public static final float partDividerDistValue = 20.0; 
+            }
             //driving
             static final int kSlowMode = RB;
 

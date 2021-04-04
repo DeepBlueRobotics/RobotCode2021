@@ -31,10 +31,92 @@ public class GalacticSearchCommand extends SequentialCommandGroup {
         addCommands(
             new InstantCommand(() -> dt.setOdometry(new SwerveDriveOdometry(dt.getKinematics(), heading, new Pose2d(0, 0, heading)))),
             new ToggleIntake(intake),
+            //
             new DriveToBalls(dt, intake, lime, cameraHeight, 3),
             // It is best to set the x-component to be farther than it needs to be
             new DriveToEnd(dt, new Pose2d(Units.inchesToMeters(300), dt.getOdometry().getPoseMeters().getTranslation().getY(), new Rotation2d()))
+            //
         );
+    }
+}
+
+class DeterminePath extends CommandBase {
+    private Drivetrain dt;
+    private Intake intake;
+    private Limelight lime;
+    private double cameraHeight;
+    private int part;
+
+    public DriveToBalls(Drivetrain dt, Intake intake, Limelight lime, double cameraHeight) {
+        this.dt = dt;
+        this.intake = intake;
+        this.lime = lime;
+        this.cameraHeight = cameraHeight;
+        addRequirements(dt, intake);
+
+        // Use the same PID Controllers as in RobotPath
+        thetaController = new ProfiledPIDController(4, 0, 0,
+                                                    new Constraints(Double.POSITIVE_INFINITY,
+                                                                    Double.POSITIVE_INFINITY));
+        thetaController.enableContinuousInput(-180, 180);
+        thetaController.setGoal(0);
+
+        xPIDController = new PIDController(4, 0, 0);
+        xPIDController.setSetpoint(0);
+        yPIDController = new PIDController(4, 0, 0);
+        yPIDController.setSetpoint(0);
+
+        pdp = new PowerDistributionPanel(Constants.DrivePorts.kPDPCANPort);
+    }
+
+    public void initialize(){
+        double[] distComponents = lime.determineObjectDist(cameraHeight, 0.0);
+        double dist = Math.hypot(distComponents[0], distComponents[1]);
+
+        if(dist < Constants.GameConstants.partDividerDistValue){
+            //we are on part one (red)
+            part = 1;
+        }else{
+            //we are on part two (blue)
+            part = 2;
+        }
+    }
+
+    // One flaw with this command is that there is no end condition for if the robot never finds a ball.
+    public void execute() {
+        if(part == 1){
+
+        }else{
+
+        }
+
+
+
+        // Search for the ball using the limelight
+        if (mode == 0) {
+        } else {
+            // Check the current draw on the roller motor to see if we have intaked the ball
+            if (pdp.getCurrent(Constants.DrivePorts.kIntakeRollerPDP) > Constants.DriveConstants.intakeCurrentDraw) {
+                // If so, start again from the beginning until all balls have been collected.
+                mode = 0;
+                ballCounter++;
+            }
+
+            // Compute distances to the ball and use PID to drive to the ball
+            double[] setpoints = lime.determineObjectDist(cameraHeight, 0.0);
+            //-27 degrees to 27 degrees off x angle
+            double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
+            dt.drive(Constants.DriveConstants.maxForward * MathUtil.clamp(xPIDController.calculate(setpoints[0]), -1.0, 1.0),
+                     Constants.DriveConstants.maxStrafe * MathUtil.clamp(yPIDController.calculate(setpoints[1]), -1.0, 1.0),
+                     Constants.DriveConstants.maxRCW * MathUtil.clamp(thetaController.calculate(tx), -1.0, 1.0));
+        }
+    }
+
+    public boolean isFinished() {
+        return ballCounter == ballsToCollect;
+    }
+
+    public void end(boolean interrupted) {
     }
 }
 
