@@ -120,7 +120,7 @@ public final class Constants {
         public static final int kIntakeRoller = 13;
 
         public static final int kPDPCANPort = 0;
-        public static final int kIntakeRollerPDP = 0;
+        public static final int kIntakeRollerPDP = 3;
 
         public static final int kFeederEjector = 7;
         public static final int kFeederBelt = 8;
