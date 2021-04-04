@@ -105,6 +105,7 @@ public class RobotContainer {
         loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        autoCommandChooser.addOption("Galactic Search: Group 4", getGalacticSearchCommand4());
         SmartDashboard.putData(autoCommandChooser);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
@@ -146,7 +147,7 @@ public class RobotContainer {
         //new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
     }
 
-    public Command getGalacticSearchCommand() {
+    public Command getGalacticSearchCommand4() {
         GalacticSearchSearch search = new GalacticSearchSearch(drivetrain, lime);
         return new SequentialCommandGroup(new GalacticSearchSetup(drivetrain), new ToggleIntake(intake), search, new GalacticSearchPath(drivetrain, intake, search));
     }

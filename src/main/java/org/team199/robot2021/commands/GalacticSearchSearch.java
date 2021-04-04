@@ -70,7 +70,12 @@ public class GalacticSearchSearch extends CommandBase {
     }
     drivetrain.drive(0, 0, 0);
     if(ballPositions.size() == 2) {
-      Translation2d oldPos = ballPositions.get(0);
+      Translation2d oldPos = null;
+      for(Translation2d pos: ballPositions) {
+        if(oldPos == null || oldPos.getX() > pos.getX()) {
+          oldPos = pos;
+        }
+      }
       Translation2d newPos = new Translation2d(oldPos.getX(), oldPos.getY());
       newPos.plus(new Translation2d(3, 0));
       ballPositions.add(newPos);
