@@ -4,43 +4,46 @@
 
 package org.team199.robot2021.commands;
 
+import org.team199.lib.RobotPath;
 import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Intake;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
+public class GalacticSearchPath extends SequentialCommandGroup {
 
-public class GalacticSearch extends CommandBase {
   private final Drivetrain drivetrain;
   private final Intake intake;
+  private GalacticSearchSearch search;
+  private Command command;
+
   /** Creates a new GalacticSearch. */
-  public GalacticSearch(Drivetrain drivetrain, Intake intake) {
+  public GalacticSearchPath(Drivetrain drivetrain, Intake intake, GalacticSearchSearch search) {
     addRequirements(this.drivetrain = drivetrain);
     addRequirements(this.intake = intake);
-    // Use addRequirements() here to declare subsystem dependencies.
+    this.search = search;
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+    command = new RobotPath(search.getTrajectory(), drivetrain, intake, false).getPathCommand(true);
+    command.initialize();
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    command.execute();
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
+    command.end(interrupted);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return command.isFinished();
   }
+
 }

@@ -20,10 +20,15 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.lib.Limelight;
 
 import org.team199.lib.RobotPath;
 import org.team199.robot2021.Constants.OI;
+import org.team199.robot2021.commands.GalacticSearchPath;
+import org.team199.robot2021.commands.GalacticSearchSearch;
+import org.team199.robot2021.commands.GalacticSearchSetup;
 import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.commands.ToggleIntake;
@@ -39,7 +44,7 @@ import org.team199.robot2021.subsystems.Intake;
  */
 public class RobotContainer {
     final Drivetrain drivetrain = new Drivetrain();
-    //private final Limelight lime = new Limelight();
+    private final Limelight lime = new Limelight();
     //private final Shooter shooter = new Shooter(lime);
     private final Intake intake = new Intake();
     //private final Feeder feeder = new Feeder();
@@ -139,6 +144,11 @@ public class RobotContainer {
 
         // climb button
         //new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
+    }
+
+    public Command getGalacticSearchCommand() {
+        GalacticSearchSearch search = new GalacticSearchSearch(drivetrain, lime);
+        return new SequentialCommandGroup(new GalacticSearchSetup(drivetrain), new ToggleIntake(intake), search, new GalacticSearchPath(drivetrain, intake, search));
     }
 
     public Command getAutonomousCommand() {
