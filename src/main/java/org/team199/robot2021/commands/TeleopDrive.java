@@ -54,7 +54,7 @@ public class TeleopDrive extends CommandBase {
       if (Math.abs(rcw.get()) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
       else rotateClockwise = Constants.DriveConstants.maxRCW * rcw.get();
     } else {
-      rotateClockwise = Math.atan2(strafe, forward);
+      rotateClockwise = drivetrain.getHeading()/90;
     }
     
     drivetrain.drive(forward, strafe, rotateClockwise);
