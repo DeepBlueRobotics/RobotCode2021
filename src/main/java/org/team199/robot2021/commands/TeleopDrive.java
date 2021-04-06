@@ -12,8 +12,11 @@ import java.util.function.Supplier;
 import org.team199.robot2021.Constants;
 import org.team199.robot2021.subsystems.Drivetrain;
 
+import edu.wpi.first.wpilibj.drive.Vector2d;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpiutil.math.Vector;
 
 public class TeleopDrive extends CommandBase {
   //private static final double kSlowDriveSpeed = 0.6;
@@ -23,7 +26,8 @@ public class TeleopDrive extends CommandBase {
   private Supplier<Double> fwd;
   private Supplier<Double> str;
   private Supplier<Double> rcw;
-
+  double currentForward = 0;
+  double currentStrafe = 0;
   /**
    * Creates a new TeleopDrive.
    */
@@ -42,22 +46,36 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double forward, strafe, rotateClockwise;
+    double rawForward, rawStrafe, rotateClockwise, deltaT;
+    deltaT = .05;
     // Sets all values less than or equal to a very small value (determined by the idle joystick state) to zero.
     // Used to make sure that the robot does not try to change its angle unless it is moving,
-    if (Math.abs(fwd.get()) <= Constants.OI.JOY_THRESH) forward = 0.0;
-    else forward = Constants.DriveConstants.maxForward * fwd.get();
-    if (Math.abs(str.get()) <= Constants.OI.JOY_THRESH) strafe = 0.0;
-    else strafe = Constants.DriveConstants.maxStrafe * str.get();
+    if (Math.abs(fwd.get()) <= Constants.OI.JOY_THRESH) rawForward = 0.0;
+    else rawForward = Constants.DriveConstants.maxForward * fwd.get();
+    if (Math.abs(str.get()) <= Constants.OI.JOY_THRESH) rawStrafe = 0.0;
+    else rawStrafe = Constants.DriveConstants.maxStrafe * str.get();
 
     if (!SmartDashboard.getBoolean("Teleop Face Direction of Travel", false)) {
       if (Math.abs(rcw.get()) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
       else rotateClockwise = Constants.DriveConstants.maxRCW * rcw.get();
     } else {
-      rotateClockwise = Math.atan2(strafe, forward);
+      rotateClockwise = drivetrain.getHeading()/90;
     }
-    
-    drivetrain.drive(forward, strafe, rotateClockwise);
+    //double currentForward = drivetrain.getSpeeds().vxMetersPerSecond;
+    //double currentStrafe = -drivetrain.getSpeeds().vyMetersPerSecond;
+    Vector2d targetAcceleration = new Vector2d((rawForward - currentForward)/deltaT, (rawStrafe - currentStrafe)/deltaT);
+    double accelerationMagnitude = targetAcceleration.magnitude();
+    if (accelerationMagnitude >= Constants.DriveConstants.autoMaxAccel) {
+      targetAcceleration.x *= Constants.DriveConstants.autoMaxAccel/accelerationMagnitude;
+      targetAcceleration.y *= Constants.DriveConstants.autoMaxAccel/accelerationMagnitude;
+    }
+    currentForward += targetAcceleration.x*deltaT;
+    currentStrafe += targetAcceleration.y*deltaT;
+    if (Math.abs(currentForward) <= Constants.OI.JOY_THRESH)
+      currentForward = 0;
+    if (Math.abs(currentStrafe) <= Constants.OI.JOY_THRESH)
+      currentStrafe = 0;
+    drivetrain.drive(currentForward, currentStrafe, rotateClockwise);
   }
 
   /*
