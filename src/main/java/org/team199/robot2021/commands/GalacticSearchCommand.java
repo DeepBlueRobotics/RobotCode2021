@@ -61,15 +61,15 @@ class DriveToBalls extends CommandBase {
         ballCounter = 0;
 
         // Use the same PID Controllers as in RobotPath
-        thetaController = new ProfiledPIDController(4, 0, 0,
+        thetaController = new ProfiledPIDController(.005, 0, 0,
                                                     new Constraints(Double.POSITIVE_INFINITY,
                                                                     Double.POSITIVE_INFINITY));
         thetaController.enableContinuousInput(-180, 180);
         thetaController.setGoal(0);
 
-        xPIDController = new PIDController(4, 0, 0);
+        xPIDController = new PIDController(.05, 0, 0);
         xPIDController.setSetpoint(0);
-        yPIDController = new PIDController(4, 0, 0);
+        yPIDController = new PIDController(.05, 0, 0);
         yPIDController.setSetpoint(0);
 
         pdp = new PowerDistributionPanel(Constants.DrivePorts.kPDPCANPort);
@@ -80,28 +80,32 @@ class DriveToBalls extends CommandBase {
 
     // One flaw with this command is that there is no end condition for if the robot never finds a ball.
     public void execute() {
+        SmartDashboard.putNumber("Ball search mode: ", mode);
         // Search for the ball using the limelight
         if (mode == 0) {
             double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
             double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0.0);
-            if (tv == 1.0 && ta > SmartDashboard.getNumber("Area Threshold", 0.02)) mode = 1;
+            if (tv == 1.0 && ta > SmartDashboard.getNumber("Area Threshold", 0.02)) 
+                mode = 1;
+            
             // lime.steeringAssist() outputs positive adjustment values for when we need to rotate clockwise.
             // dt.drive() has counter-clockwise rotation = +, clockwise rotation = -
-            dt.drive(0, 0, Constants.DriveConstants.maxRCW * -lime.steeringAssist(dt.getHeading()));
+            dt.drive(0, 0, Constants.DriveConstants.maxRCW/3 /* 1 * lime.steeringAssist(dt.getHeading())/3*/);
         } else {
             // Check the current draw on the roller motor to see if we have intaked the ball
-            if (pdp.getCurrent(Constants.DrivePorts.kIntakeRollerPDP) > Constants.DriveConstants.intakeCurrentDraw) {
+            //if (pdp.getCurrent(Constants.DrivePorts.kIntakeRollerPDP) > Constants.DriveConstants.intakeCurrentDraw) {
                 // If so, start again from the beginning until all balls have been collected.
-                mode = 0;
-                ballCounter++;
-            }
+            //    mode = 0;
+            //    ballCounter++;
+            //}
 
             // Compute distances to the ball and use PID to drive to the ball
-            double[] setpoints = lime.determineObjectDist(cameraHeight, 0.0);
+            double[] setpoints = lime.determineObjectDist(cameraHeight, 0.0, Constants.DriveConstants.cameraMountingAngleDeg);
             double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
-            dt.drive(Constants.DriveConstants.maxForward * MathUtil.clamp(xPIDController.calculate(setpoints[0]), -1.0, 1.0),
-                     Constants.DriveConstants.maxStrafe * MathUtil.clamp(yPIDController.calculate(setpoints[1]), -1.0, 1.0),
-                     Constants.DriveConstants.maxRCW * MathUtil.clamp(thetaController.calculate(tx), -1.0, 1.0));
+            dt.drive(-Constants.DriveConstants.maxForward/2 * MathUtil.clamp(xPIDController.calculate(setpoints[0]), -1.0, 1.0),
+                     -Constants.DriveConstants.maxStrafe/2 * MathUtil.clamp(yPIDController.calculate(setpoints[1]), -1.0, 1.0),
+                     //0,0,
+                     -Constants.DriveConstants.maxRCW * MathUtil.clamp(thetaController.calculate(tx), -1.0, 1.0));
         }
     }
 

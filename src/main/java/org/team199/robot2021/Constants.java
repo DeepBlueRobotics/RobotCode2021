@@ -98,6 +98,7 @@ public final class Constants {
         public static final double intakeCurrentDraw = 8.0;
 
         public static final double cameraHeight = Units.inchesToMeters(40.0);
+        public static final double cameraMountingAngleDeg = 29.5;
     }
 
     public static final class DrivePorts {
