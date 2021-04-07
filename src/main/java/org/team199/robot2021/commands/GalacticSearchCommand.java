@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.controller.HolonomicDriveController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
@@ -49,7 +50,7 @@ class DriveToBalls extends CommandBase {
     private PIDController xPIDController, yPIDController;
 
     private PowerDistributionPanel pdp;
-
+    private Timer timer = new Timer();
     public DriveToBalls(Drivetrain dt, Intake intake, Limelight lime, double cameraHeight, int ballsToCollect) {
         this.dt = dt;
         this.intake = intake;
@@ -67,9 +68,9 @@ class DriveToBalls extends CommandBase {
         thetaController.enableContinuousInput(-180, 180);
         thetaController.setGoal(0);
 
-        xPIDController = new PIDController(.05, 0, 0);
+        xPIDController = new PIDController(.15, 0, 0);
         xPIDController.setSetpoint(0);
-        yPIDController = new PIDController(.05, 0, 0);
+        yPIDController = new PIDController(.15, 0, 0);
         yPIDController.setSetpoint(0);
 
         pdp = new PowerDistributionPanel(Constants.DrivePorts.kPDPCANPort);
@@ -106,6 +107,18 @@ class DriveToBalls extends CommandBase {
                      -Constants.DriveConstants.maxStrafe/2 * MathUtil.clamp(yPIDController.calculate(setpoints[1]), -1.0, 1.0),
                      //0,0,
                      -Constants.DriveConstants.maxRCW * MathUtil.clamp(thetaController.calculate(tx), -1.0, 1.0));
+             double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
+             double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0.0);
+             timer.start();
+             if (tv == 0.0 && ta < SmartDashboard.getNumber("Area Threshold", 0.02)) {
+                 if (timer.hasElapsed(1)){
+                    mode = 0;
+                    ballCounter++;
+                 }
+             } else {
+                 timer.reset();
+             }
+
         }
     }
 
@@ -125,7 +138,7 @@ class DriveToEnd extends CommandBase {
     // endZone is the pose of the end zone relative to the robot's initial starting pose
     public DriveToEnd(Drivetrain dt, Pose2d endZone) {
         addRequirements(this.dt = dt);
-
+        this.endZone = endZone;
         ProfiledPIDController thetaController = new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
                                                                           Constants.DriveConstants.thetaPIDController[1],
                                                                           Constants.DriveConstants.thetaPIDController[2],
