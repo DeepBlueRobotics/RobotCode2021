@@ -165,7 +165,7 @@ public class SwerveModule {
         //double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime;// + calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get());
         double maxAcceleration = Constants.DriveConstants.mu * Constants.g;
         double maxVoltageDifference = maxAcceleration*(actualSpeed >= 0 ? forwardSimpleMotorFF.ka : backwardSimpleMotorFF.ka);
-        double clippedVoltage = MathUtil.clamp(targetVoltage, holdingVoltage - maxVoltageDifference, holdingVoltage + maxVoltageDifference);
+        double clippedVoltage =  targetVoltage; //MathUtil.clamp(targetVoltage, holdingVoltage - maxVoltageDifference, holdingVoltage + maxVoltageDifference);
         //SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
         //clippedAcceleration = 0;
         // Clip the speed based on the clipped desired acceleration

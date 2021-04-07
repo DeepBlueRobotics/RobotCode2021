@@ -37,12 +37,12 @@ public final class Constants {
         public static final double driveGearing = 6.86;
 
         public static final double driveModifier = 1;
-        public static final double wheelDiameter = Units.inchesToMeters(4.0);
-        public static final double mu = 0.3;
+        public static final double wheelDiameter = Units.inchesToMeters(4.0)*7.36/7.65;
+        public static final double mu = 0.2;
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
         // Angular speed to translational speed --> v = omega * r / gearing
-        public static final double maxSpeed = NEOFreeSpeed * (wheelDiameter / 2.0) / driveGearing * 0.2;
+        public static final double maxSpeed = NEOFreeSpeed * (wheelDiameter / 2.0) / driveGearing * 0.7;
         public static final double maxForward = maxSpeed;
         public static final double maxStrafe = maxSpeed;
         // maxRCW is the angular velocity of the robot.
@@ -82,7 +82,7 @@ public final class Constants {
         //public static final double[] kForwardAccels = {0, 0, 0, 0};
         //public static final double[] kBackwardAccels = {0, 0, 0, 0};
 
-        public static final double autoMaxSpeed = 0.75 * 4.4;  // Meters / second
+        public static final double autoMaxSpeed = 0.3 * 4.4;  // Meters / second
         public static final double autoMaxAccel = mu * g;  // Meters / seconds^2
         public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java
         // The maximum acceleration the robot can achieve is equal to the coefficient of static friction times the gravitational acceleration
