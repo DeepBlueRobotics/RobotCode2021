@@ -26,10 +26,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import org.team199.lib.RobotPath;
 import org.team199.robot2021.Constants.OI;
+import org.team199.robot2021.commands.GalacticSearchCommand;
 import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.commands.ToggleIntake;
-import org.team199.robot2021.commands.GalacticSearchCommand;
 import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Intake;
 
@@ -141,7 +141,7 @@ public class RobotContainer {
         loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
         loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
         loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
-        autoCommandChooser.addOption("Galactic Search: All Points", new GalacticSearchCommand(drivetrain, intake, lime, Constants.DriveConstants.cameraHeight));
+        autoCommandChooser.addOption("Galactic Search: Solution 3", new GalacticSearchCommand(drivetrain, intake, lime));
         SmartDashboard.putData(autoCommandChooser);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
