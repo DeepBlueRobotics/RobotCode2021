@@ -16,20 +16,18 @@ public class GalacticSearchCommand extends CommandBase {
     private Drivetrain dt;
     private Intake intake;
     private Limelight lime;
-    private double cameraHeight;
     private int path;
     private Command pathCommand;
 
-    public GalacticSearchCommand(Drivetrain dt, Intake intake, Limelight lime, double cameraHeight) {
+    public GalacticSearchCommand(Drivetrain dt, Intake intake, Limelight lime) {
         this.dt = dt;
         this.intake = intake;
         this.lime = lime;
-        this.cameraHeight = cameraHeight;
         addRequirements(dt, intake);
     }
 
     public void initialize(){
-        double[] distComponents = lime.determineObjectDist(cameraHeight, 0.0);
+        double[] distComponents = lime.determineObjectDist(Constants.DriveConstants.cameraHeight, 0.0, Constants.DriveConstants.cameraMountingAngleDeg);
         double dist = Math.hypot(distComponents[0], distComponents[1]);
 
         //dist val interpretting -> path index
