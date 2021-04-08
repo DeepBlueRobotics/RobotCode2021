@@ -8,6 +8,7 @@
 
 package org.team199.robot2021;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,7 +133,17 @@ public class RobotContainer {
         bounceRegions.add(RobotPath.createRegionConstraint(3.8, -1.5, 1, 1, 0, curvatureRadius));
         bounceRegions.add(RobotPath.createRegionConstraint(5.3, -1.5, 1, 1, 0, curvatureRadius));
         bounceRegions.add(RobotPath.createRegionConstraint(7.6, -1.5, 1, 1, 0, curvatureRadius));
-        loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions);
+        // Create a SequentialCommandGroup for the multiple parts of bounce
+        try {
+            Command bounce1 = new RobotPath("Bounce1", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false);
+            Command bounce2 = new RobotPath("Bounce2", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false);
+            Command bounce3 = new RobotPath("Bounce3", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false);
+            Command bounce4 = new RobotPath("Bounce4", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false);
+            autoCommandChooser.addOption("AutoNav: Bounce", bounce1.andThen(bounce2).andThen(bounce3).andThen(bounce4));
+        } catch (IOException io) {
+            System.err.println("Could not create Bounce autonomous command.");
+            io.printStackTrace();
+        }
 
         loadPath("Galactic search: Path A Red","PathARed", true, true, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
         loadPath("Galactic search: Path B Red","PathBRed", true, true, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
