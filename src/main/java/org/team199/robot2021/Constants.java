@@ -38,7 +38,7 @@ public final class Constants {
 
         public static final double driveModifier = 1;
         public static final double wheelDiameter = Units.inchesToMeters(4.0)*7.36/7.65;
-        public static final double mu = 0.2;
+        public static final double mu = 0.15;
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
         // Angular speed to translational speed --> v = omega * r / gearing

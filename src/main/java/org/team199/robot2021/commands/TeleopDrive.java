@@ -56,7 +56,7 @@ public class TeleopDrive extends CommandBase {
     else rawStrafe = Constants.DriveConstants.maxStrafe * str.get();
 
     if (!SmartDashboard.getBoolean("Teleop Face Direction of Travel", false)) {
-      rotateClockwise = drivetrain.getHeading()/160;
+      rotateClockwise = rcw.get();
       if (Math.abs(rotateClockwise) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
       else rotateClockwise = Constants.DriveConstants.maxRCW * rotateClockwise;
     } else {

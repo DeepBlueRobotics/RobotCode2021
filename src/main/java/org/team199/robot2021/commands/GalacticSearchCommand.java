@@ -58,7 +58,7 @@ class DriveToBalls extends CommandBase {
         this.cameraHeight = cameraHeight;
         this.ballsToCollect = ballsToCollect;
         addRequirements(dt, intake);
-
+        SmartDashboard.putBoolean("Field Oriented", false);
         ballCounter = 0;
 
         // Use the same PID Controllers as in RobotPath
@@ -137,6 +137,7 @@ class DriveToEnd extends CommandBase {
 
     // endZone is the pose of the end zone relative to the robot's initial starting pose
     public DriveToEnd(Drivetrain dt, Pose2d endZone) {
+        SmartDashboard.putBoolean("Field Oriented", true);
         addRequirements(this.dt = dt);
         this.endZone = endZone;
         ProfiledPIDController thetaController = new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],

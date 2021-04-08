@@ -98,6 +98,10 @@ public class RobotContainer {
         autoCommandChooser.setDefaultOption("No autonomous", new InstantCommand());
         loadPath("AutoNav: Barrel Racing", "barrelRacing", true, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic search: Path A Red","PathARed", true, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic search: Path B Red","PathBRed", true, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic search: Path A Blue","PathABlue", false, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic search: Path B Blue","PathBBlue", false, true, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed);
