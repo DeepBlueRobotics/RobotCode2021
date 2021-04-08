@@ -9,6 +9,7 @@
 package org.team199.robot2021;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.constraint.EllipticalRegionConstraint;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -96,18 +98,50 @@ public class RobotContainer {
 
         autoCommandChooser = new SendableChooser<Command>();
         autoCommandChooser.setDefaultOption("No autonomous", new InstantCommand());
+
+        /* Load AutoNav paths and specify every region where we need to slow down for each path */
+
+        double curvatureRadius = 1;
+        // Barrel Racing
+        List<EllipticalRegionConstraint>  barrelRegions = new ArrayList<EllipticalRegionConstraint>();
+        // Add circular regions around each of the loops around the markers
+        barrelRegions.add(RobotPath.createRegionConstraint(3.8, -3, 1, 1, 0, curvatureRadius));
+        barrelRegions.add(RobotPath.createRegionConstraint(6.1, -1.5, 1, 1, 0, curvatureRadius));
+        barrelRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
+        loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed, barrelRegions);
+        
+        // Slalom
+        List<EllipticalRegionConstraint>  slalomRegions = new ArrayList<EllipticalRegionConstraint>();
+        // Add elliptical regions around where we weave between markers
+        slalomRegions.add(RobotPath.createRegionConstraint(2.3, -3.1, 0.1, 0.9, 90, curvatureRadius));
+        slalomRegions.add(RobotPath.createRegionConstraint(6.8, -3.1, 0.1, 0.9, 90, curvatureRadius));
+        // Add a circular region around the end loop
+        slalomRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
+        loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed, slalomRegions);
+        
+        // Bounce
+        List<EllipticalRegionConstraint>  bounceRegions = new ArrayList<EllipticalRegionConstraint>();
+        // Add elliptical regions around each marker we weave through / get close to 
+        bounceRegions.add(RobotPath.createRegionConstraint(2.3, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(3.8, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(5.3, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(6.1, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(1.5, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(3, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(3.8, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(5.3, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(7.6, -1.5, 1, 1, 0, curvatureRadius));
+        loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions);
+
+        loadPath("Galactic search: Path A Red","PathARed", false, true, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Galactic search: Path B Red","PathBRed", false, true, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Galactic search: Path A Blue","PathABlue", false, true, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Galactic search: Path B Blue","PathBBlue", false, true, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
         autoCommandChooser.addOption("Galactic Search: Solution 3", new GalacticSearchCommand(drivetrain, intake, lime));
-        loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("AutoNav: Barrel Racing", "barrelRacing", true, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Galactic search: Path A Red","PathARed", false, true, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Galactic search: Path B Red","PathBRed", false, true, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Galactic search: Path A Blue","PathABlue", false, true, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Galactic search: Path B Blue","PathBBlue", false, true, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         SmartDashboard.putData(autoCommandChooser);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
@@ -163,9 +197,9 @@ public class RobotContainer {
     }
 
     private void loadPath(final String chooserName, final String pathName, final boolean faceInPathDirection, final boolean deployIntake, 
-                          final boolean isInverted, final double endVelocity) {
+                          final boolean isInverted, final double endVelocity, final List<EllipticalRegionConstraint> regionConstraints) {
         try {
-            RobotPath path = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity);
+            RobotPath path = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity, regionConstraints);
             autoCommandChooser.addOption(chooserName, path.getPathCommand(faceInPathDirection));
         } catch(final Exception e) {
             e.printStackTrace(System.err);
