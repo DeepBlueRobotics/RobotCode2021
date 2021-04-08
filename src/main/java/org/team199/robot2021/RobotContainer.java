@@ -29,8 +29,11 @@ import org.team199.robot2021.commands.GalacticSearchCommand;
 import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.commands.ToggleIntake;
+import org.team199.robot2021.commands.GalacticSearchCommand;
 import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Intake;
+
+import frc.robot.lib.Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -97,12 +100,17 @@ public class RobotContainer {
         autoCommandChooser.setDefaultOption("No autonomous", new InstantCommand());
         autoCommandChooser.addOption("Galactic Search: Solution 3", new GalacticSearchCommand(drivetrain, intake, lime, 40.0D));
         loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("AutoNav: Barrel Racing", "barrelRacing", true, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic search: Path A Red","PathARed", true, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic search: Path B Red","PathBRed", true, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic search: Path A Blue","PathABlue", false, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic search: Path B Blue","PathBBlue", false, true, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Galactic Search: All Points", "GalacticSearchAllPoints", true, true, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        autoCommandChooser.addOption("Galactic Search: All Points", new GalacticSearchCommand(drivetrain, intake, lime, Constants.DriveConstants.cameraHeight));
         SmartDashboard.putData(autoCommandChooser);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }

@@ -1,5 +1,6 @@
 package org.team199.robot2021;
 
+import org.opencv.core.Mat;
 import org.team199.robot2021.Constants;
 
 import java.util.function.Supplier;
@@ -12,6 +13,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import frc.robot.lib.swerve.SwerveMath;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpiutil.math.MathUtil;
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 
 /**
  * A class that stores all the variables and methods applicaple to a single swerve module,
@@ -31,7 +34,9 @@ public class SwerveModule {
     private String moduleString;
     private CANSparkMax drive, turn;
     private CANCoder turnEncoder;
-    private PIDController drivePIDController, turnPIDController;
+    private PIDController drivePIDController;
+    private ProfiledPIDController turnPIDController;
+    private TrapezoidProfile.Constraints turnConstraints = new TrapezoidProfile.Constraints(Constants.DriveConstants.autoMaxSpeed,Double.POSITIVE_INFINITY);
     private double driveModifier, maxSpeed, turnZero;
     private Supplier<Float> pitchDegSupplier, rollDegSupplier;
     private boolean reversed;
@@ -70,10 +75,12 @@ public class SwerveModule {
         //System.out.println("Velocity Constant: " + (positionConstant / 60));
 
         this.turn = turn;
-        turnPIDController = new PIDController(Constants.DriveConstants.turnkP[arrIndex],
+        turnPIDController = new ProfiledPIDController(Constants.DriveConstants.turnkP[arrIndex],
                                               Constants.DriveConstants.turnkI[arrIndex],
-                                              Constants.DriveConstants.turnkD[arrIndex]);
+                                              Constants.DriveConstants.turnkD[arrIndex],turnConstraints);
         turnPIDController.enableContinuousInput(-180.0, 180.0);
+        //turnPIDController.setTolerance(0.01);
+        turnPIDController.reset(0);
 
         this.turnEncoder = turnEncoder;
         this.turnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
@@ -98,8 +105,9 @@ public class SwerveModule {
     }
 
     public void periodic() {
-        if (!turnPIDController.atSetpoint()) {
-            turn.set(MathUtil.clamp(turnPIDController.calculate(turnEncoder.getPosition()), -1.0, 1.0));
+        if (!turnPIDController.atGoal()) {
+            turn.set(MathUtil.clamp(turnPIDController.calculate(getModuleAngle()*180/Math.PI), -1.0, 1.0));
+            //System.out.println("stuff is being turned");
         }
     }
 
@@ -142,38 +150,38 @@ public class SwerveModule {
      */
     private void setSpeed(double speed) {
         // Get the change in time (for acceleration limiting calculations)
-        double deltaTime = timer.get();
+        
         SmartDashboard.putNumber(moduleString + " Desired Speed (unitless)", speed);
 
         // Compute desired and actual speeds in m/s
         double desiredSpeed = maxSpeed * speed * driveModifier;
         double actualSpeed = getCurrentSpeed();
         SmartDashboard.putNumber(moduleString + " Desired (mps)", desiredSpeed);
-
+        double targetVoltage = (actualSpeed >= 0 ? forwardSimpleMotorFF :
+                                 backwardSimpleMotorFF).calculate(desiredSpeed, calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get()));//clippedAcceleration);
+        double holdingVoltage = (actualSpeed >= 0 ? forwardSimpleMotorFF :
+                                 backwardSimpleMotorFF).calculate(actualSpeed, calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get()));//clippedAcceleration);
         // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
-        double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime + calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get());
+        //double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime;// + calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get());
         double maxAcceleration = Constants.DriveConstants.mu * Constants.g;
-        double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
+        double maxVoltageDifference = maxAcceleration*(actualSpeed >= 0 ? forwardSimpleMotorFF.ka : backwardSimpleMotorFF.ka);
+        double clippedVoltage =  targetVoltage; //MathUtil.clamp(targetVoltage, holdingVoltage - maxVoltageDifference, holdingVoltage + maxVoltageDifference);
         //SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
-
+        //clippedAcceleration = 0;
         // Clip the speed based on the clipped desired acceleration
-        double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
+        //double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
         //SmartDashboard.putNumber(moduleString + " Clipped Desired Speed", clippedDesiredSpeed);
-
+        
         // Use robot characterization as a simple physical model to account for internal resistance, frcition, etc.
-        double appliedVoltage = (clippedDesiredSpeed >= 0 ? forwardSimpleMotorFF :
-                                 backwardSimpleMotorFF).calculate(clippedDesiredSpeed, clippedAcceleration);
         // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
         //SmartDashboard.putNumber(moduleString + " Voltage no PID", appliedVoltage);
-        appliedVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
+        //appliedVoltage += drivePIDController.calculate(actualSpeed, clippedDesiredSpeed);
         //SmartDashboard.putNumber(moduleString + " Unclamped Voltage", appliedVoltage);
-        appliedVoltage = MathUtil.clamp(appliedVoltage / 12, -1, 1);
+        double appliedVoltage = MathUtil.clamp(clippedVoltage / 12, -1, 1);
         //SmartDashboard.putNumber(moduleString + " Drive Speed", driveModifier * appliedVoltage);
         drive.set(appliedVoltage);
 
         // Reset the timer so get() returns a change in time
-        timer.reset();
-        timer.start();
     }
 
     /**
@@ -181,8 +189,13 @@ public class SwerveModule {
      * @param angle     The desired angle, between -0.5 (180 degrees counterclockwise) and 0.5 (180 degrees clockwise).
      */
     private void setAngle(double angle) {
+        double deltaTime = timer.get();
+        timer.reset();
+        timer.start();
+        double maxDeltaTheta = Math.asin(deltaTime*Constants.DriveConstants.autoCentripetalAccel/(Math.abs(getCurrentSpeed())+0.0001));
+        turnConstraints.maxVelocity = maxDeltaTheta*180/Math.PI;
         //SmartDashboard.putNumber(moduleString + "Target Angle:", 360 * angle * (reversed ? -1 : 1));
-        turnPIDController.setSetpoint(360 * angle * (reversed ? -1 : 1));
+        turnPIDController.setGoal(360 * (angle) * (reversed ? -1 : 1));
     }
 
     private double getModuleAngle() {
@@ -214,7 +227,7 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Encoder Position", drive.getEncoder().getPosition());
         // Display the speed that the robot thinks it is travelling at.
         SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
-        SmartDashboard.putNumber(moduleString + " Setpoint Angle", turnPIDController.getSetpoint());
+        SmartDashboard.putNumber(moduleString + " Setpoint Angle", turnPIDController.getGoal().position);
         //SmartDashboard.putNumber("Gyro Pitch", pitchDegSupplier.get());
         //SmartDashboard.putNumber("Gyro Roll", rollDegSupplier.get());
         SmartDashboard.putNumber(moduleString + "Antigravitational Acceleration", calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get()));

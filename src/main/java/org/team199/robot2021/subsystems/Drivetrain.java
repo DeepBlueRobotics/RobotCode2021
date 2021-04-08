@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
@@ -56,7 +57,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putBoolean("Magnetic Field Disturbance", gyro.isMagneticDisturbance());
     System.out.println("Magnetometer is calibrated: " + gyro.isMagnetometerCalibrated());
     compassOffset = gyro.getCompassHeading();
-    SmartDashboard.putNumber("Field Offset from North (degrees)", 134.1);
+    SmartDashboard.putNumber("Field Offset from North (degrees)", 0);
 
     // Define the corners of the robot relative to the center of the robot using Translation2d objects.
     // Positive x-values represent moving toward the front of the robot whereas positive y-values represent moving toward the left of the robot.
@@ -130,14 +131,15 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetOdometry() {
-    odometry.resetPosition(odometry.getPoseMeters(), Rotation2d.fromDegrees(getHeading()));
+    odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(0));
+    gyro.reset();
     isOdometryInit = false;
   }
 
   public double getHeading() {
     double x = gyro.getAngle();
     if (SmartDashboard.getBoolean("Field Oriented", false)) {
-      x += compassOffset - SmartDashboard.getNumber("Field Offset from North (degrees)", 134.1);
+      x -= SmartDashboard.getNumber("Field Offset from North (degrees)", 0);
     }
     return Math.IEEEremainder(x * (isGyroReversed ? -1.0 : 1.0), 360);
   }
@@ -162,6 +164,9 @@ public class Drivetrain extends SubsystemBase {
    */
   public void homeAbsolute() {
     for (int i = 0; i < 4; i++) modules[i].homeAbsolute();
+  }
+  public ChassisSpeeds getSpeeds() {
+    return kinematics.toChassisSpeeds(modules[0].getCurrentState(),modules[1].getCurrentState(),modules[2].getCurrentState(),modules[3].getCurrentState());
   }
 
   /**
