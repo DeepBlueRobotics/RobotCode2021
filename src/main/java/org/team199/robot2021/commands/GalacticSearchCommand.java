@@ -1,6 +1,7 @@
 package org.team199.robot2021.commands;
 
 import frc.robot.lib.Limelight;
+import jdk.jfr.internal.tool.Command;
 
 import org.team199.robot2021.Constants;
 import org.team199.robot2021.subsystems.Drivetrain;
@@ -21,31 +22,14 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class GalacticSearchCommand extends SequentialCommandGroup {
-    public GalacticSearchCommand(Drivetrain dt, Intake intake, Limelight lime, double cameraHeight) {
-        addRequirements(dt, intake);
-
-        Rotation2d heading = Rotation2d.fromDegrees(dt.getHeading());
-        addCommands(
-            new InstantCommand(() -> dt.setOdometry(new SwerveDriveOdometry(dt.getKinematics(), heading, new Pose2d(0, 0, heading)))),
-            new ToggleIntake(intake),
-            //
-            new DriveToBalls(dt, intake, lime, cameraHeight, 3),
-            // It is best to set the x-component to be farther than it needs to be
-            new DriveToEnd(dt, new Pose2d(Units.inchesToMeters(300), dt.getOdometry().getPoseMeters().getTranslation().getY(), new Rotation2d()))
-            //
-        );
-    }
-}
-
-class DeterminePath extends CommandBase {
+class GalacticSearchCommand extends CommandBase {
     private Drivetrain dt;
     private Intake intake;
     private Limelight lime;
     private double cameraHeight;
-    private int part;
+    private int path;
+    private Command pathCommand;
 
     public DriveToBalls(Drivetrain dt, Intake intake, Limelight lime, double cameraHeight) {
         this.dt = dt;
@@ -73,162 +57,36 @@ class DeterminePath extends CommandBase {
         double[] distComponents = lime.determineObjectDist(cameraHeight, 0.0);
         double dist = Math.hypot(distComponents[0], distComponents[1]);
 
-        if(dist < Constants.GameConstants.partDividerDistValue){
-            //we are on part one (red)
-            part = 1;
-        }else{
-            //we are on part two (blue)
-            part = 2;
-        }
+        //dist val interpretting -> path index
+
+        path = getPathIndex(dist);
+
+        pathCommand = new RobotPath(Constants.GameConstants.GSPaths[path], dt, intake, true, false, Constants.autoMaxSpeed).getPathCommand();
+        pathCommand.initialize();
     }
 
     // One flaw with this command is that there is no end condition for if the robot never finds a ball.
     public void execute() {
-        if(part == 1){
+        pathCommand.execute();
+    }
 
+    public boolean isFinished() {
+        return pathCommand.isFinished();
+    }
+
+    public void end(boolean interrupted) {
+        pathCommand.end(interrupted);
+    }
+
+    private int getPathIndex(double dist){
+        if(dist < Constant.GameConstants.GSMidPoints[0]){
+            return 0;
+        }else if(dist > Constant.GameConstants.GSMidPoints[0] && dist < Constant.GameConstants.GSMidPoints[1]){
+            return 1;
+        }else if(dist > Constant.GameConstants.GSMidPoints[1] && dist < Constant.GameConstants.GSMidPoints[2]){
+            return 2;
         }else{
-
+            return 3;
         }
-
-
-
-        // Search for the ball using the limelight
-        if (mode == 0) {
-        } else {
-            // Check the current draw on the roller motor to see if we have intaked the ball
-            if (pdp.getCurrent(Constants.DrivePorts.kIntakeRollerPDP) > Constants.DriveConstants.intakeCurrentDraw) {
-                // If so, start again from the beginning until all balls have been collected.
-                mode = 0;
-                ballCounter++;
-            }
-
-            // Compute distances to the ball and use PID to drive to the ball
-            double[] setpoints = lime.determineObjectDist(cameraHeight, 0.0);
-            //-27 degrees to 27 degrees off x angle
-            double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
-            dt.drive(Constants.DriveConstants.maxForward * MathUtil.clamp(xPIDController.calculate(setpoints[0]), -1.0, 1.0),
-                     Constants.DriveConstants.maxStrafe * MathUtil.clamp(yPIDController.calculate(setpoints[1]), -1.0, 1.0),
-                     Constants.DriveConstants.maxRCW * MathUtil.clamp(thetaController.calculate(tx), -1.0, 1.0));
-        }
-    }
-
-    public boolean isFinished() {
-        return ballCounter == ballsToCollect;
-    }
-
-    public void end(boolean interrupted) {
-    }
-}
-
-class DriveToBalls extends CommandBase {
-    private Drivetrain dt;
-    private Intake intake;
-    private Limelight lime;
-    private double cameraHeight;
-    private int ballsToCollect, ballCounter, mode;
-
-    private ProfiledPIDController thetaController;
-    private PIDController xPIDController, yPIDController;
-
-    private PowerDistributionPanel pdp;
-
-    public DriveToBalls(Drivetrain dt, Intake intake, Limelight lime, double cameraHeight, int ballsToCollect) {
-        this.dt = dt;
-        this.intake = intake;
-        this.lime = lime;
-        this.cameraHeight = cameraHeight;
-        this.ballsToCollect = ballsToCollect;
-        addRequirements(dt, intake);
-
-        ballCounter = 0;
-
-        // Use the same PID Controllers as in RobotPath
-        thetaController = new ProfiledPIDController(4, 0, 0,
-                                                    new Constraints(Double.POSITIVE_INFINITY,
-                                                                    Double.POSITIVE_INFINITY));
-        thetaController.enableContinuousInput(-180, 180);
-        thetaController.setGoal(0);
-
-        xPIDController = new PIDController(4, 0, 0);
-        xPIDController.setSetpoint(0);
-        yPIDController = new PIDController(4, 0, 0);
-        yPIDController.setSetpoint(0);
-
-        pdp = new PowerDistributionPanel(Constants.DrivePorts.kPDPCANPort);
-
-        // mode = 0 means searching for the ball, mode = 1 means driving toward the ball
-        mode = 0;
-    }
-
-    // One flaw with this command is that there is no end condition for if the robot never finds a ball.
-    public void execute() {
-        // Search for the ball using the limelight
-        if (mode == 0) {
-            double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
-            double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0.0);
-            if (tv == 1.0 && ta > SmartDashboard.getNumber("Area Threshold", 0.02)) mode = 1;
-            // lime.steeringAssist() outputs positive adjustment values for when we need to rotate clockwise.
-            // dt.drive() has counter-clockwise rotation = +, clockwise rotation = -
-            dt.drive(0, 0, Constants.DriveConstants.maxRCW * -lime.steeringAssist(dt.getHeading()));
-        } else {
-            // Check the current draw on the roller motor to see if we have intaked the ball
-            if (pdp.getCurrent(Constants.DrivePorts.kIntakeRollerPDP) > Constants.DriveConstants.intakeCurrentDraw) {
-                // If so, start again from the beginning until all balls have been collected.
-                mode = 0;
-                ballCounter++;
-            }
-
-            // Compute distances to the ball and use PID to drive to the ball
-            double[] setpoints = lime.determineObjectDist(cameraHeight, 0.0);
-            double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
-            dt.drive(Constants.DriveConstants.maxForward * MathUtil.clamp(xPIDController.calculate(setpoints[0]), -1.0, 1.0),
-                     Constants.DriveConstants.maxStrafe * MathUtil.clamp(yPIDController.calculate(setpoints[1]), -1.0, 1.0),
-                     Constants.DriveConstants.maxRCW * MathUtil.clamp(thetaController.calculate(tx), -1.0, 1.0));
-        }
-    }
-
-    public boolean isFinished() {
-        return ballCounter == ballsToCollect;
-    }
-
-    public void end(boolean interrupted) {
-    }
-}
-
-class DriveToEnd extends CommandBase {
-    private Drivetrain dt;
-    private HolonomicDriveController controller;
-    private Pose2d endZone;
-
-    // endZone is the pose of the end zone relative to the robot's initial starting pose
-    public DriveToEnd(Drivetrain dt, Pose2d endZone) {
-        addRequirements(this.dt = dt);
-
-        ProfiledPIDController thetaController = new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
-                                                                          Constants.DriveConstants.thetaPIDController[1],
-                                                                          Constants.DriveConstants.thetaPIDController[2],
-                                                                          new Constraints(Double.POSITIVE_INFINITY,
-                                                                                          Double.POSITIVE_INFINITY));
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
-        PIDController xPIDController = new PIDController(Constants.DriveConstants.xPIDController[0],
-                                                         Constants.DriveConstants.xPIDController[1],
-                                                         Constants.DriveConstants.xPIDController[2]);
-        PIDController yPIDController = new PIDController(Constants.DriveConstants.yPIDController[0],
-                                                         Constants.DriveConstants.yPIDController[1],
-                                                         Constants.DriveConstants.yPIDController[2]);
-        controller = new HolonomicDriveController(xPIDController, yPIDController, thetaController);
-    }
-
-    public void execute() {
-        ChassisSpeeds speeds = controller.calculate(dt.getOdometry().getPoseMeters(), endZone, 
-                                                    Constants.DriveConstants.autoMaxSpeed, Rotation2d.fromDegrees(dt.getHeading()));
-        dt.drive(dt.getKinematics().toSwerveModuleStates(speeds));                                            
-    }
-
-    public boolean isFinished() {
-        return (dt.getOdometry().getPoseMeters().getTranslation().getX() > endZone.getTranslation().getX());
-    }
-
-    public void end(boolean interrupted) {
     }
 }

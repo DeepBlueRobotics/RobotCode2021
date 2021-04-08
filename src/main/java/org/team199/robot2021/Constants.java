@@ -213,7 +213,9 @@ public final class Constants {
 
             public static final class GameConstants {
                 //TODO: find actual value
-                public static final float partDividerDistValue = 20.0; 
+                public final double[] GSMidPoints = {0.0, 1.0, 2.0};
+                
+                public String[] GSPaths = {"RedA", "RedB", "BlueA", "BlueB"};
             }
             //driving
             static final int kSlowMode = RB;
