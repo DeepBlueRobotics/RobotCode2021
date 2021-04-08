@@ -21,9 +21,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.lib.Limelight;
 
 import org.team199.lib.RobotPath;
 import org.team199.robot2021.Constants.OI;
+import org.team199.robot2021.commands.GalacticSearchCommand;
 import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.commands.ToggleIntake;
@@ -39,7 +41,7 @@ import org.team199.robot2021.subsystems.Intake;
  */
 public class RobotContainer {
     final Drivetrain drivetrain = new Drivetrain();
-    //private final Limelight lime = new Limelight();
+    private final Limelight lime = new Limelight();
     //private final Shooter shooter = new Shooter(lime);
     private final Intake intake = new Intake();
     //private final Feeder feeder = new Feeder();
@@ -93,6 +95,7 @@ public class RobotContainer {
 
         autoCommandChooser = new SendableChooser<Command>();
         autoCommandChooser.setDefaultOption("No autonomous", new InstantCommand());
+        autoCommandChooser.addOption("Galactic Search: Solution 3", new GalacticSearchCommand(drivetrain, intake, lime, 40.0D));
         loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);

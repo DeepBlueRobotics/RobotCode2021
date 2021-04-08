@@ -210,13 +210,6 @@ public final class Constants {
                     START = 10;    
                 }
             }
-
-            public static final class GameConstants {
-                //TODO: find actual value
-                public final double[] GSMidPoints = {0.0, 1.0, 2.0};
-                
-                public String[] GSPaths = {"RedA", "RedB", "BlueA", "BlueB"};
-            }
             //driving
             static final int kSlowMode = RB;
 
@@ -231,5 +224,12 @@ public final class Constants {
             public static final int kOuttakeButton = Y;
             //public static final int kRegurgitateButton = B;
         }
+    }
+
+    public static final class GameConstants {
+        //TODO: find actual value
+        public static final double[] GSMidPoints = {0.0, 1.0, 2.0};
+        
+        public static final String[] GSPaths = {"RedA", "RedB", "BlueA", "BlueB"};
     }
 }
