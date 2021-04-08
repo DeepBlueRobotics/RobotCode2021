@@ -100,8 +100,8 @@ public class RobotContainer {
         loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Barrel Racing", "barrelRacing", true, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Galactic search: Path A Red","PathARed", true, true, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Galactic search: Path B Red","PathBRed", true, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic search: Path A Red","PathARed", false, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic search: Path B Red","PathBRed", false, true, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Galactic search: Path A Blue","PathABlue", false, true, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("Galactic search: Path B Blue","PathBBlue", false, true, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);
