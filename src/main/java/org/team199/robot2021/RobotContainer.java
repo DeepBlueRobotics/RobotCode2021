@@ -98,7 +98,7 @@ public class RobotContainer {
 
         autoCommandChooser = new SendableChooser<Command>();
         autoCommandChooser.setDefaultOption("No autonomous", new InstantCommand());
-        autoCommandChooser.addOption("Galactic Search: Solution 3", new GalacticSearchCommand(drivetrain, intake, lime, 40.0D));
+        autoCommandChooser.addOption("Galactic Search: Solution 3", new GalacticSearchCommand(drivetrain, intake, lime, Constants.DriveConstants.cameraHeight));
         loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Barrel Racing", "barrelRacing", true, false, false, Constants.DriveConstants.autoMaxSpeed);
         loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed);
