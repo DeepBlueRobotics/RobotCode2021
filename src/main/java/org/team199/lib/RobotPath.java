@@ -31,8 +31,9 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstraint;
+import edu.wpi.first.wpilibj.trajectory.constraint.EllipticalRegionConstraint;
 import edu.wpi.first.wpilibj.trajectory.constraint.SwerveDriveKinematicsConstraint;
+import edu.wpi.first.wpilibj.trajectory.constraint.MaxVelocityConstraint;
 import frc.robot.lib.swerve.SwerveDriveVoltageConstraint;
 
 import org.team199.robot2021.Constants;
@@ -80,12 +81,25 @@ public class RobotPath {
         this.dt = dt;
     }
     */
-    public RobotPath(String pathName, Drivetrain dt, Intake intake, boolean deployIntake, boolean isInverted, double endVelocity) throws IOException {
-       this(getVectorsFromFile(pathName, dt), isInverted, dt, intake, deployIntake, endVelocity);
+
+    /*
+        Creates an EllipticalRegionConstraint for a particular part of a trajectory using the region dimensions and the
+        radius of curvature at that point in the trajectory.
+    */
+    public static EllipticalRegionConstraint createRegionConstraint(double centerX, double centerY, double xWidth, double yWidth,
+                                                                    double rotation, double curvatureRadius) {
+        return new EllipticalRegionConstraint(new Translation2d(centerX, centerY), xWidth, yWidth, Rotation2d.fromDegrees(rotation),
+                                              new MaxVelocityConstraint(Math.sqrt(curvatureRadius * Constants.DriveConstants.autoCentripetalAccel)));
     }
 
-    public RobotPath(ControlVectorList vectors, boolean isInverted, Drivetrain dt, Intake intake, boolean deployIntake, double endVelocity) {
-        this(vectors, createConfig(isInverted, dt, endVelocity), dt, intake, deployIntake);
+    public RobotPath(String pathName, Drivetrain dt, Intake intake, boolean deployIntake, boolean isInverted, double endVelocity,
+                     List<EllipticalRegionConstraint> regionConstraints) throws IOException {
+       this(getVectorsFromFile(pathName, dt), isInverted, dt, intake, deployIntake, endVelocity, regionConstraints);
+    }
+
+    public RobotPath(ControlVectorList vectors, boolean isInverted, Drivetrain dt, Intake intake, boolean deployIntake, double endVelocity,
+                     List<EllipticalRegionConstraint> regionConstraints) {
+        this(vectors, createConfig(isInverted, dt, endVelocity, regionConstraints), dt, intake, deployIntake);
     }
 
     public RobotPath(ControlVectorList vectors, TrajectoryConfig config, Drivetrain dt, Intake intake, boolean deployIntake) {
@@ -149,14 +163,14 @@ public class RobotPath {
         return sum / arr.length;
     }
 
-    public static TrajectoryConfig createConfig(boolean isInverted, Drivetrain dt, double endVelocity) {
+    public static TrajectoryConfig createConfig(boolean isInverted, Drivetrain dt, double endVelocity, List<EllipticalRegionConstraint> regionConstraints) {
         TrajectoryConfig config = new TrajectoryConfig(Constants.DriveConstants.autoMaxSpeed, 
                                                        Constants.DriveConstants.autoMaxAccel);
         // Limit the modules based on a maximum speed
         config.addConstraint(new SwerveDriveKinematicsConstraint(dt.getKinematics(),
                                                                  Constants.DriveConstants.autoMaxSpeed));
         // Ensure that the robot turns slowly around tight turns and doesn't slip
-        config.addConstraint(new CentripetalAccelerationConstraint(Constants.DriveConstants.autoCentripetalAccel));
+        config.addConstraints(regionConstraints);
         config.setEndVelocity(endVelocity);
         /*
         double kVoltAVG = 0.5 * (average(Constants.DriveConstants.kForwardVolts) 
