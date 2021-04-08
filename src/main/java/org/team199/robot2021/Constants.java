@@ -232,8 +232,13 @@ public final class Constants {
 
     public static final class GameConstants {
         //TODO: find actual value
-        public static final double[] GSMidPoints = {8.998, 17.842, 21.385};
+        public static final double[][] GSPoints = {
+            {-22, -1.8},
+            {-2.8, -1.1},
+            {6.3, 13.6},
+            {15.6, 13.6}
+        };
         
-        public static final String[] GSPaths = {"RedA", "BlueB", "BlueA", "RedB"};
+        public static final String[] GSPaths = {"RedA", "RedB", "BlueA", "BlueB"};
     }
 }
