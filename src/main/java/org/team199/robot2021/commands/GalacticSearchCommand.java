@@ -60,6 +60,19 @@ public class GalacticSearchCommand extends CommandBase {
         pathCommand.end(interrupted);
     }
 
+    private int getWhatever(double tx, double ty){
+        double min = 100000;
+        int index;
+        for(int i = 0; i < 4; i++){
+            double temp = Math.hypot(Constants.GameConstants.GSPoints[i][0] - tx, Constants.GameConstants.GSPoints[i][1] - ty);
+            if(temp < min){
+                min = temp;
+                index = i;
+            }
+        }
+        return index;
+    }
+
     private int getPathIndex(double dist){
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
         double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0);
