@@ -234,6 +234,6 @@ public final class Constants {
         //TODO: find actual value
         public static final double[] GSMidPoints = {8.998, 17.842, 21.385};
         
-        public static final String[] GSPaths = {"RedA", "BlueB", "BlueA", "RedB"};
+        public static final String[] GSPaths = {"PathARed", "PathBBlue", "PathABlue", "PathBRed"};
     }
 }
