@@ -118,7 +118,7 @@ public class RobotContainer {
         slalomRegions.add(RobotPath.createRegionConstraint(6.8, -3.1, 0.1, 0.9, 90, curvatureRadius));
         // Add a circular region around the end loop
         slalomRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
-        loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed, slalomRegions);
+        loadPath("AutoNav: Slalom","slalom", false, false, false, Constants.DriveConstants.autoMaxSpeed, slalomRegions);
         
         // Bounce
         List<EllipticalRegionConstraint>  bounceRegions = new ArrayList<EllipticalRegionConstraint>();

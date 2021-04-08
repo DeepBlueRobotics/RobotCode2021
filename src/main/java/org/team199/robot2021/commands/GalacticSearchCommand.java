@@ -59,7 +59,7 @@ public class GalacticSearchCommand extends CommandBase {
     public void end(boolean interrupted) {
         pathCommand.end(interrupted);
     }
-
+/*
     private int getWhatever(double tx, double ty){
         double min = 100000;
         int index;
@@ -71,7 +71,7 @@ public class GalacticSearchCommand extends CommandBase {
             }
         }
         return index;
-    }
+    } */
 
     private int getPathIndex(double dist){
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
