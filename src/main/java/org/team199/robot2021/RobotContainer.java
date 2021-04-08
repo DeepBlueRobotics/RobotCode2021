@@ -109,7 +109,7 @@ public class RobotContainer {
         barrelRegions.add(RobotPath.createRegionConstraint(3.8, -3, 1, 1, 0, curvatureRadius));
         barrelRegions.add(RobotPath.createRegionConstraint(6.1, -1.5, 1, 1, 0, curvatureRadius));
         barrelRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
-        loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, Constants.DriveConstants.autoMaxSpeed, barrelRegions);
+        loadPath("AutoNav: Barrel Racing", "barrelRacing", true, false, false, true, Constants.DriveConstants.autoMaxSpeed, barrelRegions);
         
         // Slalom
         List<EllipticalRegionConstraint>  slalomRegions = new ArrayList<EllipticalRegionConstraint>();
@@ -118,7 +118,7 @@ public class RobotContainer {
         slalomRegions.add(RobotPath.createRegionConstraint(6.8, -3.1, 0.1, 0.9, 90, curvatureRadius));
         // Add a circular region around the end loop
         slalomRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
-        loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed, slalomRegions);
+        loadPath("AutoNav: Slalom","slalom", true, false, false, true, Constants.DriveConstants.autoMaxSpeed, slalomRegions);
         
         // Bounce
         List<EllipticalRegionConstraint>  bounceRegions = new ArrayList<EllipticalRegionConstraint>();
@@ -135,23 +135,23 @@ public class RobotContainer {
         bounceRegions.add(RobotPath.createRegionConstraint(7.6, -1.5, 1, 1, 0, curvatureRadius));
         // Create a SequentialCommandGroup for the multiple parts of bounce
         try {
-            Command bounce1 = new RobotPath("Bounce1", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false);
-            Command bounce2 = new RobotPath("Bounce2", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false);
-            Command bounce3 = new RobotPath("Bounce3", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false);
-            Command bounce4 = new RobotPath("Bounce4", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false);
-            autoCommandChooser.addOption("AutoNav: Bounce", bounce1.andThen(bounce2).andThen(bounce3).andThen(bounce4));
+            Command bounce1 = new RobotPath("Bounce1", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false, false);
+            Command bounce2 = new RobotPath("Bounce2", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false, false);
+            Command bounce3 = new RobotPath("Bounce3", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false, false);
+            Command bounce4 = new RobotPath("Bounce4", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false, true);
+            autoCommandChooser.addOption("AutoNav: Bounce", bounce1.andThen(bounce2, bounce3, bounce4));
         } catch (IOException io) {
             System.err.println("Could not create Bounce autonomous command.");
             io.printStackTrace();
         }
 
-        loadPath("Galactic search: Path A Red","PathARed", false, true, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
-        loadPath("Galactic search: Path B Red","PathBRed", false, true, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
-        loadPath("Galactic search: Path A Blue","PathABlue", false, true, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
-        loadPath("Galactic search: Path B Blue","PathBBlue", false, true, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
-        loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
-        loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
-        loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Galactic search: Path A Red","PathARed", true, true, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Galactic search: Path B Red","PathBRed", true, true, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Galactic search: Path A Blue","PathABlue", false, true, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Galactic search: Path B Blue","PathBBlue", false, true, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Square", "Square", false, false, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Figure Eight", "Figure8", false, false, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Straight Line Test", "LineTest", false, false, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
         autoCommandChooser.addOption("Galactic Search: Solution 3", new GalacticSearchCommand(drivetrain, intake, lime));
         SmartDashboard.putData(autoCommandChooser);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
@@ -208,10 +208,10 @@ public class RobotContainer {
     }
 
     private void loadPath(final String chooserName, final String pathName, final boolean faceInPathDirection, final boolean deployIntake, 
-                          final boolean isInverted, final double endVelocity, final List<EllipticalRegionConstraint> regionConstraints) {
+                          final boolean isInverted, final boolean stopAtEnd, final double endVelocity, final List<EllipticalRegionConstraint> regionConstraints) {
         try {
             RobotPath path = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity, regionConstraints);
-            autoCommandChooser.addOption(chooserName, path.getPathCommand(faceInPathDirection));
+            autoCommandChooser.addOption(chooserName, path.getPathCommand(faceInPathDirection, stopAtEnd));
         } catch(final Exception e) {
             e.printStackTrace(System.err);
         }

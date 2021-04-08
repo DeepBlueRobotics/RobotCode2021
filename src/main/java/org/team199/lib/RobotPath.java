@@ -118,7 +118,7 @@ public class RobotPath {
         this.deployIntake = deployIntake;
     }
 
-    public Command getPathCommand(boolean faceInPathDirection) {
+    public Command getPathCommand(boolean faceInPathDirection, boolean stopAtEnd) {
         ProfiledPIDController thetaController = new ProfiledPIDController(Constants.DriveConstants.thetaPIDController[0],
                                                                           Constants.DriveConstants.thetaPIDController[1],
                                                                           Constants.DriveConstants.thetaPIDController[2],
@@ -148,11 +148,11 @@ public class RobotPath {
             dt
             );
 
-        if (deployIntake) {
-            return new InstantCommand(this::loadOdometry).andThen(new ToggleIntake(intake)).andThen(ram, new InstantCommand(() -> dt.drive(0, 0, 0), dt));
-        } else {
-            return new InstantCommand(this::loadOdometry).andThen(ram, new InstantCommand(() -> dt.drive(0, 0, 0), dt));
-        }
+        Command command;
+        if (deployIntake) command = new InstantCommand(this::loadOdometry).andThen(new ToggleIntake(intake));
+        else command = new InstantCommand(this::loadOdometry);
+        if (stopAtEnd) return command.andThen(ram, new InstantCommand(() -> dt.drive(0, 0, 0), dt));
+        else return command.andThen(ram);
     }
 
     public void loadOdometry() {

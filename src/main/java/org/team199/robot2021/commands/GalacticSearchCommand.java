@@ -40,7 +40,7 @@ public class GalacticSearchCommand extends CommandBase {
         SmartDashboard.putString("Chosen Path", Constants.GameConstants.GSPaths[path]);
 
         try {
-            pathCommand = new RobotPath(Constants.GameConstants.GSPaths[path], dt, intake, true, false, Constants.DriveConstants.autoMaxSpeed).getPathCommand(false);
+            pathCommand = new RobotPath(Constants.GameConstants.GSPaths[path], dt, intake, true, false, Constants.DriveConstants.autoMaxSpeed).getPathCommand(false, true);
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -60,6 +60,7 @@ public class GalacticSearchCommand extends CommandBase {
         pathCommand.end(interrupted);
     }
 
+    /*
     private int getWhatever(double tx, double ty){
         double min = 100000;
         int index;
@@ -71,7 +72,7 @@ public class GalacticSearchCommand extends CommandBase {
             }
         }
         return index;
-    }
+    }*/
 
     private int getPathIndex(double dist){
         double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0);
