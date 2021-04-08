@@ -239,6 +239,6 @@ public final class Constants {
             {15.6, 13.6}
         };
         
-        public static final String[] GSPaths = {"RedA", "RedB", "BlueA", "BlueB"};
+        public static final String[] GSPaths = {"PathARed", "PathBBlue", "PathABlue", "PathBRed"};
     }
 }
