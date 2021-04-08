@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -92,6 +93,9 @@ public class RobotPath {
                                               new MaxVelocityConstraint(Math.sqrt(curvatureRadius * Constants.DriveConstants.autoCentripetalAccel)));
     }
 
+    public RobotPath(String pathName, Drivetrain dt, Intake intake, boolean deployIntake, boolean isInverted, double endVelocity) throws IOException {
+       this(getVectorsFromFile(pathName, dt), isInverted, dt, intake, deployIntake, endVelocity, new ArrayList<>());
+    }
     public RobotPath(String pathName, Drivetrain dt, Intake intake, boolean deployIntake, boolean isInverted, double endVelocity,
                      List<EllipticalRegionConstraint> regionConstraints) throws IOException {
        this(getVectorsFromFile(pathName, dt), isInverted, dt, intake, deployIntake, endVelocity, regionConstraints);
