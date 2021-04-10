@@ -156,7 +156,8 @@ public class SwerveModule {
         // Compute desired and actual speeds in m/s
         double desiredSpeed = maxSpeed * speed * driveModifier;
         double actualSpeed = getCurrentSpeed();
-        SmartDashboard.putNumber(moduleString + " Desired (mps)", desiredSpeed);
+        SmartDashboard.putNumber(moduleString + " Desired Speed (mps)", desiredSpeed);
+        SmartDashboard.putNumber(moduleString + " Actual Speed (mps)", actualSpeed);
         double targetVoltage = (actualSpeed >= 0 ? forwardSimpleMotorFF :
                                  backwardSimpleMotorFF).calculate(desiredSpeed, calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get()));//clippedAcceleration);
         double holdingVoltage = (actualSpeed >= 0 ? forwardSimpleMotorFF :
