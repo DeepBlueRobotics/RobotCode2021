@@ -40,7 +40,7 @@ public class GalacticSearchCommand extends CommandBase {
         SmartDashboard.putString("Chosen Path", Constants.GameConstants.GSPaths[path]);
 
         try {
-            pathCommand = new RobotPath(Constants.GameConstants.GSPaths[path], dt, intake, true, false, Constants.DriveConstants.autoMaxSpeed).getPathCommand(false);
+            pathCommand = new RobotPath(Constants.GameConstants.GSPaths[path], dt, intake, true, false, Constants.DriveConstants.autoMaxSpeed).getPathCommand(false, true);
         } catch(IOException e) {
             e.printStackTrace();
         }

@@ -39,7 +39,6 @@ public class Drivetrain extends SubsystemBase {
   private SwerveDriveKinematics kinematics = null;
   private SwerveDriveOdometry odometry = null;
   private SwerveModule modules[];
-  private boolean isOdometryInit = false;
   private static final boolean isGyroReversed = true;
 
   public Drivetrain() {
@@ -120,10 +119,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void setOdometry(SwerveDriveOdometry odometry) {
-    if(!isOdometryInit) {
-      this.odometry = odometry;
-      isOdometryInit = true;
-    }
+    this.odometry = odometry;
   }
 
   public SwerveDriveOdometry getOdometry() {
@@ -133,7 +129,6 @@ public class Drivetrain extends SubsystemBase {
   public void resetOdometry() {
     odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(0));
     gyro.reset();
-    isOdometryInit = false;
   }
 
   public double getHeading() {
