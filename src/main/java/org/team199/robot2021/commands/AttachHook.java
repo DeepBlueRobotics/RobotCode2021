@@ -16,15 +16,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class AttachHook extends CommandBase {
   private final Climber climber;
   private final Joystick controller;
-  private double voltage;
-
+  private boolean hookAttached;
   /**
    * Manually adjusting the climber hook position
    */
   public AttachHook(Climber climber, Joystick manipulator) {
     addRequirements(this.climber = climber);
     this.controller = manipulator;
-    voltage = climber.getVoltage();
+    hookAttached = climber.isHookAttached();
   }
 
   // Called when the command is initially scheduled.
@@ -50,6 +49,6 @@ public class AttachHook extends CommandBase {
   @Override
   public boolean isFinished() {
     
-    return voltage >= climber.kHighVoltage;
+    return hookAttached;
   }
 }

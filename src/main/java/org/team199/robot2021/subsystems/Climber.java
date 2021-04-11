@@ -50,7 +50,11 @@ public class Climber extends SubsystemBase {
     private final CANEncoder winchEnc = winchMotor.getEncoder();
     private final PowerDistributionPanel powerDistributionPanel = new PowerDistributionPanel(1); //TODO: set correct module
     private final Joystick placeholder = new Joystick(1);
+    private final Joystick placeholder2 = new Joystick(2);
     private final JoystickButton buttonCheck = new JoystickButton(placeholder, 1);
+    private final JoystickButton checkHookAttached = new JoystickButton(placeholder2, 2);
+
+    
 
     public Climber(){
         liftEnc.setDistancePerPulse(kLiftConversionFactor);
@@ -134,6 +138,11 @@ public class Climber extends SubsystemBase {
     public boolean isButtonPressed() {
         boolean isButtonPressed = buttonCheck.get();
        return isButtonPressed;
+    }
+
+    public boolean isHookAttached() {
+        boolean isHookAttached = checkHookAttached.get();
+       return isHookAttached;
     }
 
 
