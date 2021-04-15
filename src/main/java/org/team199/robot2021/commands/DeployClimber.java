@@ -36,6 +36,7 @@ public class DeployClimber extends CommandBase {
   @Override
   public void execute() {
       //In case the winch somehow gets faster than the arm and needs to be stopped before it extends farther than the max
+      //this probably won't be necessary thx to equations :)
       if (climber.getWinchHeight() >= climber.kWinchEndHeight) {
         climber.runWinch(0);
       }
@@ -45,7 +46,7 @@ public class DeployClimber extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     //When it reaches the top this stops all of it
-    climber.runLift(Climber.kLiftKeepSpeed);
+    climber.runLift(0);
     climber.runWinch(0);
     System.out.println("--ENDED--");
   }
@@ -55,6 +56,5 @@ public class DeployClimber extends CommandBase {
   public boolean isFinished() {
     //Checks if arm has reached top
     return climber.getLiftHeight() >= Climber.kLiftHeight;
-   // return climber.getWinchHeight() >= 0;
   }
 }

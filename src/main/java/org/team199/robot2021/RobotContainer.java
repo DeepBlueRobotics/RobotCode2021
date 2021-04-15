@@ -151,7 +151,7 @@ public class RobotContainer {
         // climb button
         new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new SequentialCommandGroup(
             new AttachHook(climber, controller),
-           new ClimberAttachedCheck(climber),
+          // new ClimberAttachedCheck(climber),
             new ParallelCommandGroup(
                 new RaiseRobot(climber),
                 new LowerArm(climber)

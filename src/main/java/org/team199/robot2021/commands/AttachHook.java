@@ -48,7 +48,6 @@ public class AttachHook extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    
-    return hookAttached;
+    return hookAttached || (climber.getLiftHeight() <= climber.kArmRetryDistance);
   }
 }

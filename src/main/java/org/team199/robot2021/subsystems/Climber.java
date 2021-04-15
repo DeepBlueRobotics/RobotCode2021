@@ -26,7 +26,6 @@ public class Climber extends SubsystemBase {
 
     //TODO: find good values and then set to final
     
-  
     public static double kLiftDeploySpeed = RaiseRobot.liftDeploySpeed; //TODO: set correct speed
     public static double kWinchDeploySpeed = 1; //TODO: set correct speed
     public static double kLiftLowerSpeed = 1; //TODO: set correct speed
@@ -38,6 +37,7 @@ public class Climber extends SubsystemBase {
     public static double kWinchAdjustSpeed = 0.2; //TODO: set correct speed
     public static double kHighVoltage = 0.1; //TODO: find voltage
     public static double kLowVoltage = 0.2; //TODO: find voltage
+    public static double kArmRetryDistance = 5; //TODO: find distance
 
     public static final double kLiftHeight = 87; // TODO: set correct speed
     public static final double kLiftLowerHeight = 0;  //TODO: set this one probably
