@@ -22,7 +22,6 @@ public class RaiseRobot extends CommandBase {
    * Old needs to be fixed and updated for current
    */
   public RaiseRobot(Climber climber) {
-    hookAttached = climber.isHookAttached();
     addRequirements(this.climber = climber);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -30,6 +29,7 @@ public class RaiseRobot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    hookAttached = climber.isHookAttached();
     if (!hookAttached) {
       //Retract winch to raise robot
       climber.runWinch(Climber.kWinchRetractSpeedSecond);

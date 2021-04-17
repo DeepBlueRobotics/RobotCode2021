@@ -20,13 +20,13 @@ public class LowerArm extends CommandBase {
 
   public LowerArm(Climber climber) {
     addRequirements(this.climber = climber);
-    hookAttached = climber.isHookAttached();
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    hookAttached = climber.isHookAttached();
     if (!hookAttached) {
       climber.runLift(climber.kLiftLowerSpeed);
     }

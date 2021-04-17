@@ -23,13 +23,14 @@ public class AttachHook extends CommandBase {
   public AttachHook(Climber climber, Joystick manipulator) {
     addRequirements(this.climber = climber);
     this.controller = manipulator;
-    hookAttached = climber.isHookAttached();
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     //pulls lift and winch in, arm will go all the way down, winch will stop once hook reaches bar
+    hookAttached = climber.isHookAttached();
     climber.runLift(climber.kLiftRetractSpeed);
     climber.runWinch(climber.kWinchRetractSpeedFirst);
     System.out.println("--ATTACH HOOK--");
@@ -48,6 +49,6 @@ public class AttachHook extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return hookAttached || (climber.getLiftHeight() <= climber.kArmRetryDistance);
+    return !hookAttached || (climber.getLiftHeight() <= climber.kArmRetryDistance);
   }
 }
