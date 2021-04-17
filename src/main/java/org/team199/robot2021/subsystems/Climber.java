@@ -67,7 +67,7 @@ public class Climber extends SubsystemBase {
         SmartDashboard.putNumber("Climber.kLiftKeepSpeed", kLiftKeepSpeed);
         SmartDashboard.putNumber("Climber.kLiftRetractSpeed", kLiftRetractSpeed);
         SmartDashboard.putNumber("Climber.kWinchRetractSpeedFirst", kWinchRetractSpeedFirst);
-        SmartDashboard.putNumber("Climber.kLiftAdjustSpeed", kLiftAdjustSpeed);
+        // SmartDashboard.putNumber("Climber.kLiftAdjustSpeed", kLiftAdjustSpeed);
     }
 
     public void periodic()  {
@@ -76,7 +76,7 @@ public class Climber extends SubsystemBase {
         kLiftKeepSpeed = SmartDashboard.getNumber("Climber.kLiftKeepSpeed", kLiftKeepSpeed);
         kLiftRetractSpeed = SmartDashboard.getNumber("Climber.kLiftRetractSpeed", kLiftRetractSpeed);
         kWinchRetractSpeedFirst = SmartDashboard.getNumber("Climber.kWinchRetractSpeedFirst", kWinchRetractSpeedFirst);
-        kLiftAdjustSpeed = SmartDashboard.getNumber("Climber.kLiftAdjustSpeed", kLiftAdjustSpeed);
+        // kLiftAdjustSpeed = SmartDashboard.getNumber("Climber.kLiftAdjustSpeed", kLiftAdjustSpeed);
         SmartDashboard.putNumber("Lift Position", getLiftHeight());
         SmartDashboard.putNumber("Winch Position", getWinchHeight());
         SmartDashboard.putNumber("Lift Speed", getLiftSpeed());
@@ -128,9 +128,9 @@ public class Climber extends SubsystemBase {
         return false;
     }
 
-    public double getCurrent() {
-        return liftMotor.getOutputCurrent();
-    }
+    // public double getCurrent() {
+    //     return liftMotor.getOutputCurrent();
+    // }
 
     public boolean isButtonPressed() {
         boolean isButtonPressed = buttonCheck.get();
