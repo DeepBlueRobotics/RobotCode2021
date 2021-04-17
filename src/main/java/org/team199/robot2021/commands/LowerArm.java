@@ -14,20 +14,22 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class LowerArm extends CommandBase {
   private final Climber climber;
   //change voltage to isButtonPressed
-  private double isButtonPressed;
+  private boolean hookAttached;
   
 
 
   public LowerArm(Climber climber) {
     addRequirements(this.climber = climber);
-    current = climber.getCurrent();
+    hookAttached = climber.isHookAttached();
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.runLift(climber.kLiftLowerSpeed);
+    if (!hookAttached) {
+      climber.runLift(climber.kLiftLowerSpeed);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,8 +50,7 @@ public class LowerArm extends CommandBase {
   @Override
   public boolean isFinished() {
     //checks if arm has returned to robot
-    return climber.getLiftHeight() <= Climber.kLiftLowerHeight;
-    //TODO: stop when it reaches bottom. (call end)
-}  
+    return (climber.getLiftHeight() <= Climber.kLiftLowerHeight) || hookAttached;
+  }  
 }
 

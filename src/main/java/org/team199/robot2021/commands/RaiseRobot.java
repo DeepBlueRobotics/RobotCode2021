@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class RaiseRobot extends CommandBase {
   private final Climber climber;
+  private boolean hookAttached;
 
   public static double liftDeploySpeed;
 
@@ -21,6 +22,7 @@ public class RaiseRobot extends CommandBase {
    * Old needs to be fixed and updated for current
    */
   public RaiseRobot(Climber climber) {
+    hookAttached = climber.isHookAttached();
     addRequirements(this.climber = climber);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -28,8 +30,10 @@ public class RaiseRobot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //Retract winch to raise robot
-    climber.runWinch(Climber.kWinchRetractSpeedSecond);
+    if (!hookAttached) {
+      //Retract winch to raise robot
+      climber.runWinch(Climber.kWinchRetractSpeedSecond);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -40,9 +44,6 @@ public class RaiseRobot extends CommandBase {
     double winchSpeed = climber.getWinchSpeed();
     //this equation is random, it's not the final one- we made a placeholder equation with constants and a get method
     liftDeploySpeed = 2 * winchSpeed + climber.kLiftHeight;
-
-    
-
   } 
 
   // Called once the command ends or is interrupted.
@@ -56,6 +57,6 @@ public class RaiseRobot extends CommandBase {
   @Override
   public boolean isFinished() {
     //checks if robot has reached top
-    return climber.getWinchHeight() >= Climber.kWinchFinalHeight;
+    return (climber.getWinchHeight() >= Climber.kWinchEndHeight) || hookAttached;
   }
 }

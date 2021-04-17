@@ -42,5 +42,6 @@ public class ClimberAttachedCheck extends CommandBase {
   @Override
   public boolean isFinished() {
     return buttonPressed;
+    //also return true if 
   }
 }

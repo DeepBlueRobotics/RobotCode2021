@@ -30,10 +30,13 @@ public class Climber extends SubsystemBase {
     public static double kLiftRetractSpeed = -0.3; //TODO: set correct speed
     public static double kWinchRetractSpeedFirst = 0.6; //TODO: set correct speed  KEEP THIS POSITIVE SO THAT WINCH GOES IN THE RIGHT DIRECTION
     public static double kWinchRetractSpeedSecond = 1;
+    public static double kArmRetryDistance = 5; //TODO: find distance
     //public static double kLiftAdjustSpeed = 0.2; //vestigial from perevious iteration
     //public static double kWinchAdjustSpeed = 0.2; //vestigial from perevious iteration
     //public static double kHighCurrent = 83; //based on current budget? may have to be changed (number is in amps?)
     //public static double kLowCurrent = 0.2;
+
+    
 
     public static final double kLiftHeight = 87; // TODO: set correct speed
     public static final double kLiftLowerHeight = 0;  //TODO: set this one probably (could be double max height depending on if scalar or vector)
@@ -46,9 +49,10 @@ public class Climber extends SubsystemBase {
     private final Encoder liftEnc = new Encoder(2, 3);
     private final CANEncoder winchEnc = winchMotor.getEncoder();
     private final PowerDistributionPanel powerDistributionPanel = new PowerDistributionPanel(1); //TODO: set correct module
-    private final Joystick placeholder = new Joystick(1);
+    private final Joystick placeholder = new Joystick(1);    
+    private final Joystick placeholder2 = new Joystick(2);
     private final JoystickButton buttonCheck = new JoystickButton(placeholder, 1);
-
+    private final JoystickButton checkHookAttached = new JoystickButton(placeholder2, 2);
     public Climber(){
         liftEnc.setDistancePerPulse(kLiftConversionFactor);
         winchEnc.setPositionConversionFactor(kWinchConversionFactor);
@@ -132,6 +136,9 @@ public class Climber extends SubsystemBase {
         boolean isButtonPressed = buttonCheck.get();
        return isButtonPressed;
     }
-
+    public boolean isHookAttached() {
+        boolean isHookAttached = checkHookAttached.get();
+       return isHookAttached;
+    }
 
 }
