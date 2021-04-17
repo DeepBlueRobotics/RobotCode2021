@@ -38,7 +38,7 @@ public final class Constants {
 
         public static final double driveModifier = 1;
         public static final double wheelDiameter = Units.inchesToMeters(4.0)*7.36/7.65;
-        public static final double mu = 0.15;
+        public static final double mu = 0.5;
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
         // Angular speed to translational speed --> v = omega * r / gearing
@@ -57,17 +57,26 @@ public final class Constants {
 
         // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
         // Determine correct turn PID constants
-        public static final double[] turnkP = {0.005, 0.005, 0.005, 0.005};
+        public static final double[] turnkP = {0.00374, 0.00374, 0.00374, 0.00374};
+        //public static final double[] turnkP = {0.005, 0.005, 0.005, 0.005};
         public static final double[] turnkI = {0, 0, 0, 0};
         public static final double[] turnkD = {0, 0, 0, 0};
+        public static final double[] turnkS = {0.2, 0.2, 0.2, 0.2};
+        // V = kS + kV * v + kA * a
+        // 12 = 0.2 + 0.00463 * v
+        // v = (12 - 0.2) / 0.00463 = 2548.596 degrees/s
+        public static final double[] turnkV = {0.00463, 0.00463, 0.00463, 0.00463};
+        public static final double[] turnkA = {0.000115, 0.000115, 0.000115, 0.000115};
+        //public static final double[] turnkD = {0.0001, 0.0001, 0.0001, 0.0001};
 
         // kP is an average of the forward and backward kP values
         // Forward: 1.72, 1.71, 1.92, 1.94
         // Backward: 1.92, 1.92, 2.11, 1.89
-        public static final double[] drivekP = {1.82, 1.815, 2.015, 1.915};
-        //public static final double[] drivekP = {0, 0, 0, 0};
+        // public static final double[] drivekP = {1.82, 1.815, 2.015, 1.915};
+        public static final double[] drivekP = {0, 0, 0, 0};
         public static final double[] drivekI = {0, 0, 0, 0};
-        public static final double[] drivekD = {0, 0, 0, 0};
+        // public static final double[] drivekD = {.1,.1,.1,.1};
+        public static final double[] drivekD = {0,0,0,0};
         public static final boolean[] driveInversion = {true, true, true, true};
 
         public static final double[] kForwardVolts = {0.129, 0.108, 0.14, 0.125};
