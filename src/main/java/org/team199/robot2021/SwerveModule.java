@@ -7,8 +7,6 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import frc.robot.lib.swerve.SwerveMath;
-
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -134,21 +132,17 @@ public class SwerveModule {
     }
 
     /**
-     * Move the module to a specified angle and drive at a specified speed.
-     * @param normalizedSpeed   The desired speed normalized with respect to a maximum speed, in m/s.
-     * @param angle             The desired angle, in radians.
+     * Move the module to a specified ang
+     * le and drive at a specified speed.
+     * @param speed   The desired speed in m/s.
+     * @param angle             The desired angle in degrees.
      */
-    public void move(double normalizedSpeed, double angle) {
-        //SmartDashboard.putNumber(moduleString + " Compute Setpoints Angle:", angle / (2 * Math.PI));
-        SmartDashboard.putNumber(moduleString + " Target Angle (deg)", 180 * angle / Math.PI);
-        double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maxSpeed,
-                                                         angle / (2 * Math.PI),
-                                                         turnEncoder.getPosition(),
-                                                         360.0);
-        //SmartDashboard.putNumber(moduleString + " Setpoint Result: ", setpoints[1] * 360.0D);
-        setSpeed(setpoints[0]);
+    public void move(double speed, double angle) {
+        setSpeed(speed);
         // if(setpoints[0] != 0.0) 
-            setAngle(setpoints[1]);
+        //SmartDashboard.putNumber(moduleString + " Target Angle (deg)", angle);
+        angle = MathUtil.inputModulus(angle, -180, 180);
+        setAngle(angle);
     }
 
     /**
@@ -244,7 +238,7 @@ public class SwerveModule {
         lastAngle = angle;
     }
 
-    private double getModuleAngle() {
+    public double getModuleAngle() {
         return Math.PI * (turnEncoder.getAbsolutePosition() - turnZero) / 180;
     }
 

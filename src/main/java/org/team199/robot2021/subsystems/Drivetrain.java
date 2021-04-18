@@ -150,7 +150,8 @@ public class Drivetrain extends SubsystemBase {
     
     // Move the modules based on desired (normalized) speed, desired angle, max speed, drive modifier, and whether or not to reverse turning.
     for (int i = 0; i < 4; i++) {
-      modules[i].move(moduleStates[i].speedMetersPerSecond, moduleStates[i].angle.getRadians());
+      moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], new Rotation2d(modules[i].getModuleAngle()));
+      modules[i].move(moduleStates[i].speedMetersPerSecond, moduleStates[i].angle.getDegrees());
     }
   }
 
