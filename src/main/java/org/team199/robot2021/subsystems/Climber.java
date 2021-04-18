@@ -17,6 +17,7 @@ import frc.robot.lib.MotorControllerFactory;
 import org.team199.robot2021.Constants;
 import org.team199.robot2021.commands.RaiseRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Climber extends SubsystemBase {
     private static final double kLiftConversionFactor =  1; //pulse resolution * 2pi * gear ratio (1.0/12  * 2 * Math.PI * 100) = distance lift has traveled, included later (in big trig function)  TODO find r
@@ -51,8 +52,7 @@ public class Climber extends SubsystemBase {
     private final PowerDistributionPanel powerDistributionPanel = new PowerDistributionPanel(1); //TODO: set correct module
     private final Joystick placeholder = new Joystick(1);    
     private final Joystick placeholder2 = new Joystick(2);
-    private final JoystickButton buttonCheck = new JoystickButton(placeholder, 1);
-    private final JoystickButton checkHookAttached = new JoystickButton(placeholder2, 2);
+    private final DigitalInput checkHookAttached = new DigitalInput(2);
     public Climber(){
         liftEnc.setDistancePerPulse(kLiftConversionFactor);
         winchEnc.setPositionConversionFactor(kWinchConversionFactor);
@@ -132,10 +132,7 @@ public class Climber extends SubsystemBase {
     //     return liftMotor.getOutputCurrent();
     // }
 
-    public boolean isButtonPressed() {
-        boolean isButtonPressed = buttonCheck.get();
-       return isButtonPressed;
-    }
+    //isHookAttached to arm, not bar 
     public boolean isHookAttached() {
         boolean isHookAttached = checkHookAttached.get();
        return isHookAttached;

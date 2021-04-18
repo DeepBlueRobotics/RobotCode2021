@@ -34,7 +34,6 @@ import org.team199.robot2021.commands.AttachHook;
 import org.team199.robot2021.commands.AutoShootAndDrive;
 import org.team199.robot2021.commands.DeployClimber;
 import org.team199.robot2021.commands.RaiseRobot;
-import org.team199.robot2021.commands.ClimberAttachedCheck;
 import org.team199.robot2021.commands.LowerArm;
 import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;
