@@ -205,7 +205,7 @@ public class SwerveModule {
 
     /**
      * Sets the angle for the turn motor controller.
-     * @param angle     The desired angle, between -0.5 (180 degrees counterclockwise) and 0.5 (180 degrees clockwise).
+     * @param angle     The desired angle, between 180 degrees clockwise and 180 degrees counterclockwise.
      */
     private void setAngle(double angle) {
         //SmartDashboard.putNumber(moduleString + "Target Angle:", 360 * angle * (reversed ? -1 : 1));
@@ -225,7 +225,7 @@ public class SwerveModule {
         // Find the minimum distance to travel from lastAngle to angle and determine the
         // correct direction to trvel the minimum distance. This is used in order to accurately
         // calculate the goal velocity.
-        double angleDiff = MathUtil.inputModulus(360 * (angle - lastAngle), -180, 180);
+        double angleDiff = MathUtil.inputModulus(angle - lastAngle, -180, 180);
         // double angleDiff = (360 * Math.abs(angle - lastAngle)) % 360;
         // double optimalDiff = Math.min(angleDiff, 360 - angleDiff);
         // double s1 = Math.signum(angle);
@@ -235,7 +235,7 @@ public class SwerveModule {
 	    //     else optimalDiff *= s1;
         // } else optimalDiff *= Math.signum(angle - lastAngle);
 
-        turnPIDController.setGoal(new TrapezoidProfile.State(360 * angle * (reversed ? -1 : 1), angleDiff * (reversed ? -1 : 1) / deltaTime));
+        turnPIDController.setGoal(new TrapezoidProfile.State(angle * (reversed ? -1 : 1), angleDiff * (reversed ? -1 : 1) / deltaTime));
         lastAngle = angle;
     }
 
