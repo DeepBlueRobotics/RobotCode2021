@@ -91,7 +91,7 @@ public class SwerveModule {
         // Voltage = kS + kV * velocity + kA * acceleration
         // Assume cruising at maximum velocity --> 12 = kS + kV * max velocity + kA * 0 --> max velocity = (12 - kS) / kV
         // Limit the velocity by a factor of 0.5
-        double maxTurnVelocity = 0.5 * turnSimpleMotorFeedforward.maxAchievableVelocity(12.0, 0);
+        maxTurnVelocity = 0.5 * turnSimpleMotorFeedforward.maxAchievableVelocity(12.0, 0);
         // Assume accelerating while at limited speed --> 12 = kS + kV * limited speed + kA * acceleration
         // acceleration = (12 - kS - kV * limiedSpeed) / kA
         double turnAccelrationConstraint = turnSimpleMotorFeedforward.maxAchievableAcceleration(12.0, maxTurnVelocity);
@@ -135,7 +135,7 @@ public class SwerveModule {
      * Move the module to a specified ang
      * le and drive at a specified speed.
      * @param speed   The desired speed in m/s.
-     * @param angle             The desired angle in degrees.
+     * @param angle   The desired angle in degrees.
      */
     public void move(double speed, double angle) {
         setSpeed(speed);
@@ -225,16 +225,17 @@ public class SwerveModule {
         // Find the minimum distance to travel from lastAngle to angle and determine the
         // correct direction to trvel the minimum distance. This is used in order to accurately
         // calculate the goal velocity.
-        double angleDiff = (360 * Math.abs(angle - lastAngle)) % 360;
-        double optimalDiff = Math.min(angleDiff, 360 - angleDiff);
-        double s1 = Math.signum(angle);
-        double s2 = Math.signum(lastAngle);
-        if (s1 != s2) {
-	        if (optimalDiff == 360 - angleDiff) optimalDiff *= s2;
-	        else optimalDiff *= s1;
-        } else optimalDiff *= Math.signum(angle - lastAngle);
+        double angleDiff = MathUtil.inputModulus(360 * (angle - lastAngle), -180, 180);
+        // double angleDiff = (360 * Math.abs(angle - lastAngle)) % 360;
+        // double optimalDiff = Math.min(angleDiff, 360 - angleDiff);
+        // double s1 = Math.signum(angle);
+        // double s2 = Math.signum(lastAngle);
+        // if (s1 != s2) {
+	    //     if (optimalDiff == 360 - angleDiff) optimalDiff *= s2;
+	    //     else optimalDiff *= s1;
+        // } else optimalDiff *= Math.signum(angle - lastAngle);
 
-        turnPIDController.setGoal(new TrapezoidProfile.State(360 * angle * (reversed ? -1 : 1), optimalDiff / deltaTime));
+        turnPIDController.setGoal(new TrapezoidProfile.State(360 * angle * (reversed ? -1 : 1), angleDiff * (reversed ? -1 : 1) / deltaTime));
         lastAngle = angle;
     }
 
