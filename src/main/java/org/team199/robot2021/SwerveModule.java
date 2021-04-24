@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.util.Units;
 
 /**
  * A class that stores all the variables and methods applicaple to a single swerve module,
@@ -37,7 +38,7 @@ public class SwerveModule {
     private boolean reversed;
     private Timer timer;
     private SimpleMotorFeedforward forwardSimpleMotorFF, backwardSimpleMotorFF, turnSimpleMotorFeedforward;
-    private double lastAngle, maxTurnVelocity;
+    private double lastAngle, maxAchievableTurnVelocityDps, maxAchievableTurnAccelerationMps2, turnToleranceDeg;
 
     public SwerveModule(ModuleType type, CANSparkMax drive, CANSparkMax turn, CANCoder turnEncoder, double driveModifier,
                         double maxSpeed, int arrIndex, Supplier<Float> pitchDegSupplier, Supplier<Float> rollDegSupplier) {
@@ -63,10 +64,20 @@ public class SwerveModule {
         }
 
         this.drive = drive;
-        double positionConstant = Constants.DriveConstants.wheelDiameter * Math.PI / Constants.DriveConstants.driveGearing;
+        double positionConstant = Constants.DriveConstants.wheelDiameterMeters * Math.PI / Constants.DriveConstants.driveGearing;
         drive.setInverted(Constants.DriveConstants.driveInversion[arrIndex]);
         drive.getEncoder().setPositionConversionFactor(positionConstant);
         drive.getEncoder().setVelocityConversionFactor(positionConstant / 60);
+
+        final double normalForceNewtons = 83.2 /* lbf */ * 4.4482 /* N/lbf */ / 4 /* numModules */;
+        double wheelTorqueLimitNewtonMeters = normalForceNewtons * Constants.DriveConstants.mu * Constants.DriveConstants.wheelDiameterMeters / 2;
+        double motorTorqueLimitNewtonMeters = wheelTorqueLimitNewtonMeters / Constants.DriveConstants.driveGearing;
+        final double neoStallTorqueNewtonMeters = 3.36;
+        final double neoFreeCurrentAmps = 1.3;
+        final double neoStallCurrentAmps = 166;
+        double currentLimitAmps = neoFreeCurrentAmps + motorTorqueLimitNewtonMeters / neoStallTorqueNewtonMeters * (neoStallCurrentAmps-neoFreeCurrentAmps);
+        SmartDashboard.putNumber(moduleString + " current limit (amps)", currentLimitAmps);
+        drive.setSmartCurrentLimit((int)Math.min(50, currentLimitAmps));
 
         this.forwardSimpleMotorFF = new SimpleMotorFeedforward(Constants.DriveConstants.kForwardVolts[arrIndex],
                                                                Constants.DriveConstants.kForwardVels[arrIndex],
@@ -84,28 +95,26 @@ public class SwerveModule {
 
         this.turn = turn;
 
-        this.turnSimpleMotorFeedforward = new SimpleMotorFeedforward(Constants.DriveConstants.turnkS[arrIndex],
+        this.turnSimpleMotorFeedforward = new SimpleMotorFeedforward(Constants.DriveConstants.turnkS[arrIndex] * 0.6 /* empirical adjustment */,
                                                                      Constants.DriveConstants.turnkV[arrIndex],
                                                                      Constants.DriveConstants.turnkA[arrIndex]);
 
         // Voltage = kS + kV * velocity + kA * acceleration
         // Assume cruising at maximum velocity --> 12 = kS + kV * max velocity + kA * 0 --> max velocity = (12 - kS) / kV
         // Limit the velocity by a factor of 0.5
-        maxTurnVelocity = 0.5 * turnSimpleMotorFeedforward.maxAchievableVelocity(12.0, 0);
+        maxAchievableTurnVelocityDps = 0.5 * turnSimpleMotorFeedforward.maxAchievableVelocity(12.0, 0);
         // Assume accelerating while at limited speed --> 12 = kS + kV * limited speed + kA * acceleration
         // acceleration = (12 - kS - kV * limiedSpeed) / kA
-        double turnAccelrationConstraint = turnSimpleMotorFeedforward.maxAchievableAcceleration(12.0, maxTurnVelocity);
-        turnConstraints = new TrapezoidProfile.Constraints(maxTurnVelocity, turnAccelrationConstraint);
+        turnToleranceDeg = 3 * 360/4096.0; /* degree offset for 3 CANCoder counts */
+        maxAchievableTurnAccelerationMps2 = 0.5 * turnSimpleMotorFeedforward.maxAchievableAcceleration(12.0, maxAchievableTurnVelocityDps);
+        turnConstraints = new TrapezoidProfile.Constraints(maxAchievableTurnVelocityDps, maxAchievableTurnAccelerationMps2);
         lastAngle = 0.0;
-        //SmartDashboard.putNumber("turn velocity constraint", turnConstraints.maxVelocity);
-        //SmartDashboard.putNumber("turn accel constraint", turnConstraints.maxAcceleration);
-        turnPIDController = new ProfiledPIDController(Constants.DriveConstants.turnkP[arrIndex] * 1.0,
+        turnPIDController = new ProfiledPIDController(Constants.DriveConstants.turnkP[arrIndex] * 2.0 /* Empirical adjustment */, 
                                               Constants.DriveConstants.turnkI[arrIndex],
                                               Constants.DriveConstants.turnkD[arrIndex],
                                               turnConstraints);
         turnPIDController.enableContinuousInput(-180.0, 180.0);
-        turnPIDController.setTolerance(3 * 360/4096.0);
-        turnPIDController.reset(0);
+        turnPIDController.setTolerance(turnToleranceDeg);
 
         this.turnEncoder = turnEncoder;
         this.turnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
@@ -115,20 +124,32 @@ public class SwerveModule {
         this.reversed = Constants.DriveConstants.reversed[arrIndex];
         this.turnZero = Constants.DriveConstants.turnZero[arrIndex];
 
+        turnPIDController.reset(getModuleAngle() * 180 / Math.PI);
+
         this.rollDegSupplier = rollDegSupplier;
         this.pitchDegSupplier = pitchDegSupplier;
     }
 
+    private double prevTurnVelocity = 0;
     public void periodic() {
-        double turnSpeed = turnPIDController.calculate(getModuleAngle()*180/Math.PI);
+        double measuredAngleDegs = getModuleAngle()*180/Math.PI;
+        TrapezoidProfile.State goal = turnPIDController.getGoal();
+        goal = new TrapezoidProfile.State(goal.position, goal.velocity);
+        
+        double period = turnPIDController.getPeriod();
+        double optimalTurnVelocityDps = Math.abs(MathUtil.inputModulus(goal.position-measuredAngleDegs, -180, 180))/period;
+        turnConstraints.maxVelocity = Math.min(maxAchievableTurnVelocityDps, optimalTurnVelocityDps);
+
+        double turnSpeedCorrectionDps = turnPIDController.calculate(measuredAngleDegs) * turnSimpleMotorFeedforward.maxAchievableVelocity(12,0);
         TrapezoidProfile.State state = turnPIDController.getSetpoint();
-        SmartDashboard.putNumber(moduleString + "state position", state.position);
-        SmartDashboard.putNumber(moduleString + "state velocity", state.velocity);
-        turnSpeed += turnSimpleMotorFeedforward.calculate(state.velocity) / 12.0;
+        double turnVolts = turnSimpleMotorFeedforward.calculate(prevTurnVelocity+turnSpeedCorrectionDps, (state.velocity-prevTurnVelocity) / period);
         if (!turnPIDController.atGoal()) {
-            turn.set(MathUtil.clamp(turnSpeed, -1.0, 1.0));
-            //System.out.println("stuff is being turned");
-        }
+            turn.setVoltage(MathUtil.clamp(turnVolts, -12.0, 12.0));
+        } else {
+            turn.setVoltage(turnSimpleMotorFeedforward.calculate(goal.velocity));
+        }        
+        prevTurnVelocity = state.velocity;
+        SmartDashboard.putNumber(moduleString + " error (deg)", turnPIDController.getPositionError());
     }
 
     /**
@@ -139,10 +160,11 @@ public class SwerveModule {
      */
     public void move(double speed, double angle) {
         setSpeed(speed);
-        // if(setpoints[0] != 0.0) 
-        //SmartDashboard.putNumber(moduleString + " Target Angle (deg)", angle);
-        angle = MathUtil.inputModulus(angle, -180, 180);
-        setAngle(angle);
+        if(speed != 0.0) {
+            //SmartDashboard.putNumber(moduleString + " Target Angle (deg)", angle);
+            angle = MathUtil.inputModulus(angle, -180, 180);
+            setAngle(angle);
+        }
     }
 
     /**
@@ -177,30 +199,12 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Actual Speed (mps)", actualSpeed);
         double targetVoltage = (actualSpeed >= 0 ? forwardSimpleMotorFF :
                                  backwardSimpleMotorFF).calculate(desiredSpeed, calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get()));//clippedAcceleration);
-        /* double holdingVoltage = (actualSpeed >= 0 ? forwardSimpleMotorFF :
-                                 backwardSimpleMotorFF).calculate(actualSpeed, calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get()));//clippedAcceleration);
-        */
-        // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
-        //double desiredAcceleration = (desiredSpeed - actualSpeed) / deltaTime;// + calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get());
-        //double maxAcceleration = Constants.DriveConstants.mu * Constants.g;
-        //double maxVoltageDifference = maxAcceleration*(actualSpeed >= 0 ? forwardSimpleMotorFF.ka : backwardSimpleMotorFF.ka);
-        double clippedVoltage =  targetVoltage; //MathUtil.clamp(targetVoltage, holdingVoltage - maxVoltageDifference, holdingVoltage + maxVoltageDifference);
-        //SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
-        //clippedAcceleration = 0;
-        // Clip the speed based on the clipped desired acceleration
-        //double clippedDesiredSpeed = actualSpeed + clippedAcceleration * deltaTime;
-        //SmartDashboard.putNumber(moduleString + " Clipped Desired Speed", clippedDesiredSpeed);
-        
+
         // Use robot characterization as a simple physical model to account for internal resistance, frcition, etc.
         // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
-        //SmartDashboard.putNumber(moduleString + " Voltage no PID", appliedVoltage);
-        clippedVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
-        //SmartDashboard.putNumber(moduleString + " Unclamped Voltage", appliedVoltage);
-        double appliedVoltage = MathUtil.clamp(clippedVoltage / 12, -1, 1);
-        //SmartDashboard.putNumber(moduleString + " Drive Speed", driveModifier * appliedVoltage);
+        targetVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
+        double appliedVoltage = MathUtil.clamp(targetVoltage / 12, -1, 1);
         drive.set(appliedVoltage);
-
-        // Reset the timer so get() returns a change in time
     }
 
     /**
@@ -213,34 +217,21 @@ public class SwerveModule {
         double deltaTime = timer.get();
         timer.reset();
         timer.start();
-        // Omega is the angular velocity at which the module is turning.
-        // v = omega * r (for small changes in module angle)
-        // a = v^2 / r --> r = v * v / a --> r = omega * r * v / a --> 1 = omega * v / a
-        // omega = a / v
-        double maxOmega = Constants.DriveConstants.autoCentripetalAccel / getCurrentSpeed();
-        // Omega is in radians so it must be converted to degrees. Also, we don't want to
-        // turn faster than what we are capable of (maxTurnVelocity)
-        turnConstraints.maxVelocity = Math.min(maxOmega * 180 / Math.PI, maxTurnVelocity);
 		
         // Find the minimum distance to travel from lastAngle to angle and determine the
         // correct direction to trvel the minimum distance. This is used in order to accurately
         // calculate the goal velocity.
         double angleDiff = MathUtil.inputModulus(angle - lastAngle, -180, 180);
-        // double angleDiff = (360 * Math.abs(angle - lastAngle)) % 360;
-        // double optimalDiff = Math.min(angleDiff, 360 - angleDiff);
-        // double s1 = Math.signum(angle);
-        // double s2 = Math.signum(lastAngle);
-        // if (s1 != s2) {
-	    //     if (optimalDiff == 360 - angleDiff) optimalDiff *= s2;
-	    //     else optimalDiff *= s1;
-        // } else optimalDiff *= Math.signum(angle - lastAngle);
+        SmartDashboard.putNumber(moduleString + " angleDiff (deg)", angleDiff);
 
         turnPIDController.setGoal(new TrapezoidProfile.State(angle * (reversed ? -1 : 1), angleDiff * (reversed ? -1 : 1) / deltaTime));
         lastAngle = angle;
     }
 
     public double getModuleAngle() {
-        return Math.PI * (turnEncoder.getAbsolutePosition() - turnZero) / 180;
+        double angleRads = Math.PI * (turnEncoder.getAbsolutePosition() - turnZero) / 180;
+        angleRads = MathUtil.inputModulus(angleRads, -Math.PI, Math.PI);
+        return angleRads;
     }
 
     /**
@@ -262,13 +253,16 @@ public class SwerveModule {
         // Display the position of the quadrature encoder.
         SmartDashboard.putNumber(moduleString + " Incremental Position", turnEncoder.getPosition());
         // Display the position of the analog encoder.
-        SmartDashboard.putNumber(moduleString + " Absolute Angle (degrees)", turnEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber(moduleString + " Absolute Angle (deg)", turnEncoder.getAbsolutePosition());
         // Display the module angle as calculated using the absolute encoder.
-        SmartDashboard.putNumber(moduleString + " Relative Angle (degrees)", getModuleAngle()/Math.PI*180);
+        SmartDashboard.putNumber(moduleString + " Turn Measured Pos (deg)", getModuleAngle()/Math.PI*180);
         SmartDashboard.putNumber(moduleString + " Encoder Position", drive.getEncoder().getPosition());
         // Display the speed that the robot thinks it is travelling at.
         SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
-        SmartDashboard.putNumber(moduleString + " Setpoint Angle", turnPIDController.getGoal().position);
+        SmartDashboard.putNumber(moduleString + " Turn Setpoint Pos (deg)", turnPIDController.getSetpoint().position);
+        SmartDashboard.putNumber(moduleString + " Turn Setpoint Vel (dps)", turnPIDController.getSetpoint().velocity);
+        SmartDashboard.putNumber(moduleString + " Turn Goal Pos (deg)", turnPIDController.getGoal().position);
+        SmartDashboard.putNumber(moduleString + " Turn Goal Vel (dps)", turnPIDController.getGoal().velocity);
         //SmartDashboard.putNumber("Gyro Pitch", pitchDegSupplier.get());
         //SmartDashboard.putNumber("Gyro Roll", rollDegSupplier.get());
         SmartDashboard.putNumber(moduleString + "Antigravitational Acceleration", calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get()));

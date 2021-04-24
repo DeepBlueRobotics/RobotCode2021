@@ -102,20 +102,20 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     for (int i = 0; i < 4; i++) {
       modules[i].periodic();
-      modules[i].updateSmartDashboard();
+      // modules[i].updateSmartDashboard();
     }
 
     // Update the odometry with current heading and encoder position
     odometry.update(Rotation2d.fromDegrees(getHeading()), modules[0].getCurrentState(), modules[1].getCurrentState(),
                     modules[2].getCurrentState(), modules[3].getCurrentState());
   
-    SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
-    SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());;
-    SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
-    SmartDashboard.putNumber("Robot Heading", getHeading());
-    SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
-    SmartDashboard.putNumber("Compass Offset", compassOffset);
-    SmartDashboard.putBoolean("Current Magnetic Field Disturbance", gyro.isMagneticDisturbance());
+    // SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
+    // SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());;
+    // SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
+    // SmartDashboard.putNumber("Robot Heading", getHeading());
+    // SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
+    // SmartDashboard.putNumber("Compass Offset", compassOffset);
+    // SmartDashboard.putBoolean("Current Magnetic Field Disturbance", gyro.isMagneticDisturbance());
   }
 
   public void setOdometry(SwerveDriveOdometry odometry) {

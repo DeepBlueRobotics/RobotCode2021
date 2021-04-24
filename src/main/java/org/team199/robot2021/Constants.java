@@ -37,12 +37,12 @@ public final class Constants {
         public static final double driveGearing = 6.86;
 
         public static final double driveModifier = 1;
-        public static final double wheelDiameter = Units.inchesToMeters(4.0)*7.36/7.65;
+        public static final double wheelDiameterMeters = Units.inchesToMeters(4.0) * 7.36/7.65 /* empirical correction */; 
         public static final double mu = 0.5;
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
         // Angular speed to translational speed --> v = omega * r / gearing
-        public static final double maxSpeed = NEOFreeSpeed * (wheelDiameter / 2.0) / driveGearing * 0.7;
+        public static final double maxSpeed = NEOFreeSpeed * (wheelDiameterMeters / 2.0) / driveGearing * 0.7;
         public static final double maxForward = maxSpeed;
         public static final double maxStrafe = maxSpeed;
         // maxRCW is the angular velocity of the robot.
