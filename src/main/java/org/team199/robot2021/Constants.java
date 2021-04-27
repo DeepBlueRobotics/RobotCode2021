@@ -168,7 +168,7 @@ public final class Constants {
         public static final class RightJoy {
             public static final int port = 1;
 
-            //public static final int alignAndShootButton = 2;
+            public static final int kAlignAndShootButton = 2;
             //public static final int slowDriveButton = 5;
         }
 

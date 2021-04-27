@@ -12,8 +12,6 @@ import org.team199.robot2021.subsystems.Shooter;
 import org.team199.robot2021.subsystems.Turret;
 
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class AutoShootAndDrive extends SequentialCommandGroup {
@@ -22,7 +20,7 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
         addRequirements(drivetrain, intake, feeder, shooter, turret);
 
         TimeOfFlight shooterDistanceSensor = feeder.getShooterDistanceSensor();
-        ShooterHorizontalAim aim = new ShooterHorizontalAim(turret, lime);
+        ShooterHorizontalAim aim = new ShooterHorizontalAim(drivetrain, turret, lime);
         AutoShoot shoot = new AutoShoot(feeder, shooter, shooterDistanceSensor, 3);
 
         /*

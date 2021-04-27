@@ -15,10 +15,10 @@ import frc.robot.lib.MotorControllerFactory;
 
 public class Turret extends SubsystemBase {
     
-    private final DigitalInput homeSensor = new DigitalInput(Constants.Drive.kTurretHomeSensor);
-    private final DigitalInput counterclockwiseLimit = new DigitalInput(Constants.Drive.kTurretCounterclockwiseLimit);
-    private final DigitalInput clockwiseLimit = new DigitalInput(Constants.Drive.kTurretClockwiseLimit);
-    private final CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.Drive.kTurretMotor);
+    private final DigitalInput homeSensor = new DigitalInput(Constants.DrivePorts.kTurretHomeSensor);
+    private final DigitalInput counterclockwiseLimit = new DigitalInput(Constants.DrivePorts.kTurretCounterclockwiseLimit);
+    private final DigitalInput clockwiseLimit = new DigitalInput(Constants.DrivePorts.kTurretClockwiseLimit);
+    private final CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kTurretMotor);
     private final CANEncoder encoder = motor.getEncoder();
     private final double gearing = 1/50D;
 
