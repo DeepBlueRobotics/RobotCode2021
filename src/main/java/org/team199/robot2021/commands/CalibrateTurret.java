@@ -41,7 +41,7 @@ public class CalibrateTurret extends CommandBase {
                 speed = 0.01;
                 state = state | FINAL_ALIGN_MASK;
             } else if(turret.limited(speed)) {
-                turret.setPosition(170);
+                turret.setPosition(180);
                 speed *= -1;
                 state = state | APROX_ALIGN_MASK;
             }

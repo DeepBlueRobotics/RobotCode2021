@@ -16,8 +16,7 @@ import frc.robot.lib.MotorControllerFactory;
 public class Turret extends SubsystemBase {
     
     private final DigitalInput homeSensor = new DigitalInput(Constants.DrivePorts.kTurretHomeSensor);
-    private final DigitalInput counterclockwiseLimit = new DigitalInput(Constants.DrivePorts.kTurretCounterclockwiseLimit);
-    private final DigitalInput clockwiseLimit = new DigitalInput(Constants.DrivePorts.kTurretClockwiseLimit);
+    private final DigitalInput limit = new DigitalInput(Constants.DrivePorts.kTurretLimit);
     private final CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kTurretMotor);
     private final CANEncoder encoder = motor.getEncoder();
     private final double gearing = 1/50D;
@@ -26,15 +25,13 @@ public class Turret extends SubsystemBase {
     private long simLastUpdate = -1;
     private double simLastSpeed = 0;
     private DIOSim simHomeSensor;
-    private DIOSim simCounterclockwiseLimit;
-    private DIOSim simClockwiseLimit;
+    private DIOSim simLimit;
 
     public Turret() {
         encoder.setPositionConversionFactor(gearing * 180 / (42 * 2 * Math.PI));
         if(RobotBase.isSimulation()) {
             simHomeSensor = new DIOSim(homeSensor);
-            simCounterclockwiseLimit = new DIOSim(counterclockwiseLimit);
-            simClockwiseLimit = new DIOSim(clockwiseLimit);
+            simLimit = new DIOSim(limit);
 
             SmartDashboard.putNumber("Target Position", 0.0D);
         }
@@ -76,12 +73,8 @@ public class Turret extends SubsystemBase {
         return motor.get();
     }
 
-    public boolean isAtCounterclockwiseLimit() {
-        return counterclockwiseLimit.get();
-    }
-
-    public boolean isAtClockwiseLimit() {
-        return clockwiseLimit.get();
+    public boolean isAtLimit() {
+        return limit.get();
     }
 
     public boolean isAtHome() {
@@ -97,7 +90,7 @@ public class Turret extends SubsystemBase {
     }
 
     public boolean limited(double speed) {
-        return (Math.signum(speed) == -1 ? counterclockwiseLimit : clockwiseLimit).get();
+        return Math.signum(speed) == Math.signum(getPosition()) && (limit.get() || Math.abs(getPosition()) >= 180);
     }
 
     @Override
@@ -109,9 +102,8 @@ public class Turret extends SubsystemBase {
                 simPos += deltaPos;
                 encoder.setPosition(encoder.getPosition()+deltaPos);
                 SmartDashboard.putNumber("Simulated Turret Position", simPos);
-                simHomeSensor.setValue(isInRange(simPos, 0, 1));
-                simCounterclockwiseLimit.setValue(isInRange(simPos, -170, 10));
-                simClockwiseLimit.setValue(isInRange(simPos, 170, 10));
+                simHomeSensor.setValue(isInRange(simPos, 0, 10));
+                simLimit.setValue(isInRange(Math.abs(simPos), 180, 10));
             }
             simLastUpdate = currentTimeMillis;
             simLastSpeed = motor.get();
