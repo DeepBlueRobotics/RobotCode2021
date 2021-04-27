@@ -9,6 +9,7 @@ public class CalibrateTurret extends CommandBase {
     private final Turret turret;
     private double speed;
     private int state;
+    private boolean cancel;
 
     private static final int APROX_ALIGN_MASK = 1 << 0;
     private static final int FINAL_ALIGN_MASK = 1 << 1;
@@ -19,12 +20,19 @@ public class CalibrateTurret extends CommandBase {
 
     @Override
     public void initialize() {
+        cancel = false;
         state = 0;
         speed = 0.25;
+        if(turret.isAtLimit()) {
+            cancel = true;
+        }
     }
 
     @Override
     public void execute() {
+        if(cancel) {
+            return;
+        }
         if((state & FINAL_ALIGN_MASK) == FINAL_ALIGN_MASK) {
             if(Math.abs(turret.getPosition()) >= 10 && Math.signum(turret.getPosition()) == Math.signum(speed)) {
                 speed *= -1;
@@ -51,7 +59,7 @@ public class CalibrateTurret extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return (turret.isAtHome() && (state & FINAL_ALIGN_MASK) == FINAL_ALIGN_MASK);
+        return cancel || (turret.isAtHome() && (state & FINAL_ALIGN_MASK) == FINAL_ALIGN_MASK);
     }
 
     @Override
