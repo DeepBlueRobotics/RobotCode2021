@@ -2,21 +2,24 @@ package org.team199.robot2021.subsystems;
 
 import com.revrobotics.CANSparkMax;
 
-import frc.robot.lib.MotorControllerFactory;
 import org.team199.robot2021.Constants;
+
+//import frc.robot.lib.MotorControllerFactory;
+//import org.team199.robot2021.Constants;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.lib.MotorControllerFactory;
 
 public class Intake extends SubsystemBase {
     // TODO: find good values and then set to final
     private static double kIntakeSpeed = 0.4;
     private static double kSlowSpeed = -0.1;
 
-    private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kIntakeRoller);
-    private final DoubleSolenoid intakePistons1 = new DoubleSolenoid(Constants.Drive.kIntakePistons[0], Constants.Drive.kIntakePistons[1]);
-    private final DoubleSolenoid intakePistons2 = new DoubleSolenoid(Constants.Drive.kIntakePistons[2], Constants.Drive.kIntakePistons[3]);
+    private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kIntakeRoller);
+    private final DoubleSolenoid intakePistons1 = new DoubleSolenoid(Constants.DrivePorts.kIntakePistons[2], Constants.DrivePorts.kIntakePistons[3]);
+    private final DoubleSolenoid intakePistons2 = new DoubleSolenoid(Constants.DrivePorts.kIntakePistons[0], Constants.DrivePorts.kIntakePistons[1]);
 
     private boolean deployed = false;
 
@@ -24,7 +27,7 @@ public class Intake extends SubsystemBase {
      * Vectored intake that rolls balls through the bumper gap and into feeder.
      */
     public Intake() {
-        rollerMotor.setInverted(false);
+        rollerMotor.setInverted(true);
         rollerMotor.setSmartCurrentLimit(30);
 
         SmartDashboard.putNumber("Intake.kIntakeSpeed", kIntakeSpeed);

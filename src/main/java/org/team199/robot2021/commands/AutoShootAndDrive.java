@@ -25,6 +25,7 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
         ShooterHorizontalAim aim = new ShooterHorizontalAim(turret, lime);
         AutoShoot shoot = new AutoShoot(feeder, shooter, shooterDistanceSensor, 3);
 
+        /*
         addCommands(
             aim,
             new InstantCommand(() -> { 
@@ -47,5 +48,6 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
             }),
             shoot
         );
+        */
     }
 }

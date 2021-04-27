@@ -33,10 +33,10 @@ public class Feeder extends SubsystemBase {
   private static double kOutSensorMinDistance = 32;
   private static double kOutSensorMaxDistance = 45;
   
-  private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederBelt);
-  private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.Drive.kFeederEjector);
-  private final TimeOfFlight inSensor = createTimeOfFlight(Constants.Drive.kFeederInSensor);
-  private final TimeOfFlight outSensor = createTimeOfFlight(Constants.Drive.kFeederOutSensor);
+  private final WPI_TalonSRX beltMotor = MotorControllerFactory.createTalon(Constants.DrivePorts.kFeederBelt);
+  private final WPI_TalonSRX ejectMotor = MotorControllerFactory.createTalon(Constants.DrivePorts.kFeederEjector);
+  private final TimeOfFlight inSensor = createTimeOfFlight(Constants.DrivePorts.kFeederInSensor);
+  private final TimeOfFlight outSensor = createTimeOfFlight(Constants.DrivePorts.kFeederOutSensor);
   
   private double limitDistance = 7000;
   private double startPosition = 0;
@@ -66,7 +66,7 @@ public class Feeder extends SubsystemBase {
 
   public void periodic() {
     if (inSensor.getRange() <= kInSensorMaxDistance && inSensor.getRange() >= kInSensorMinDistance) {
-      startPosition = beltMotor.getSelectedSensorPosition(0);
+      //startPosition = beltMotor.getSelectedSensorPosition(0);
     }
 
     if (!reachedShooter) {

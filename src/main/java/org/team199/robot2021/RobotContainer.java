@@ -9,35 +9,29 @@
 package org.team199.robot2021;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-
-import frc.robot.lib.Limelight;
-import frc.robot.lib.LinearInterpolation;
-import org.team199.lib.RobotPath;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.lib.Limelight;
 
-import org.team199.robot2021.commands.Regurgitate;
-import org.team199.robot2021.commands.TeleopDrive;
+import org.team199.lib.RobotPath;
+import org.team199.robot2021.Constants.OI;
+import org.team199.robot2021.commands.CalibrateTurret;
+import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.Shoot;
 import org.team199.robot2021.commands.ShooterHorizontalAim;
+import org.team199.robot2021.commands.TeleopDrive;
+import org.team199.robot2021.commands.ToggleIntake;
 import org.team199.robot2021.subsystems.Drivetrain;
-import org.team199.robot2021.subsystems.Shooter;
-import org.team199.robot2021.subsystems.Turret;
-import org.team199.robot2021.commands.AdjustClimber;
-import org.team199.robot2021.commands.AutoShootAndDrive;
-import org.team199.robot2021.commands.CalibrateTurret;
-import org.team199.robot2021.commands.DeployClimber;
-import org.team199.robot2021.commands.RaiseRobot;
 import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;
-import org.team199.robot2021.subsystems.Climber;
+import org.team199.robot2021.subsystems.Turret;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -47,44 +41,48 @@ import org.team199.robot2021.subsystems.Climber;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    private final DigitalInput autoSwitch1 = new DigitalInput(Constants.Drive.kAutoPathSwitch1Port);
-    private final DigitalInput autoSwitch2 = new DigitalInput(Constants.Drive.kAutoPathSwitch2Port);
     final Drivetrain drivetrain = new Drivetrain();
     private final Limelight lime = new Limelight();
-    private final Shooter shooter = new Shooter(lime);
+    //private final Shooter shooter = new Shooter(lime);
     private final Intake intake = new Intake();
     private final Feeder feeder = new Feeder();
-    private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.kPort);
-    private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.kPort);
-    private final Joystick controller = new Joystick(Constants.OI.Controller.kPort);
-    private final Climber climber = new Climber();
+    private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.port);
+    private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.port);
+    private final Joystick controller = new Joystick(Constants.OI.Controller.port);
+    //private final Climber climber = new Climber();
     private final Turret turret = new Turret();
-    private final RobotPath[] paths;
-    private final LinearInterpolation linearInterpol;
+    private final SendableChooser<Command> autoCommandChooser;
+    public Trajectory trajectory;
+    //private final LinearInterpolation linearInterpol;
 
     public RobotContainer() {
-        
-        if(DriverStation.getInstance().getJoystickName(0).length() != 0) {
+
+        if(DriverStation.getInstance().getJoystickName(OI.LeftJoy.port).length() != 0) {
             configureButtonBindingsLeftJoy();
         } else{
             System.err.println("ERROR: Dude, you're missing the left joystick.");
         }
 
-        if(DriverStation.getInstance().getJoystickName(1).length() != 0) {
+        if(DriverStation.getInstance().getJoystickName(OI.RightJoy.port).length() != 0) {
             configureButtonBindingsRightJoy();
         } else{
             System.err.println("ERROR: Dude, you're missing the right joystick.");
         }
 
-        if(DriverStation.getInstance().getJoystickName(2).length() != 0) {
+        if(DriverStation.getInstance().getJoystickName(OI.Controller.port).length() != 0) {
             configureButtonBindingsController();
         } else{
             System.err.println("ERROR: Dude, you're missing the controller.");
         }
 
-        shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
-        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain, leftJoy, rightJoy, lime));
-        
+        //shooter.setDefaultCommand(new RunCommand(()-> shooter.setSpeed(shooter.getTargetSpeed()), shooter));
+        drivetrain.setDefaultCommand(new TeleopDrive(drivetrain,
+
+        () -> inputProcessing(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.Y)),
+            () -> inputProcessing(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X)),
+            () -> inputProcessing(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X))));
+
+        /*
         feeder.setDefaultCommand(new RunCommand(() -> {
             if (feeder.isCellEntering() && !feeder.isCellAtShooter()) {
                 feeder.runForward();
@@ -95,64 +93,59 @@ public class RobotContainer {
                 if(intake.isDeployed())
                     intake.intake();
             }
-        }, feeder, intake));
+        }, feeder, intake));*/
 
         turret.setDefaultCommand(new RunCommand(turret::stop, turret));
 
-        paths = new RobotPath[4];
-        if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue) {
-            loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.BLUE_LEFT.pos);
-            loadPath(Path.PATH2, "OneBall", false, StartingPosition.BLUE_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.BLUE_RIGHT.pos);
-        } else {
-            loadPath(Path.PATH1, "AutoLeft", false, StartingPosition.RED_LEFT.pos);
-            loadPath(Path.PATH2, "OneBall", false, StartingPosition.RED_CENTER.pos);
-            loadPath(Path.PATH3, "AutoRight", false, StartingPosition.RED_RIGHT.pos);
-        }
-        linearInterpol = new LinearInterpolation("ShooterData.csv");
+        autoCommandChooser = new SendableChooser<Command>();
+        autoCommandChooser.setDefaultOption("No autonomous", new InstantCommand());
+        loadPath("AutoNav: Barrel Racing", "barrelRacing", true, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Galactic Search: All Points", "GalacticSearchAllPoints", true, true, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+        SmartDashboard.putData(autoCommandChooser);
+        //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
 
     private void configureButtonBindingsLeftJoy() {
         // Arcade/Tank drive button
-        new JoystickButton(leftJoy, Constants.OI.LeftJoy.kToggleDriveModeButton).whenPressed(new InstantCommand(
-                () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
+        //new JoystickButton(leftJoy, Constants.OI.LeftJoy.kToggleDriveModeButton).whenPressed(new InstantCommand(
+        //        () -> SmartDashboard.putBoolean("Arcade Drive", !SmartDashboard.getBoolean("Arcade Drive", false))));
 
         // characterize drive button
-        
-        // Toggle Characterize Drive                
-        new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
-                () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
+
+        // Toggle Characterize Drive
+        //new JoystickButton(leftJoy, Constants.OI.LeftJoy.kCharacterizedDriveButton).whenPressed(new InstantCommand(
+        //        () -> SmartDashboard.putBoolean("Characterized Drive", !SmartDashboard.getBoolean("Characterized Drive", false))));
     }
 
     private void configureButtonBindingsRightJoy() {
         new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleMode, drivetrain));
         // Align the robot and then shoots
         new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(turret, lime), new Shoot(feeder)));
+        //new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
     }
 
     private void configureButtonBindingsController() {
+        new JoystickButton(controller, Constants.OI.Controller.A).whenPressed(new HomeAbsolute(drivetrain));
+        new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
-        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new InstantCommand(() -> {
-            if (intake.isDeployed()) {
-                intake.retract();
-                intake.stop();
-            } else {
-                intake.doTheFlop();
-                intake.intake();
-            }
-        }, intake));
+        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
 
         // Power cell regurgitate button
-        new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
+        //new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
 
         // Deploy climber button and allow for adjustment
-        new JoystickButton(controller, Constants.OI.Controller.kDeployClimberButton).whenPressed(new SequentialCommandGroup(
+        /*new JoystickButton(controller, Constants.OI.Controller.kDeployClimberButton).whenPressed(new SequentialCommandGroup(
             new DeployClimber(climber),
             new AdjustClimber(climber, controller)
-        ));
+        ));*/
 
         // climb button
-        new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
+        //new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
 
         // turn turret
         new JoystickButton(controller, Constants.OI.Controller.kTurnTurretCounterclockwiseButton).whileHeld(new InstantCommand(turret::turnCounterclockwise, turret));
@@ -164,99 +157,78 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         try {
-            final RobotPath path = paths[getPath().idx];
-            if(path == null) {
-                throw new Exception();
+            final Command autoCommand = autoCommandChooser.getSelected();
+            if (autoCommand == null) {
+                throw new Exception("No path was selected.");
             }
-            boolean isBlue = DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue;
-            return new AutoShootAndDrive(drivetrain, intake, feeder, 
-                                         shooter, turret, lime, path, 
-                                         linearInterpol, (isBlue ? Target.BLUE_PORT.pos : Target.RED_PORT.pos));
+            return autoCommand;
         } catch(final Exception e) {
+            e.printStackTrace(System.err);
             return new InstantCommand();
         }
     }
 
-    
-    /**
-     * DIO Port 0 = Switch 1
-     * DIO Port 1 = Switch 2
-     * on = jumper in
-     * off= jumper out
-     * Red/Blue determined by DS
-     * Switch states
-     * 1    2
-     * off off = off
-     * on off = 1
-     * off on = 2
-     * on on = 3
-     */
-    public Path getPath() {
-        Path outPath = Path.OFF;
-        // get() returns true if the circuit is open.
-        if(!autoSwitch1.get()) {
-            if(!autoSwitch2.get()) {
-                outPath = Path.PATH3;
-                System.out.println("Path3 loaded.");
-            } else {
-                outPath = Path.PATH1;
-                System.out.println("Path1 loaded.");
-            }
-        } else if(!autoSwitch2.get()) {
-            outPath = Path.PATH2;
-            System.out.println("Path2 loaded.");
-        } else {
-            outPath = Path.OFF;
-            System.out.println("No path loaded.");
-        }
-        return outPath;
-    }
-
-        
-    private void loadPath(final Path path, final String pathName, final boolean isInverted, final Translation2d initPos) {
+    private void loadPath(final String chooserName, final String pathName, final boolean faceInPathDirection, final boolean deployIntake, 
+                          final boolean isInverted, final double endVelocity) {
         try {
-            paths[path.idx] = new RobotPath(pathName, drivetrain, isInverted, initPos);
+            RobotPath path = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity);
+            autoCommandChooser.addOption(chooserName, path.getPathCommand(faceInPathDirection));
         } catch(final Exception e) {
-            System.err.println("Error Occured Loading Path: [" + path.name() + "," + pathName + "]");
             e.printStackTrace(System.err);
         }
     }
-    
-    public static enum Path {
-        PATH1(0), PATH2(1), PATH3(2), OFF(-1);
 
-        public final int idx;
-
-        private Path(final int idx) {
-            this.idx = idx;
+    /**
+     * Get the stick value of a joystick given its stick type (left side or right side) and its axis (X or Y).
+     * @param stick   The stick type of the joystick, either LEFT for left joystick or RIGHT for right joystick.
+     * @param dir     The direction, or axis, of the joystick, either X for the x-axis or Y for the y-axis.
+     * @return A double representing how far the joystick has been pushed, between -1.0 (all the way backwards) to 1.0 (all the way forwards).
+     */
+    private double getStickValue(Constants.OI.StickType stick, Constants.OI.StickDirection dir) {
+        switch (Constants.OI.CONTROL_TYPE) {
+            case JOYSTICKS:
+                if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return leftJoy.getX();
+                if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.Y) return -leftJoy.getY();
+                if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.X) return rightJoy.getX();
+                if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -rightJoy.getY();
+            case GAMEPAD:
+                if (controller.getName().equals("Logitech Dual Action")) {
+                    if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(0);
+                    if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(1);
+                    if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(2);
+                    if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(3);
+                } else {
+                    if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(0);
+                    if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(1);
+                    if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.X) return controller.getRawAxis(4);
+                    if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -controller.getRawAxis(5);
+                }
+            default: return 0;
         }
     }
 
-    public static enum StartingPosition {
-        // DO NOT CHANGE ANY OF THESE VALUES.
-        BLUE_LEFT(12.61, -4.75), 
-        BLUE_CENTER(12.61, -5.75), 
-        BLUE_RIGHT(12.61, -6.75), 
-        RED_LEFT(3.39, -3.4), 
-        RED_CENTER(3.39, -2.4), 
-        RED_RIGHT(3.39, -1.4);
-
-        public final Translation2d pos;
-
-        private StartingPosition(double x, double y) {
-            pos = new Translation2d(x, y);
-        }
+    /**
+     * Processes an input from the joystick into a value between -1 and 1
+     * @param value     The value to be processed.
+     * @return The processed value.
+     */
+    private double inputProcessing(double value){
+        double processedInput;
+        //processedInput = (((1-Math.cos(value*Math.PI))/2)*((1-Math.cos(value*Math.PI))/2))*(value/Math.abs(value));
+        processedInput = Math.copySign(((1-Math.cos(value*Math.PI))/2)*((1-Math.cos(value*Math.PI))/2),value);
+        return processedInput;
     }
 
+    /*
     public static enum Target {
-        // DO NOT CHANGE ANY OF THESE VALUES.
-        BLUE_PORT(16, -5.75), 
-        RED_PORT(0, -2.4); 
-    
+        BLUE_PORT(16, -5.75),
+        RED_PORT(0, -2.4);
+
         public final Translation2d pos;
-    
+
         private Target(double x, double y) {
             pos = new Translation2d(x, y);
         }
-      }
+    }
+    */
 }
