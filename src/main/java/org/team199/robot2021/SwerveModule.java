@@ -218,10 +218,6 @@ public class SwerveModule {
         double maxDeltaTheta = Math.asin(deltaTime*Constants.DriveConstants.autoCentripetalAccel/(Math.abs(getCurrentSpeed())+0.0001));
         turnConstraints.maxVelocity = maxDeltaTheta*180/Math.PI;
         //SmartDashboard.putNumber(moduleString + "Target Angle:", 360 * angle * (reversed ? -1 : 1));
-
-        double deltaTime = timer.get();
-        timer.reset();
-        timer.start();
 		
         // Find the minimum distance to travel from lastAngle to angle and determine the
         // correct direction to trvel the minimum distance. This is used in order to accurately
