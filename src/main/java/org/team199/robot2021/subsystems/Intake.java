@@ -14,7 +14,7 @@ import frc.robot.lib.MotorControllerFactory;
 
 public class Intake extends SubsystemBase {
     // TODO: find good values and then set to final
-    private static double kIntakeSpeed = 0.4;
+    private static double kIntakeSpeed = .6;
     private static double kSlowSpeed = -0.1;
 
     private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kIntakeRoller);
