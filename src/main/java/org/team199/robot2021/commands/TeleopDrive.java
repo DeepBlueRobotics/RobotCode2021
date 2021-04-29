@@ -13,10 +13,8 @@ import org.team199.robot2021.Constants;
 import org.team199.robot2021.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.drive.Vector2d;
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpiutil.math.Vector;
 
 public class TeleopDrive extends CommandBase {
   //private static final double kSlowDriveSpeed = 0.6;
@@ -76,6 +74,8 @@ public class TeleopDrive extends CommandBase {
       currentForward = 0;
     if (Math.abs(currentStrafe) <= Constants.OI.JOY_THRESH)
       currentStrafe = 0;
+    //SmartDashboard.putNumber("Forward (mps)", currentForward);
+   // SmartDashboard.putNumber("Strafe (mps)", currentStrafe);
     drivetrain.drive(currentForward, currentStrafe, rotateClockwise);
   }
 

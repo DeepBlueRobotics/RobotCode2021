@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.util.Units;
 
 /**
  * A class that stores all the variables and methods applicaple to a single swerve module,
@@ -155,12 +154,12 @@ public class SwerveModule {
     /**
      * Move the module to a specified ang
      * le and drive at a specified speed.
-     * @param speed   The desired speed in m/s.
+     * @param speedMps   The desired speed in m/s.
      * @param angle   The desired angle in degrees.
      */
-    public void move(double speed, double angle) {
-        setSpeed(speed);
-        if(speed != 0.0) {
+    public void move(double speedMps, double angle) {
+        setSpeed(speedMps);
+        if(speedMps != 0.0) {
             //SmartDashboard.putNumber(moduleString + " Target Angle (deg)", angle);
             angle = MathUtil.inputModulus(angle, -180, 180);
             setAngle(angle);
@@ -185,15 +184,11 @@ public class SwerveModule {
     }
     /**
      * Sets the speed for the drive motor controller.
-     * @param speed     The desired speed, from -1.0 (maximum speed directed backwards) to 1.0 (maximum speed directed forwards).
+     * @param speedMps     The desired speed in meters per second.
      */
-    private void setSpeed(double speed) {
-        // Get the change in time (for acceleration limiting calculations)
-        
-        SmartDashboard.putNumber(moduleString + " Desired Speed (unitless)", speed);
-
+    private void setSpeed(double speedMps) {
         // Compute desired and actual speeds in m/s
-        double desiredSpeed = maxSpeed * speed * driveModifier;
+        double desiredSpeed = speedMps * driveModifier;
         double actualSpeed = getCurrentSpeed();
         SmartDashboard.putNumber(moduleString + " Desired Speed (mps)", desiredSpeed);
         SmartDashboard.putNumber(moduleString + " Actual Speed (mps)", actualSpeed);
@@ -203,8 +198,8 @@ public class SwerveModule {
         // Use robot characterization as a simple physical model to account for internal resistance, frcition, etc.
         // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
         targetVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
-        double appliedVoltage = MathUtil.clamp(targetVoltage / 12, -1, 1);
-        drive.set(appliedVoltage);
+        double appliedVoltage = MathUtil.clamp(targetVoltage, -12, 12);
+        drive.setVoltage(appliedVoltage);
     }
 
     /**

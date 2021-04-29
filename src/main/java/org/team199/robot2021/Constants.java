@@ -38,7 +38,7 @@ public final class Constants {
 
         public static final double driveModifier = 1;
         public static final double wheelDiameterMeters = Units.inchesToMeters(4.0) * 7.36/7.65 /* empirical correction */; 
-        public static final double mu = 0.5;
+        public static final double mu = 0.5; /* 70/83.2;  */
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
         // Angular speed to translational speed --> v = omega * r / gearing
@@ -72,8 +72,8 @@ public final class Constants {
         // kP is an average of the forward and backward kP values
         // Forward: 1.72, 1.71, 1.92, 1.94
         // Backward: 1.92, 1.92, 2.11, 1.89
-        // public static final double[] drivekP = {1.82, 1.815, 2.015, 1.915};
-        public static final double[] drivekP = {0, 0, 0, 0};
+        public static final double[] drivekP = {1.82, 1.815, 2.015, 1.915};
+        // public static final double[] drivekP = {0, 0, 0, 0};
         public static final double[] drivekI = {0, 0, 0, 0};
         // public static final double[] drivekD = {.1,.1,.1,.1};
         public static final double[] drivekD = {0,0,0,0};
