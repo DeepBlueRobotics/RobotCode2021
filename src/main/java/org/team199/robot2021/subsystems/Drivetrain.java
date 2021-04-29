@@ -155,12 +155,6 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  /**
-   * Runs homeAbsolute for all of the swerve modules.
-   */
-  public void homeAbsolute() {
-    for (int i = 0; i < 4; i++) modules[i].homeAbsolute();
-  }
   public ChassisSpeeds getSpeeds() {
     return kinematics.toChassisSpeeds(modules[0].getCurrentState(),modules[1].getCurrentState(),modules[2].getCurrentState(),modules[3].getCurrentState());
   }
