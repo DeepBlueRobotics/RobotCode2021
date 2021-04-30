@@ -19,16 +19,21 @@ public class Turret extends SubsystemBase {
     private final DigitalInput limitSensor = new DigitalInput(Constants.DrivePorts.kTurretLimitSensor);
     private final CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kTurretMotor);
     private final CANEncoder encoder = motor.getEncoder();
-    private final double gearing = 1/50D;
+    private final double gearing = 50D;
+    private final double maxSpeed = 75; // RPM
+    private final double manualTurnSpeed = 0.25;
+    private final double limitSpeed = 0.1; // How fast to turn away from limit points
+    private final double minEncoderDistToLimit = 100; // If we are at the limit and the encoder is less than this distance, the reported direction of the turret will be assumed to be inaccurate
 
     private double simPos = 10;
     private long simLastUpdate = -1;
     private double simLastSpeed = 0;
     private DIOSim simHomeSensor;
     private DIOSim simLimitSensor;
+    private final double sensorRange = 10; // +- degrees
 
     public Turret() {
-        encoder.setPositionConversionFactor(gearing * 180 / (42 * 2 * Math.PI));
+        encoder.setPositionConversionFactor(360 / gearing);
         if(RobotBase.isSimulation()) {
             simHomeSensor = new DIOSim(homeSensor);
             simLimitSensor = new DIOSim(limitSensor);
@@ -40,10 +45,10 @@ public class Turret extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Turret Position", encoder.getPosition());
-        double speed = motor.get();
+        double speed = getSpeedSetpoint();
         if(speed == 0) {
-            if(isAtLimit() && Math.abs(getPosition()) > 100) {
-                motor.set(-Math.copySign(0.1, getPosition()));
+            if(isAtLimit() && Math.abs(getPosition()) > minEncoderDistToLimit) {
+                motor.set(-Math.copySign(limitSpeed, getPosition()));
             }
             return;
         }
@@ -53,14 +58,14 @@ public class Turret extends SubsystemBase {
     }
 
     public void turnCounterclockwise() {
-        if(!limited(0.25)) {
-            motor.set(0.25);
+        if(!limited(manualTurnSpeed)) {
+            motor.set(manualTurnSpeed);
         }
     }
 
     public void turnClockwise() {
-        if(!limited(-0.25)) {
-            motor.set(-0.25);
+        if(!limited(-manualTurnSpeed)) {
+            motor.set(-manualTurnSpeed);
         }
     }
 
@@ -72,7 +77,7 @@ public class Turret extends SubsystemBase {
         motor.set(0);
     }
 
-    public double getSpeed() {
+    public double getSpeedSetpoint() {
         return motor.get();
     }
 
@@ -101,12 +106,12 @@ public class Turret extends SubsystemBase {
         {
             long currentTimeMillis = System.currentTimeMillis();
             if(simLastUpdate != -1) {
-                double deltaPos = simLastSpeed * 360D * ((75D / 60D) / (1000D/(currentTimeMillis - simLastUpdate)));
+                double deltaPos = simLastSpeed * ((maxSpeed / 60D) * ((currentTimeMillis - simLastUpdate)/1000D)) * 360D;
                 simPos += deltaPos;
                 encoder.setPosition(encoder.getPosition()+deltaPos);
                 SmartDashboard.putNumber("Simulated Turret Position", simPos);
-                simHomeSensor.setValue(isInRange(simPos, 0, 10));
-                simLimitSensor.setValue(isInRange(Math.abs(simPos), 180, 10));
+                simHomeSensor.setValue(isInRange(simPos, 0, sensorRange));
+                simLimitSensor.setValue(isInRange(Math.abs(simPos), 180, sensorRange));
             }
             simLastUpdate = currentTimeMillis;
             simLastSpeed = motor.get();
