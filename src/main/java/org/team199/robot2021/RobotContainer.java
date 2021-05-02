@@ -109,7 +109,7 @@ public class RobotContainer {
         barrelRegions.add(RobotPath.createRegionConstraint(3.8, -3, 1, 1, 0, curvatureRadius));
         barrelRegions.add(RobotPath.createRegionConstraint(6.1, -1.5, 1, 1, 0, curvatureRadius));
         barrelRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
-        loadPath("AutoNav: Barrel Racing", "barrelRacing", true, false, false, true, Constants.DriveConstants.autoMaxSpeed, barrelRegions);
+        loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, true, Constants.DriveConstants.autoMaxSpeed, barrelRegions);
         
         // Slalom
         List<EllipticalRegionConstraint>  slalomRegions = new ArrayList<EllipticalRegionConstraint>();
