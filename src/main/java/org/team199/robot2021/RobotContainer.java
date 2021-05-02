@@ -15,6 +15,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -55,6 +56,7 @@ public class RobotContainer {
     //private final Climber climber = new Climber();
     private final SendableChooser<Command> autoCommandChooser;
     public Trajectory trajectory;
+    public PowerDistributionPanel pdp = new PowerDistributionPanel();
     //private final LinearInterpolation linearInterpol;
 
     public RobotContainer() {
