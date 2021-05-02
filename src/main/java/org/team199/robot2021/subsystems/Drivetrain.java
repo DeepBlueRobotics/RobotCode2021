@@ -133,7 +133,7 @@ public class Drivetrain extends SubsystemBase {
 
   public double getHeading() {
     double x = gyro.getAngle();
-    if (SmartDashboard.getBoolean("Field Oriented", false)) {
+    if (SmartDashboard.getBoolean("Field Oriented", true)) {
       x -= SmartDashboard.getNumber("Field Offset from North (degrees)", 0);
     }
     return Math.IEEEremainder(x * (isGyroReversed ? -1.0 : 1.0), 360);
@@ -175,7 +175,7 @@ public class Drivetrain extends SubsystemBase {
   */
   private ChassisSpeeds getChassisSpeeds(double forward, double strafe, double rotation) {
     ChassisSpeeds speeds;
-    if (SmartDashboard.getBoolean("Field Oriented", false)) {
+    if (SmartDashboard.getBoolean("Field Oriented", true)) {
       speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Rotation2d.fromDegrees(getHeading()));
     } else {
       speeds = new ChassisSpeeds(forward, strafe, rotation);

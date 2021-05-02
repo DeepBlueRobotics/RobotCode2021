@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     //SmartDashboard.putBoolean("Arcade Drive", true);
     //SmartDashboard.putBoolean("Characterized Drive", false);
-    SmartDashboard.putBoolean("Field Oriented", false);
+    SmartDashboard.putBoolean("Field Oriented", true);
     robotContainer = new RobotContainer();
     Log.init();
     /*
