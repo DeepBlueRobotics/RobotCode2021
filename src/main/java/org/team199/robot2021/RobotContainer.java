@@ -175,6 +175,7 @@ public class RobotContainer {
     }
 
     private void configureButtonBindingsController() {
+        new JoystickButton(controller, Constants.OI.Controller.A).whenPressed(new InstantCommand(() -> {drivetrain.resetHeading();}));
         new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
         new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
