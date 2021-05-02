@@ -62,7 +62,6 @@ public class SwerveModule {
                 break;
         }
 
-        this.drive = drive;
         double positionConstant = Constants.DriveConstants.wheelDiameterMeters * Math.PI / Constants.DriveConstants.driveGearing;
         drive.setInverted(Constants.DriveConstants.driveInversion[arrIndex]);
         drive.getEncoder().setPositionConversionFactor(positionConstant);
