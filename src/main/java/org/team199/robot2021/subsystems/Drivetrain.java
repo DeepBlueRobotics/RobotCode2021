@@ -139,6 +139,12 @@ public class Drivetrain extends SubsystemBase {
     return Math.IEEEremainder(x * (isGyroReversed ? -1.0 : 1.0), 360);
   }
 
+  
+  // Resets the gyro, so that the direction the robotic currently faces is considered "forward"
+  public void resetHeading() {
+    gyro.reset();
+  }
+
   public SwerveDriveKinematics getKinematics() { return kinematics; }
 
   public void drive(double forward, double strafe, double rotation) {
@@ -155,12 +161,6 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  /**
-   * Runs homeAbsolute for all of the swerve modules.
-   */
-  public void homeAbsolute() {
-    for (int i = 0; i < 4; i++) modules[i].homeAbsolute();
-  }
   public ChassisSpeeds getSpeeds() {
     return kinematics.toChassisSpeeds(modules[0].getCurrentState(),modules[1].getCurrentState(),modules[2].getCurrentState(),modules[3].getCurrentState());
   }

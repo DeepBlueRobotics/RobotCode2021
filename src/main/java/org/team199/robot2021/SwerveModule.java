@@ -265,17 +265,6 @@ public class SwerveModule {
         SmartDashboard.putBoolean(moduleString + " Turn is at Goal", turnPIDController.atGoal());
     }
     
-    /**
-     * HomeAbsolute is an instant command that ensures that each of the turn motor controllers are in a known configuration,
-     * as dictated by the absolute encoder positions turnZero.
-     */
-    public void homeAbsolute() {
-        // Set the position of the quadrature encoder to the position measured by the CANCoder relative to the zeroed absolute position
-        turnEncoder.setPosition((turnEncoder.getAbsolutePosition() - turnZero));
-        // Ensure that we turn to this angle
-        setAngle(0.0);
-    }
-
     public void toggleMode() {
         if (drive.getIdleMode() == IdleMode.kBrake) coast();
         else brake();

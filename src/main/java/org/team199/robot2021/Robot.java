@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.team199.robot2021.commands.HomeAbsolute;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -56,7 +55,6 @@ public class Robot extends TimedRobot {
       e.printStackTrace();
       System.exit(1);
     }*/
-    CommandScheduler.getInstance().schedule(new HomeAbsolute(robotContainer.drivetrain));
   }
 
   @Override

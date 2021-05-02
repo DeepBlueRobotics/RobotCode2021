@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.team199.lib.RobotPath;
 import org.team199.robot2021.Constants.OI;
 import org.team199.robot2021.commands.GalacticSearchCommand;
-import org.team199.robot2021.commands.HomeAbsolute;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.commands.ToggleIntake;
 import org.team199.robot2021.subsystems.Drivetrain;
@@ -178,7 +177,7 @@ public class RobotContainer {
     }
 
     private void configureButtonBindingsController() {
-        new JoystickButton(controller, Constants.OI.Controller.A).whenPressed(new HomeAbsolute(drivetrain));
+        new JoystickButton(controller, Constants.OI.Controller.A).whenPressed(new InstantCommand(() -> {drivetrain.resetHeading();}));
         new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
         new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
