@@ -46,6 +46,7 @@ public class SwerveModule {
         timer.start();
 
         this.type = type;
+        this.drive = drive;
 
         switch (type) {
             case FL:
@@ -73,7 +74,7 @@ public class SwerveModule {
         final double neoStallTorqueNewtonMeters = 3.36;
         final double neoFreeCurrentAmps = 1.3;
         final double neoStallCurrentAmps = 166;
-        double currentLimitAmps = neoFreeCurrentAmps + motorTorqueLimitNewtonMeters / neoStallTorqueNewtonMeters * (neoStallCurrentAmps-neoFreeCurrentAmps);
+        double currentLimitAmps = neoFreeCurrentAmps + 2*motorTorqueLimitNewtonMeters / neoStallTorqueNewtonMeters * (neoStallCurrentAmps-neoFreeCurrentAmps);
         SmartDashboard.putNumber(moduleString + " current limit (amps)", currentLimitAmps);
         drive.setSmartCurrentLimit((int)Math.min(50, currentLimitAmps));
 
@@ -285,7 +286,6 @@ public class SwerveModule {
     }
 
     public void coast() {
-        if (DriverStation.getInstance().isDisabled()) drive.setIdleMode(IdleMode.kCoast);
-        else drive.setIdleMode(IdleMode.kBrake);
+        drive.setIdleMode(IdleMode.kCoast);
     }
 }

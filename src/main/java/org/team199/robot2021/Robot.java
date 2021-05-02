@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import org.team199.robot2021.commands.HomeAbsolute;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -61,6 +62,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    double batteryVolts = robotContainer.pdp.getVoltage();
+    double totalAmps = robotContainer.pdp.getTotalCurrent();
+    SmartDashboard.putNumber("PDP Voltage", batteryVolts);
+    SmartDashboard.putNumber("PDP Current", totalAmps);
     Log.logData();
     MotorErrors.printSparkMaxErrorMessages();
   }
