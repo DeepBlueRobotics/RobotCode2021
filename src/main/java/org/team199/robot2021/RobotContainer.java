@@ -60,19 +60,31 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-        if(DriverStation.getInstance().getJoystickName(OI.LeftJoy.port).length() != 0) {
+        DriverStation ds = DriverStation.getInstance();
+
+        while (!ds.isDSAttached()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                break;
+            }
+            System.err.println("Driver Station is not attached");
+        }
+
+        if(ds.isJoystickConnected(OI.LeftJoy.port)) {
             configureButtonBindingsLeftJoy();
         } else{
             System.err.println("ERROR: Dude, you're missing the left joystick.");
         }
 
-        if(DriverStation.getInstance().getJoystickName(OI.RightJoy.port).length() != 0) {
+        if(ds.isJoystickConnected(OI.RightJoy.port)) {
             configureButtonBindingsRightJoy();
         } else{
             System.err.println("ERROR: Dude, you're missing the right joystick.");
         }
 
-        if(DriverStation.getInstance().getJoystickName(OI.Controller.port).length() != 0) {
+        if(ds.isJoystickConnected(OI.Controller.port)) {
             configureButtonBindingsController();
         } else{
             System.err.println("ERROR: Dude, you're missing the controller.");
