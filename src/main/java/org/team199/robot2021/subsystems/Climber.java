@@ -21,18 +21,18 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 
 public class Climber extends SubsystemBase {
-    private static final double kLiftConversionFactor =  1; //pulse resolution * 2pi * gear ratio (1.0/12  * 2 * Math.PI * 100) = distance lift has traveled, included later (in big trig function)  TODO find r
+    private static final double kLiftConversionFactor =  1.0/12 * 2 * Math.PI * 115; //pulse resolution * 2pi * gear ratio = radians lift motor has travelled TODO find r
     private static final double kWinchConversionFactor = 1.0/42 * 2 * Math.PI * 0.5 * 13.2; //pulse resolution * 2*pi*r * gear ratio (1.0/42 * r * 2 * pi) = distance of rope extended
 
     //TODO: find good values and then set to final
     public static double kLiftDeploySpeed = 0.3; //TODO: set correct speed
-    public static double kWinchDeploySpeed = 1; //TODO : set correct speed 
-    public static double kLiftLowerSpeed = -0.1; //Vaguely arbitrary, but also not important might wanna ask others
+    public static double kWinchDeploySpeed = 1; //No longer used
+    public static double kLiftLowerSpeed = -0.1; //Vaguely arbitrary, but also not important might wanna ask others TODO : Name this better
     public static double kLiftKeepSpeed = 0.06; //TODO: set correct speed (trial and error) (make changeable through smartDashboard)
-    public static double kLiftRetractSpeed = -0.3; //TODO: set correct speed
-    public static double kWinchRetractSpeedFirst = 0.6; //TODO: set correct speed  KEEP THIS POSITIVE SO THAT WINCH GOES IN THE RIGHT DIRECTION
+    public static double kLiftRetractSpeed = -0.001; //TODO: name this better
+    public static double kWinchRetractSpeedFirst = 0.6; //TODO: figure out how bungie cord will affect this
     public static double kWinchRetractSpeedSecond = 1;
-    public static double kArmRetryDistance = 5; //TODO: find distance
+    public static double kArmRetryDistance = 1.046; //height arm goes to after going to max height
     //public static double kLiftAdjustSpeed = 0.2; //vestigial from perevious iteration
     //public static double kWinchAdjustSpeed = 0.2; //vestigial from perevious iteration
     //public static double kHighCurrent = 83; //based on current budget? may have to be changed (number is in amps?)
@@ -40,12 +40,13 @@ public class Climber extends SubsystemBase {
 
     
 
-    public static final double kLiftTallHeight = 87; // TODO: set correct speed
+    public static final double kLiftTallHeight = 1.803; // TODO: set correct speed
     public static final double kLiftShortHeight = 50; //TODO: set correct speed 
     public static final double kLiftLowerHeight = 0;  //TODO: set this one probably (could be double max height depending on if scalar or vector)
     public static final double kWinchMaxHeight = 59; //Winch height for fully extended arm
+    //public static final double kWinchMaxHeight = 59; //Winch height for fully extended arm (no longer necessary due to how lift raises)
     public static final double kWinchStartHeight = 0; //Winch height for arm before extension
-    public static final double kWinchFinalHeight = -80; //TODO change this 
+    public static final double kWinchFinalHeight = -80; //No longer necessary
     // Winch height for after extension
     private final WPI_VictorSPX liftMotor = MotorControllerFactory.createVictor(Constants.Drive.kClimberLift); //this is a 775
     private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch);
