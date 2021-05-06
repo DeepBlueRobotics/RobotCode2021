@@ -32,7 +32,8 @@ import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Shooter;
 import org.team199.robot2021.commands.AttachHook;
 import org.team199.robot2021.commands.AutoShootAndDrive;
-import org.team199.robot2021.commands.DeployClimber;
+import org.team199.robot2021.commands.DeployClimberTall;
+import org.team199.robot2021.commands.DeployClimberShort;
 import org.team199.robot2021.commands.RaiseRobot;
 import org.team199.robot2021.commands.LowerArm;
 import org.team199.robot2021.subsystems.Feeder;
@@ -142,9 +143,13 @@ public class RobotContainer {
         // Power cell regurgitate button
         new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
 
-        // Deploy climber button and allow for adjustment
-        new JoystickButton(controller, Constants.OI.Controller.kDeployClimberButton).whenPressed(new SequentialCommandGroup(
-            new DeployClimber(climber)
+        // Deploy climber button and allow for adjustment (tall height)
+        new JoystickButton(controller, Constants.OI.Controller.kDeployClimberTallButton).whenPressed(new SequentialCommandGroup(
+            new DeployClimberTall(climber)
+        ));
+        //Deploy climber button (short height)
+        new JoystickButton(controller, Constants.OI.Controller.kDeployClimberShortButton).whenPressed(new SequentialCommandGroup(
+            new DeployClimberShort(climber)
         ));
 
         // climb button

@@ -43,7 +43,7 @@ public class RaiseRobot extends CommandBase {
     
     double winchSpeed = climber.getWinchSpeed();
     //this equation is random, it's not the final one- we made a placeholder equation with constants and a get method
-    liftDeploySpeed = 2 * winchSpeed + climber.kLiftHeight;
+    liftDeploySpeed = 2 * winchSpeed + climber.kLiftTallHeight;
   } 
 
   // Called once the command ends or is interrupted.

@@ -19,6 +19,7 @@ import org.team199.robot2021.commands.RaiseRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.DigitalInput;
 
+
 public class Climber extends SubsystemBase {
     private static final double kLiftConversionFactor =  1; //pulse resolution * 2pi * gear ratio (1.0/12  * 2 * Math.PI * 100) = distance lift has traveled, included later (in big trig function)  TODO find r
     private static final double kWinchConversionFactor = 1.0/42 * 2 * Math.PI * 0.5 * 13.2; //pulse resolution * 2*pi*r * gear ratio (1.0/42 * r * 2 * pi) = distance of rope extended
@@ -39,7 +40,8 @@ public class Climber extends SubsystemBase {
 
     
 
-    public static final double kLiftHeight = 87; // TODO: set correct speed
+    public static final double kLiftTallHeight = 87; // TODO: set correct speed
+    public static final double kLiftShortHeight = 50; //TODO: set correct speed 
     public static final double kLiftLowerHeight = 0;  //TODO: set this one probably (could be double max height depending on if scalar or vector)
     public static final double kWinchMaxHeight = 59; //Winch height for fully extended arm
     public static final double kWinchStartHeight = 0; //Winch height for arm before extension
@@ -138,4 +140,11 @@ public class Climber extends SubsystemBase {
        return isHookAttached;
     }
 
+    public void setWinchIdleCoast(){
+        winchMotor.setIdleMode(IdleMode.kCoast);
+    } 
+
+    public void setWinchIdleBrake(){
+        winchMotor.setIdleMode(IdleMode.kBrake);
+    }
 }
