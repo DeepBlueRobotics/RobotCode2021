@@ -19,6 +19,7 @@ import org.team199.robot2021.SwerveModule;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
@@ -34,7 +35,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Drivetrain extends SubsystemBase {
   // compassOffset is magnetic north relative to the current heading
   private final double compassOffset;
-  private final AHRS gyro = new AHRS(SerialPort.Port.kMXP); //Also try kUSB and kUSB2
+  private final AHRS gyro = new AHRS(SPI.Port.kMXP); //Also try kUSB and kUSB2
 
   private SwerveDriveKinematics kinematics = null;
   private SwerveDriveOdometry odometry = null;
@@ -53,6 +54,7 @@ public class Drivetrain extends SubsystemBase {
       System.out.println("Calibrating the gyro...");
     }
     gyro.reset();
+    System.out.println("NavX-MXP firmware version: " + gyro.getFirmwareVersion());
     SmartDashboard.putBoolean("Magnetic Field Disturbance", gyro.isMagneticDisturbance());
     System.out.println("Magnetometer is calibrated: " + gyro.isMagnetometerCalibrated());
     compassOffset = gyro.getCompassHeading();
