@@ -18,6 +18,7 @@ import java.io.IOException;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
@@ -44,6 +45,7 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putBoolean("Arcade Drive", true);
     //SmartDashboard.putBoolean("Characterized Drive", false);
     SmartDashboard.putBoolean("Field Oriented", true);
+    LiveWindow.disableAllTelemetry();
     robotContainer = new RobotContainer();
     Log.init();
     /*
