@@ -104,6 +104,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     for (int i = 0; i < 4; i++) {
       modules[i].periodic();
+      // Uncommenting the following line will contribute to loop overrun errors 
       // modules[i].updateSmartDashboard();
     }
 
