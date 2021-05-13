@@ -118,7 +118,7 @@ public class Turret extends SubsystemBase {
         }
 
         {
-            double diff = simPos - SmartDashboard.getNumber("Target Position", 0.0D);
+            double diff = SmartDashboard.getNumber("Target Position", 0.0D) - simPos;
             boolean tv = Math.abs(diff) <= 27.0;
             NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").setDouble(tv ? diff : 0.0D);
             NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").setDouble(tv ? 1.0D : 0.0D);
