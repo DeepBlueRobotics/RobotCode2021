@@ -37,12 +37,12 @@ public final class Constants {
         public static final double driveGearing = 6.86;
 
         public static final double driveModifier = 1;
-        public static final double wheelDiameter = Units.inchesToMeters(4.0);
-        public static final double mu = 0.8;
+        public static final double wheelDiameterMeters = Units.inchesToMeters(4.0) * 7.36/7.65 /* empirical correction */; 
+        public static final double mu = 0.5; /* 70/83.2;  */
 
         public static final double NEOFreeSpeed = 5676 * (2 * Math.PI) / 60;    // radians/s
         // Angular speed to translational speed --> v = omega * r / gearing
-        public static final double maxSpeed = NEOFreeSpeed * (wheelDiameter / 2.0) / driveGearing * 0.7;
+        public static final double maxSpeed = NEOFreeSpeed * (wheelDiameterMeters / 2.0) / driveGearing * 0.7;
         public static final double maxForward = maxSpeed;
         public static final double maxStrafe = maxSpeed;
         // maxRCW is the angular velocity of the robot.
@@ -57,17 +57,26 @@ public final class Constants {
 
         // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
         // Determine correct turn PID constants
-        public static final double[] turnkP = {0.005, 0.005, 0.005, 0.005};
+        public static final double[] turnkP = {0.00374, 0.00374, 0.00374, 0.00374};
+        //public static final double[] turnkP = {0.005, 0.005, 0.005, 0.005};
         public static final double[] turnkI = {0, 0, 0, 0};
         public static final double[] turnkD = {0, 0, 0, 0};
+        public static final double[] turnkS = {0.2, 0.2, 0.2, 0.2};
+        // V = kS + kV * v + kA * a
+        // 12 = 0.2 + 0.00463 * v
+        // v = (12 - 0.2) / 0.00463 = 2548.596 degrees/s
+        public static final double[] turnkV = {0.00463, 0.00463, 0.00463, 0.00463};
+        public static final double[] turnkA = {0.000115, 0.000115, 0.000115, 0.000115};
+        //public static final double[] turnkD = {0.0001, 0.0001, 0.0001, 0.0001};
 
         // kP is an average of the forward and backward kP values
         // Forward: 1.72, 1.71, 1.92, 1.94
         // Backward: 1.92, 1.92, 2.11, 1.89
         public static final double[] drivekP = {1.82, 1.815, 2.015, 1.915};
-        //public static final double[] drivekP = {0, 0, 0, 0};
+        // public static final double[] drivekP = {0, 0, 0, 0};
         public static final double[] drivekI = {0, 0, 0, 0};
-        public static final double[] drivekD = {0, 0, 0, 0};
+        // public static final double[] drivekD = {.1,.1,.1,.1};
+        public static final double[] drivekD = {0,0,0,0};
         public static final boolean[] driveInversion = {true, true, true, true};
 
         public static final double[] kForwardVolts = {0.129, 0.108, 0.14, 0.125};
@@ -82,17 +91,23 @@ public final class Constants {
         //public static final double[] kForwardAccels = {0, 0, 0, 0};
         //public static final double[] kBackwardAccels = {0, 0, 0, 0};
 
-        public static final double autoMaxSpeed = 0.75 * 4.4;  // Meters / second
+        public static final double autoMaxSpeed = 0.35 * 4.4;  // Meters / second
         public static final double autoMaxAccel = mu * g;  // Meters / seconds^2
         public static final double autoMaxVolt = 10.0;   // For Drivetrain voltage constraint in RobotPath.java
         // The maximum acceleration the robot can achieve is equal to the coefficient of static friction times the gravitational acceleration
         // a = mu * 9.8 m/s^2
-        public static final double autoCentripetalAccel = mu * g;
+        public static final double autoCentripetalAccel = mu * g * 2;
 
         // PID values are listed in the order kP, kI, and kD
         public static final double[] xPIDController = {4, 0.0, 0.0};
         public static final double[] yPIDController = {4, 0.0, 0.0};
         public static final double[] thetaPIDController = {4, 0.0, 0.0};
+
+        // TODO: Find experimental value for current draw
+        public static final double intakeCurrentDraw = 8.0;
+
+        public static final double cameraHeight = Units.inchesToMeters(40.0);
+        public static final double cameraMountingAngleDeg = 29.5;
     }
 
     public static final class DrivePorts {
@@ -116,6 +131,9 @@ public final class Constants {
         public static final int canCoderPortBR = 2;
 
         public static final int kIntakeRoller = 13;
+
+        public static final int kPDPCANPort = 0;
+        public static final int kIntakeRollerPDP = 3;
 
         public static final int kFeederEjector = 7;
         public static final int kFeederBelt = 8;
@@ -231,5 +249,12 @@ public final class Constants {
             public static final int kTurnTurretClockwiseButton = RT; // TODO: change button
             public static final int kCalibrateTurret = START; //TODO: change button
         }
+    }
+
+    public static final class GameConstants {
+        //TODO: find actual value
+        public static final double[] GSMidPoints = {6, -12, 10};
+        
+        public static final String[] GSPaths = {"PathARed", "PathBBlue", "PathABlue", "PathBRed"};
     }
 }

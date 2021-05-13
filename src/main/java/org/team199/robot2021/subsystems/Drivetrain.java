@@ -19,10 +19,12 @@ import org.team199.robot2021.SwerveModule;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
@@ -33,12 +35,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Drivetrain extends SubsystemBase {
   // compassOffset is magnetic north relative to the current heading
   private final double compassOffset;
-  private final AHRS gyro = new AHRS(SerialPort.Port.kMXP); //Also try kUSB and kUSB2
+  private final AHRS gyro = new AHRS(SPI.Port.kMXP); //Also try kUSB and kUSB2
 
   private SwerveDriveKinematics kinematics = null;
   private SwerveDriveOdometry odometry = null;
   private SwerveModule modules[];
-  private boolean isOdometryInit = false;
   private static final boolean isGyroReversed = true;
 
   public Drivetrain() {
@@ -53,6 +54,7 @@ public class Drivetrain extends SubsystemBase {
       System.out.println("Calibrating the gyro...");
     }
     gyro.reset();
+    System.out.println("NavX-MXP firmware version: " + gyro.getFirmwareVersion());
     SmartDashboard.putBoolean("Magnetic Field Disturbance", gyro.isMagneticDisturbance());
     System.out.println("Magnetometer is calibrated: " + gyro.isMagnetometerCalibrated());
     compassOffset = gyro.getCompassHeading();
@@ -102,27 +104,25 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     for (int i = 0; i < 4; i++) {
       modules[i].periodic();
-      modules[i].updateSmartDashboard();
+      // Uncommenting the following line will contribute to loop overrun errors 
+      // modules[i].updateSmartDashboard();
     }
 
     // Update the odometry with current heading and encoder position
     odometry.update(Rotation2d.fromDegrees(getHeading()), modules[0].getCurrentState(), modules[1].getCurrentState(),
                     modules[2].getCurrentState(), modules[3].getCurrentState());
   
-    SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
-    SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());;
-    SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
-    SmartDashboard.putNumber("Robot Heading", getHeading());
-    SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
-    SmartDashboard.putNumber("Compass Offset", compassOffset);
-    SmartDashboard.putBoolean("Current Magnetic Field Disturbance", gyro.isMagneticDisturbance());
+    // SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
+    // SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getTranslation().getY());;
+    // SmartDashboard.putNumber("Raw gyro angle", gyro.getAngle());
+    // SmartDashboard.putNumber("Robot Heading", getHeading());
+    // SmartDashboard.putNumber("Gyro Compass Heading", gyro.getCompassHeading());
+    // SmartDashboard.putNumber("Compass Offset", compassOffset);
+    // SmartDashboard.putBoolean("Current Magnetic Field Disturbance", gyro.isMagneticDisturbance());
   }
 
   public void setOdometry(SwerveDriveOdometry odometry) {
-    if(!isOdometryInit) {
-      this.odometry = odometry;
-      isOdometryInit = true;
-    }
+    this.odometry = odometry;
   }
 
   public SwerveDriveOdometry getOdometry() {
@@ -130,16 +130,22 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetOdometry() {
-    odometry.resetPosition(odometry.getPoseMeters(), Rotation2d.fromDegrees(getHeading()));
-    isOdometryInit = false;
+    odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(0));
+    gyro.reset();
   }
 
   public double getHeading() {
     double x = gyro.getAngle();
-    if (SmartDashboard.getBoolean("Field Oriented", false)) {
+    if (SmartDashboard.getBoolean("Field Oriented", true)) {
       x -= SmartDashboard.getNumber("Field Offset from North (degrees)", 0);
     }
     return Math.IEEEremainder(x * (isGyroReversed ? -1.0 : 1.0), 360);
+  }
+
+  
+  // Resets the gyro, so that the direction the robotic currently faces is considered "forward"
+  public void resetHeading() {
+    gyro.reset();
   }
 
   public SwerveDriveKinematics getKinematics() { return kinematics; }
@@ -153,15 +159,13 @@ public class Drivetrain extends SubsystemBase {
     
     // Move the modules based on desired (normalized) speed, desired angle, max speed, drive modifier, and whether or not to reverse turning.
     for (int i = 0; i < 4; i++) {
-      modules[i].move(moduleStates[i].speedMetersPerSecond, moduleStates[i].angle.getRadians());
+      moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], new Rotation2d(modules[i].getModuleAngle()));
+      modules[i].move(moduleStates[i].speedMetersPerSecond, moduleStates[i].angle.getDegrees());
     }
   }
 
-  /**
-   * Runs homeAbsolute for all of the swerve modules.
-   */
-  public void homeAbsolute() {
-    for (int i = 0; i < 4; i++) modules[i].homeAbsolute();
+  public ChassisSpeeds getSpeeds() {
+    return kinematics.toChassisSpeeds(modules[0].getCurrentState(),modules[1].getCurrentState(),modules[2].getCurrentState(),modules[3].getCurrentState());
   }
 
   /**
@@ -174,7 +178,7 @@ public class Drivetrain extends SubsystemBase {
   */
   private ChassisSpeeds getChassisSpeeds(double forward, double strafe, double rotation) {
     ChassisSpeeds speeds;
-    if (SmartDashboard.getBoolean("Field Oriented", false)) {
+    if (SmartDashboard.getBoolean("Field Oriented", true)) {
       speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Rotation2d.fromDegrees(getHeading()));
     } else {
       speeds = new ChassisSpeeds(forward, strafe, rotation);

@@ -14,10 +14,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.team199.robot2021.commands.HomeAbsolute;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
@@ -44,6 +45,7 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putBoolean("Arcade Drive", true);
     //SmartDashboard.putBoolean("Characterized Drive", false);
     SmartDashboard.putBoolean("Field Oriented", true);
+    LiveWindow.disableAllTelemetry();
     robotContainer = new RobotContainer();
     Log.init();
     /*
@@ -55,12 +57,15 @@ public class Robot extends TimedRobot {
       e.printStackTrace();
       System.exit(1);
     }*/
-    CommandScheduler.getInstance().schedule(new HomeAbsolute(robotContainer.drivetrain));
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    double batteryVolts = robotContainer.pdp.getVoltage();
+    double totalAmps = robotContainer.pdp.getTotalCurrent();
+    SmartDashboard.putNumber("PDP Voltage", batteryVolts);
+    SmartDashboard.putNumber("PDP Current", totalAmps);
     Log.logData();
     MotorErrors.printSparkMaxErrorMessages();
   }
@@ -71,6 +76,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.drivetrain.brake();
+    robotContainer.drivetrain.resetOdometry();
     robotContainer.getAutonomousCommand().schedule();
     Log.setDataLoggingDisabled(false);
 

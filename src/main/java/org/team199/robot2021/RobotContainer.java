@@ -8,22 +8,14 @@
 
 package org.team199.robot2021;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.lib.Limelight;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.team199.lib.RobotPath;
 import org.team199.robot2021.Constants.OI;
 import org.team199.robot2021.commands.CalibrateTurret;
-import org.team199.robot2021.commands.HomeAbsolute;
+import org.team199.robot2021.commands.GalacticSearchCommand;
 import org.team199.robot2021.commands.Shoot;
 import org.team199.robot2021.commands.ShooterHorizontalAim;
 import org.team199.robot2021.commands.TeleopDrive;
@@ -32,6 +24,20 @@ import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;
 import org.team199.robot2021.subsystems.Turret;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.constraint.EllipticalRegionConstraint;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.lib.Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -53,23 +59,36 @@ public class RobotContainer {
     private final Turret turret = new Turret();
     private final SendableChooser<Command> autoCommandChooser;
     public Trajectory trajectory;
+    public PowerDistributionPanel pdp = new PowerDistributionPanel();
     //private final LinearInterpolation linearInterpol;
 
     public RobotContainer() {
 
-        if(DriverStation.getInstance().getJoystickName(OI.LeftJoy.port).length() != 0) {
+        DriverStation ds = DriverStation.getInstance();
+
+        while (!ds.isDSAttached()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                break;
+            }
+            System.err.println("Driver Station is not attached");
+        }
+
+        if(ds.isJoystickConnected(OI.LeftJoy.port)) {
             configureButtonBindingsLeftJoy();
         } else{
             System.err.println("ERROR: Dude, you're missing the left joystick.");
         }
 
-        if(DriverStation.getInstance().getJoystickName(OI.RightJoy.port).length() != 0) {
+        if(ds.isJoystickConnected(OI.RightJoy.port)) {
             configureButtonBindingsRightJoy();
         } else{
             System.err.println("ERROR: Dude, you're missing the right joystick.");
         }
 
-        if(DriverStation.getInstance().getJoystickName(OI.Controller.port).length() != 0) {
+        if(ds.isJoystickConnected(OI.Controller.port)) {
             configureButtonBindingsController();
         } else{
             System.err.println("ERROR: Dude, you're missing the controller.");
@@ -99,13 +118,60 @@ public class RobotContainer {
 
         autoCommandChooser = new SendableChooser<Command>();
         autoCommandChooser.setDefaultOption("No autonomous", new InstantCommand());
-        loadPath("AutoNav: Barrel Racing", "barrelRacing", true, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("AutoNav: Slalom","slalom", true, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("AutoNav: Bounce", "bounce", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Galactic Search: All Points", "GalacticSearchAllPoints", true, true, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Square", "Square", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Figure Eight", "Figure8", false, false, false, Constants.DriveConstants.autoMaxSpeed);
-        loadPath("Straight Line Test", "LineTest", false, false, false, Constants.DriveConstants.autoMaxSpeed);
+
+        /* Load AutoNav paths and specify every region where we need to slow down for each path */
+
+        double curvatureRadius = 1;
+        // Barrel Racing
+        List<EllipticalRegionConstraint>  barrelRegions = new ArrayList<EllipticalRegionConstraint>();
+        // Add circular regions around each of the loops around the markers
+        barrelRegions.add(RobotPath.createRegionConstraint(3.8, -3, 1, 1, 0, curvatureRadius));
+        barrelRegions.add(RobotPath.createRegionConstraint(6.1, -1.5, 1, 1, 0, curvatureRadius));
+        barrelRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
+        loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, true, Constants.DriveConstants.autoMaxSpeed, barrelRegions);
+        
+        // Slalom
+        List<EllipticalRegionConstraint>  slalomRegions = new ArrayList<EllipticalRegionConstraint>();
+        // Add elliptical regions around where we weave between markers
+        slalomRegions.add(RobotPath.createRegionConstraint(2.3, -3.1, 0.1, 0.9, 90, curvatureRadius));
+        slalomRegions.add(RobotPath.createRegionConstraint(6.8, -3.1, 0.1, 0.9, 90, curvatureRadius));
+        // Add a circular region around the end loop
+        slalomRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
+        loadPath("AutoNav: Slalom","slalom", false, false, false, false, Constants.DriveConstants.autoMaxSpeed, slalomRegions);
+        
+        // Bounce
+        List<EllipticalRegionConstraint>  bounceRegions = new ArrayList<EllipticalRegionConstraint>();
+        // Add elliptical regions around each marker we weave through / get close to 
+        bounceRegions.add(RobotPath.createRegionConstraint(2.3, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(3.8, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(5.3, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(6.1, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(1.5, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(3, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(3.8, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(5.3, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(RobotPath.createRegionConstraint(7.6, -1.5, 1, 1, 0, curvatureRadius));
+        // Create a SequentialCommandGroup for the multiple parts of bounce
+        try {
+            Command bounce1 = new RobotPath("Bounce1", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed*0, bounceRegions).getPathCommand(false, false);
+            Command bounce2 = new RobotPath("Bounce2", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed*0, bounceRegions).getPathCommand(false, false);
+            Command bounce3 = new RobotPath("Bounce3", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed*0, bounceRegions).getPathCommand(false, false);
+            Command bounce4 = new RobotPath("Bounce4", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false, true);
+            autoCommandChooser.addOption("AutoNav: Bounce", bounce1.andThen(bounce2, bounce3, bounce4));
+        } catch (IOException io) {
+            System.err.println("Could not create Bounce autonomous command.");
+            io.printStackTrace();
+        }
+
+        loadPath("Galactic search: Path A Red","PathARed", true, true, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Galactic search: Path B Red","PathBRed", true, true, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Galactic search: Path A Blue","PathABlue", false, true, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Galactic search: Path B Blue","PathBBlue", false, true, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Square", "Square", false, false, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Figure Eight", "Figure8", false, false, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        loadPath("Straight Line Test", "LineTest", false, false, false, true, Constants.DriveConstants.autoMaxSpeed, new ArrayList<EllipticalRegionConstraint>());
+        autoCommandChooser.addOption("Galactic Search: Solution 3", new GalacticSearchCommand(drivetrain, intake, lime));
         SmartDashboard.putData(autoCommandChooser);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
     }
@@ -130,7 +196,7 @@ public class RobotContainer {
     }
 
     private void configureButtonBindingsController() {
-        new JoystickButton(controller, Constants.OI.Controller.A).whenPressed(new HomeAbsolute(drivetrain));
+        new JoystickButton(controller, Constants.OI.Controller.A).whenPressed(new InstantCommand(() -> {drivetrain.resetHeading();}));
         new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
         new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
@@ -169,10 +235,10 @@ public class RobotContainer {
     }
 
     private void loadPath(final String chooserName, final String pathName, final boolean faceInPathDirection, final boolean deployIntake, 
-                          final boolean isInverted, final double endVelocity) {
+                          final boolean isInverted, final boolean stopAtEnd, final double endVelocity, final List<EllipticalRegionConstraint> regionConstraints) {
         try {
-            RobotPath path = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity);
-            autoCommandChooser.addOption(chooserName, path.getPathCommand(faceInPathDirection));
+            RobotPath path = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity, regionConstraints);
+            autoCommandChooser.addOption(chooserName, path.getPathCommand(faceInPathDirection, stopAtEnd));
         } catch(final Exception e) {
             e.printStackTrace(System.err);
         }
