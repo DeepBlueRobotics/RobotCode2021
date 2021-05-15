@@ -88,7 +88,7 @@ public class SwerveModule {
                                                                 Constants.DriveConstants.kBackwardVels[arrIndex],
                                                                 Constants.DriveConstants.kBackwardAccels[arrIndex]);
 
-        drivePIDController = drive.drivePIDController();
+        drivePIDController = drive.getPIDController();
 
         drivePIDController.setP(Constants.DriveConstants.drivekP[arrIndex]);
         drivePIDController.setI(Constants.DriveConstants.drivekI[arrIndex]);
