@@ -29,11 +29,7 @@ public class DeployClimberShort extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      //In case the winch somehow gets faster than the arm and needs to be stopped before it extends farther than the max
-      //this probably won't be necessary thx to equations :)
-      if (climber.getWinchHeight() >= Climber.kWinchMaxHeight) {
-        climber.runWinch(0);
-      }
+
   }
 
   // Called once the command ends or is interrupted.
@@ -41,8 +37,6 @@ public class DeployClimberShort extends CommandBase {
   public void end(boolean interrupted) {
     //When it reaches the top this stops all of it
     climber.runLift(0);
-    //Sets winch to break mode so it doesn't spin freely after arm deploys
-    climber.setWinchIdleBrake();
     System.out.println("--ENDED--");
   }
 

@@ -44,8 +44,6 @@ public class DeployClimberTall extends CommandBase {
   public void end(boolean interrupted) {
     //When it reaches the top this stops all of it
     climber.runLift(0);
-    //Sets winch to break mode so it doesn't spin freely after it deploys
-    climber.setWinchIdleBrake();
     System.out.println("--ENDED--");
   }
 

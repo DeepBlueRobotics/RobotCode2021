@@ -31,9 +31,9 @@ public class AttachHook extends CommandBase {
   public void initialize() {
     //pulls lift and winch in, arm will go all the way down, winch will stop once hook reaches bar
     hookAttached = climber.isHookAttached();
-    climber.runLift(climber.kLiftRetractSpeed);
-    climber.runWinch(climber.kWinchRetractSpeedFirst);
-    System.out.println("--ATTACH HOOK--");
+      climber.runLift(climber.kLiftRetractSpeed);
+      System.out.println("--ATTACH HOOK--");
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
