@@ -33,7 +33,7 @@ import org.team199.robot2021.subsystems.Shooter;
 import org.team199.robot2021.commands.AttachHook;
 import org.team199.robot2021.commands.AutoShootAndDrive;
 import org.team199.robot2021.commands.DeployClimberTall;
-import org.team199.robot2021.commands.DeployClimberShort;
+import org.team199.robot2021.commands.LowerClimberToShort;
 import org.team199.robot2021.commands.RaiseRobot;
 import org.team199.robot2021.commands.LowerArm;
 import org.team199.robot2021.subsystems.Feeder;
@@ -149,7 +149,7 @@ public class RobotContainer {
         ));
         //Deploy climber button (short height)
         new JoystickButton(controller, Constants.OI.Controller.kDeployClimberShortButton).whenPressed(new SequentialCommandGroup(
-            new DeployClimberShort(climber)
+            new LowerClimberToShort(climber)
         ));
 
         // climb button
