@@ -123,7 +123,7 @@ public class SwerveModule {
         this.reversed = Constants.DriveConstants.reversed[arrIndex];
         this.turnZero = Constants.DriveConstants.turnZero[arrIndex];
 
-        turnPIDController.reset(getModuleAngle() * 180 / Math.PI);
+        turnPIDController.reset(getModuleAngle());
 
         this.rollDegSupplier = rollDegSupplier;
         this.pitchDegSupplier = pitchDegSupplier;
@@ -131,7 +131,7 @@ public class SwerveModule {
 
     private double prevTurnVelocity = 0;
     public void periodic() {
-        double measuredAngleDegs = getModuleAngle()*180/Math.PI;
+        double measuredAngleDegs = getModuleAngle();
         TrapezoidProfile.State goal = turnPIDController.getGoal();
         goal = new TrapezoidProfile.State(goal.position, goal.velocity);
         
@@ -174,7 +174,7 @@ public class SwerveModule {
      */
     private double calculateAntiGravitationalA(Float gyroPitchDeg, Float gyroRollDeg)
     {
-        double moduleAngle = getModuleAngle();
+        double moduleAngle = getModuleAngle() * Math.PI / 180; // In Radians
         double moduleRollComponent = Math.sin(moduleAngle);
         double modulePitchComponent = Math.cos(moduleAngle);
         // gravitationalA is estimated to work for small angles, not 100% accurate at large angles
@@ -224,10 +224,12 @@ public class SwerveModule {
         lastAngle = angle;
     }
 
+    /**
+     * Gets the current angle of the module
+     * @return module angle in degrees
+     */
     public double getModuleAngle() {
-        double angleRads = Math.PI * (turnEncoder.getAbsolutePosition() - turnZero) / 180;
-        angleRads = MathUtil.inputModulus(angleRads, -Math.PI, Math.PI);
-        return angleRads;
+        return MathUtil.inputModulus(turnEncoder.getAbsolutePosition()-turnZero, -180, 180);
     }
 
     /**
@@ -235,7 +237,7 @@ public class SwerveModule {
      * @return A SwerveModuleState object representing the speed and angle of the module.
      */
     public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(getCurrentSpeed(), new Rotation2d(getModuleAngle()));
+        return new SwerveModuleState(getCurrentSpeed(), Rotation2d.fromDegrees(getModuleAngle()));
     }
 
     public double getCurrentSpeed() {
@@ -251,7 +253,7 @@ public class SwerveModule {
         // Display the position of the analog encoder.
         SmartDashboard.putNumber(moduleString + " Absolute Angle (deg)", turnEncoder.getAbsolutePosition());
         // Display the module angle as calculated using the absolute encoder.
-        SmartDashboard.putNumber(moduleString + " Turn Measured Pos (deg)", getModuleAngle()/Math.PI*180);
+        SmartDashboard.putNumber(moduleString + " Turn Measured Pos (deg)", getModuleAngle());
         SmartDashboard.putNumber(moduleString + " Encoder Position", drive.getEncoder().getPosition());
         // Display the speed that the robot thinks it is travelling at.
         SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
