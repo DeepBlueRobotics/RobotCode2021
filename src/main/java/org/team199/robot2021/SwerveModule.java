@@ -4,6 +4,8 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.revrobotics.ControlType;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 
@@ -30,7 +32,7 @@ public class SwerveModule {
     private String moduleString;
     private CANSparkMax drive, turn;
     private CANCoder turnEncoder;
-    private PIDController drivePIDController;
+    private CANPIDController drivePIDController;
     private ProfiledPIDController turnPIDController;
     private TrapezoidProfile.Constraints turnConstraints;
     private double driveModifier, maxSpeed, turnZero;
@@ -86,9 +88,12 @@ public class SwerveModule {
                                                                 Constants.DriveConstants.kBackwardVels[arrIndex],
                                                                 Constants.DriveConstants.kBackwardAccels[arrIndex]);
 
-        drivePIDController = new PIDController(2 * Constants.DriveConstants.drivekP[arrIndex],
-                                               Constants.DriveConstants.drivekI[arrIndex],
-                                               Constants.DriveConstants.drivekD[arrIndex]);
+        drivePIDController = drive.drivePIDController();
+
+        drivePIDController.setP(Constants.DriveConstants.drivekP[arrIndex]);
+        drivePIDController.setI(Constants.DriveConstants.drivekI[arrIndex]);
+        drivePIDController.setD(Constants.DriveConstants.drivekD[arrIndex]);
+        drivePIDController.setOutputRange(-1, 1);
     
 
         //System.out.println("Velocity Constant: " + (positionConstant / 60));
@@ -194,17 +199,9 @@ public class SwerveModule {
 
         // Compute desired and actual speeds in m/s
         double desiredSpeed = maxSpeed * speed * driveModifier;
-        double actualSpeed = getCurrentSpeed();
         SmartDashboard.putNumber(moduleString + " Desired Speed (mps)", desiredSpeed);
-        SmartDashboard.putNumber(moduleString + " Actual Speed (mps)", actualSpeed);
-        double targetVoltage = (actualSpeed >= 0 ? forwardSimpleMotorFF :
-                                 backwardSimpleMotorFF).calculate(desiredSpeed, calculateAntiGravitationalA(pitchDegSupplier.get(), rollDegSupplier.get()));//clippedAcceleration);
-
-        // Use robot characterization as a simple physical model to account for internal resistance, frcition, etc.
-        // Add a PID adjustment for error correction (also "drives" the actual speed to the desired speed)
-        targetVoltage += drivePIDController.calculate(actualSpeed, desiredSpeed);
-        double appliedVoltage = MathUtil.clamp(targetVoltage / 12, -1, 1);
-        drive.set(appliedVoltage);
+        
+        drivePIDController.setReference(desiredSpeed, ControlType.kVelocity);
     }
 
     /**
