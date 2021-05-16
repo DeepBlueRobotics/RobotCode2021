@@ -25,13 +25,15 @@ public class Climber extends SubsystemBase {
     private static final double kWinchConversionFactor = 1.0/42 * 2 * Math.PI * 0.5 * 13.2; //pulse resolution * 2*pi*r * gear ratio (1.0/42 * r * 2 * pi) = distance of rope extended
 
     //TODO: find good values and then set to final
-    public static double kLiftDeploySpeed = 0.3; //TODO: set correct speed
+    public static double kLiftDeploySpeed = 0.3; //TODO: set correct speed (test empirically)
     public static double kWinchDeploySpeed = 1; //No longer used
     public static double kLiftLowerSpeed = -0.1; //Vaguely arbitrary, but also not important might wanna ask others TODO : Name this better
-    public static double kLiftKeepSpeed = 0.06; //TODO: set correct speed (trial and error) (make changeable through smartDashboard)
+    public static double kLiftKeepSpeed = 0.06; //TODO: set correct speed (trial and error)
     public static double kLiftRetractSpeed = -0.001; //TODO: name this better
-    public static double kWinchRetractSpeedFirst = 0.6; //TODO: figure out how bungie cord will affect this
+    public static double kWinchRetractSpeedFirst = 0; //TODO: figure out how bungie cord will affect this
+    //the winch doesn't need to retract before the hook reaches the bar because any slack is taken on by the rollers
     public static double kWinchRetractSpeedSecond = 1;
+    //speed of winch retracting after hook attaches 
     public static double kArmRetryDistance = 1.046; //height arm goes to after going to max height
     //public static double kLiftAdjustSpeed = 0.2; //vestigial from perevious iteration
     //public static double kWinchAdjustSpeed = 0.2; //vestigial from perevious iteration
@@ -40,8 +42,8 @@ public class Climber extends SubsystemBase {
 
     
 
-    public static final double kLiftTallHeight = 1.803; // TODO: set correct speed
-    public static final double kLiftShortHeight = 50; //TODO: set correct speed 
+    public static final double kLiftTallHeight = 1.803;
+    public static final double kLiftShortHeight = 0.4754; //maybe check this value
     public static final double kLiftLowerHeight = 0;  //TODO: set this one probably (could be double max height depending on if scalar or vector)
     public static final double kWinchMaxHeight = 59; //Winch height for fully extended arm
     //public static final double kWinchMaxHeight = 59; //Winch height for fully extended arm (no longer necessary due to how lift raises)

@@ -57,6 +57,6 @@ public class RaiseRobot extends CommandBase {
   @Override
   public boolean isFinished() {
     //checks if robot has reached top
-    return (climber.getWinchHeight() >= Climber.kWinchMaxHeight) || hookAttached;
+    return (climber.getWinchHeight() >= Climber.kWinchMaxHeight) || hookAttached; //TODO is this line correct? kWinchMaxHeight shouldn't ever be smaller than the getWinchHeight
   }
 }
