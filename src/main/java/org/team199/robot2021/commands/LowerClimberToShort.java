@@ -37,6 +37,7 @@ public class LowerClimberToShort extends CommandBase {
   public void end(boolean interrupted) {
     //When it reaches the top this stops all of it
     climber.runLift(0);
+    climber.isFinishedDeploying = true;
     System.out.println("--ENDED--");
   }
 

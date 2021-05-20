@@ -29,10 +29,12 @@ public class RaiseRobot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    hookAttached = climber.isHookAttached();
-    if (!hookAttached) {
-      //Retract winch to raise robot
-      climber.runWinch(Climber.kWinchRetractSpeedSecond);
+    if(climber.isFinishedDeploying == true){
+      hookAttached = climber.isHookAttached();
+      if (!hookAttached) {
+        //Retract winch to raise robot
+        climber.runWinch(Climber.kWinchRetractSpeedSecond);
+    }
     }
   }
 
@@ -49,14 +51,21 @@ public class RaiseRobot extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+   if(climber.isFinishedDeploying == true){
     //stops the winch when it reaches the top
     climber.runWinch(0);
+   }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(climber.isFinishedDeploying == false){
+      return true;
+    }
+    else{
     //checks if robot has reached top
     return (climber.getWinchHeight() >= Climber.kWinchMaxHeight) || hookAttached; //TODO is this line correct? kWinchMaxHeight shouldn't ever be smaller than the getWinchHeight
+    }
   }
 }

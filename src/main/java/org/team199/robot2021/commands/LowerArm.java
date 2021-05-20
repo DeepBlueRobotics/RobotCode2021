@@ -25,11 +25,12 @@ public class LowerArm extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    hookAttached = climber.isHookAttached();
-    if (!hookAttached) {
-      climber.runLift(climber.kLiftLowerSpeed);
-    }
+  public void initialize(){ 
+    if(climber.isFinishedDeploying == true){
+      hookAttached = climber.isHookAttached();
+      if (!hookAttached) {
+        climber.runLift(climber.kLiftLowerSpeed);
+    }    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -42,15 +43,21 @@ public class LowerArm extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     //Stop lift and winch when arm returns to robot
-    climber.runLift(0);
-    System.out.println("--ENDED--");     
+    if(climber.isFinishedDeploying == true){
+      climber.runLift(0);
+      System.out.println("--ENDED--");     
+    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(climber.isFinishedDeploying == false){
+      return true;
+    } else{
     //checks if arm has returned to robot
     return (climber.getLiftHeight() <= Climber.kLiftLowerHeight) || hookAttached;
+    } 
   }  
 }
 

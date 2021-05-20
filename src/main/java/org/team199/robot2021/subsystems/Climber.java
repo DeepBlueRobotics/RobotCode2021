@@ -49,6 +49,7 @@ public class Climber extends SubsystemBase {
     //public static final double kWinchMaxHeight = 59; //Winch height for fully extended arm (no longer necessary due to how lift raises)
     public static final double kWinchStartHeight = 0; //Winch height for arm before extension
     public static final double kWinchFinalHeight = -80; //No longer necessary
+    public boolean isFinishedDeploying = false;
     // Winch height for after extension
     private final WPI_VictorSPX liftMotor = MotorControllerFactory.createVictor(Constants.Drive.kClimberLift); //this is a 775
     private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch);

@@ -29,11 +29,16 @@ public class AttachHook extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
+    if(climber.isFinishedDeploying == true){
+      
     climber.setWinchIdleBrake();
     //pulls lift and winch in, arm will go all the way down, winch will stop once hook reaches bar
     hookAttached = climber.isHookAttached();
     climber.runLift(climber.kLiftRetractSpeed);
     System.out.println("--ATTACH HOOK--");
+    }
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,6 +54,12 @@ public class AttachHook extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !hookAttached || (climber.getLiftHeight() <= climber.kArmRetryDistance);
+    if(climber.isFinishedDeploying == false) {
+      return true;
+    } 
+    else{
+      return !hookAttached || (climber.getLiftHeight() <= climber.kArmRetryDistance);   
+    }
+     
   }
 }
