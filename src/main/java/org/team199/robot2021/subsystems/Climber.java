@@ -21,15 +21,15 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 
 public class Climber extends SubsystemBase {
-    private static final double kLiftConversionFactor =  1.0/12 * 2 * Math.PI * 115; //pulse resolution * 2pi * gear ratio = radians lift motor has travelled TODO find r
+    private static final double kLiftConversionFactor =  1.0/12 * 2 * Math.PI * 115; //pulse resolution * 2pi * gear ratio = radians lift motor has travelled
     private static final double kWinchConversionFactor = 1.0/42 * 2 * Math.PI * 0.5 * 13.2; //pulse resolution * 2*pi*r * gear ratio (1.0/42 * r * 2 * pi) = distance of rope extended
 
     //TODO: find good values and then set to final
     public static double kLiftDeploySpeed = 0.3; //TODO: set correct speed (test empirically)
     public static double kWinchDeploySpeed = 1; //No longer used
-    public static double kLiftLowerSpeed = -0.1; //Vaguely arbitrary, but also not important might wanna ask others TODO : Name this better
+    public static double kLiftLowerPostHookSpeed = -0.1; //Vaguely arbitrary, but also not important might wanna ask others
     public static double kLiftKeepSpeed = 0.06; //TODO: set correct speed (trial and error)
-    public static double kLiftRetractSpeed = -0.001; //TODO: name this better
+    public static double kLiftRetractPreHookSpeed = -0.001; //speed arm retracts at to attach to hook
     public static double kWinchRetractSpeedFirst = 0; //TODO: figure out how bungie cord will affect this
     //the winch doesn't need to retract before the hook reaches the bar because any slack is taken on by the rollers
     public static double kWinchRetractSpeedSecond = 1;
@@ -42,9 +42,9 @@ public class Climber extends SubsystemBase {
 
     
 
-    public static final double kLiftTallHeight = 1.803;
-    public static final double kLiftShortHeight = 0.4754; //maybe check this value
-    public static final double kLiftLowerHeight = 0;  //TODO: set this one probably (could be double max height depending on if scalar or vector)
+    public static final double kLiftTallHeight = 1.803; //measured in radians
+    public static final double kLiftShortHeight = 0.4754; //No longer used
+    public static final double kLiftLowerHeight = 0.72;  //measured in radians
     public static final double kWinchMaxHeight = 59; //Winch height for fully extended arm
     //public static final double kWinchMaxHeight = 59; //Winch height for fully extended arm (no longer necessary due to how lift raises)
     public static final double kWinchStartHeight = 0; //Winch height for arm before extension
@@ -71,7 +71,7 @@ public class Climber extends SubsystemBase {
         SmartDashboard.putNumber("Climber.kLiftDeploySpeed", kLiftDeploySpeed);
         SmartDashboard.putNumber("Climber.kWinchDeploySpeed", kWinchDeploySpeed);
         SmartDashboard.putNumber("Climber.kLiftKeepSpeed", kLiftKeepSpeed);
-        SmartDashboard.putNumber("Climber.kLiftRetractSpeed", kLiftRetractSpeed);
+        SmartDashboard.putNumber("Climber.kLiftRetractSpeed", kLiftRetractPreHookSpeed);
         SmartDashboard.putNumber("Climber.kWinchRetractSpeedFirst", kWinchRetractSpeedFirst);
         // SmartDashboard.putNumber("Climber.kLiftAdjustSpeed", kLiftAdjustSpeed);
     }
@@ -80,7 +80,7 @@ public class Climber extends SubsystemBase {
         kLiftDeploySpeed = SmartDashboard.getNumber("Climber.kLiftDeploySpeed", kLiftDeploySpeed);
         kWinchDeploySpeed = SmartDashboard.getNumber("Climber.kWinchDeploySpeed", kWinchDeploySpeed);
         kLiftKeepSpeed = SmartDashboard.getNumber("Climber.kLiftKeepSpeed", kLiftKeepSpeed);
-        kLiftRetractSpeed = SmartDashboard.getNumber("Climber.kLiftRetractSpeed", kLiftRetractSpeed);
+        kLiftRetractPreHookSpeed = SmartDashboard.getNumber("Climber.kLiftRetractSpeed", kLiftRetractPreHookSpeed);
         kWinchRetractSpeedFirst = SmartDashboard.getNumber("Climber.kWinchRetractSpeedFirst", kWinchRetractSpeedFirst);
         // kLiftAdjustSpeed = SmartDashboard.getNumber("Climber.kLiftAdjustSpeed", kLiftAdjustSpeed);
         SmartDashboard.putNumber("Lift Position", getLiftHeight());

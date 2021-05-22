@@ -35,7 +35,7 @@ public class AttachHook extends CommandBase {
     climber.setWinchIdleBrake();
     //pulls lift and winch in, arm will go all the way down, winch will stop once hook reaches bar
     hookAttached = climber.isHookAttached();
-    climber.runLift(climber.kLiftRetractSpeed);
+    climber.runLift(climber.kLiftRetractPreHookSpeed);
     System.out.println("--ATTACH HOOK--");
     }
     

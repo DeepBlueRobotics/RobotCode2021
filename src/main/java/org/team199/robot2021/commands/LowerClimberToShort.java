@@ -20,7 +20,7 @@ public class LowerClimberToShort extends CommandBase {
   @Override
   public void initialize() {
     //Sends arm up to bar and gives slack from winch to do so
-    climber.runLift(Climber.kLiftLowerSpeed);
+    climber.runLift(Climber.kLiftLowerPostHookSpeed);
     //Puts winch into idle mode (coasting) so the arm can lift it
     climber.setWinchIdleCoast();
     System.out.println("--RUNNING--");
@@ -45,6 +45,6 @@ public class LowerClimberToShort extends CommandBase {
   @Override
   public boolean isFinished() {
     //Checks if arm has lowered to shorter height from being at the top
-    return climber.getLiftHeight() <= Climber.kLiftShortHeight;
+    return climber.getLiftHeight() <= Climber.kLiftLowerHeight;
   }
 }

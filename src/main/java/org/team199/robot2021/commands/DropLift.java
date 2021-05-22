@@ -22,7 +22,7 @@ public class DropLift extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.runLift(Climber.kLiftRetractSpeed);
+    climber.runLift(Climber.kLiftRetractPreHookSpeed);
   }
       
 

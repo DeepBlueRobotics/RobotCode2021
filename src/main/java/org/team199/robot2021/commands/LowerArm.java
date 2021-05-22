@@ -29,7 +29,7 @@ public class LowerArm extends CommandBase {
     if(climber.isFinishedDeploying == true){
       hookAttached = climber.isHookAttached();
       if (!hookAttached) {
-        climber.runLift(climber.kLiftLowerSpeed);
+        climber.runLift(climber.kLiftLowerPostHookSpeed);
     }    }
   }
 
