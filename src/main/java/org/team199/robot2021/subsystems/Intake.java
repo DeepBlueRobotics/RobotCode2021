@@ -11,17 +11,21 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.MotorControllerFactory;
-
+import edu.wpi.first.wpilibj.Servo;
 public class Intake extends SubsystemBase {
     // TODO: find good values and then set to final
     private static double kIntakeSpeed = .6;
     private static double kSlowSpeed = -0.1;
+    private static double kLimeBottomAngle = 0; //TODO: set correct angle
+    private static double kLimeTopAngle = 0; //TODO: set correct angle
 
     private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kIntakeRoller);
+    private final Servo limelightServo = new Servo(0); //TODO: set proper channel
     private final DoubleSolenoid intakePistons1 = new DoubleSolenoid(Constants.DrivePorts.kIntakePistons[2], Constants.DrivePorts.kIntakePistons[3]);
     private final DoubleSolenoid intakePistons2 = new DoubleSolenoid(Constants.DrivePorts.kIntakePistons[0], Constants.DrivePorts.kIntakePistons[1]);
 
     private boolean deployed = false;
+    private boolean isLimelightSearching = false;
 
     /**
      * Vectored intake that rolls balls through the bumper gap and into feeder.
@@ -77,5 +81,17 @@ public class Intake extends SubsystemBase {
     public boolean isDeployed() {
         return deployed;
     }
+    public boolean isLimelightSearching() {
+        return isLimelightSearching;
+    }
+    public void changeServoStatus(boolean status) {
+        isLimelightSearching = status;
+        if (isLimelightSearching() == false) {
+            limelightServo.setAngle(kLimeBottomAngle); // TODO: set correct angle
+        } else {
+            limelightServo.setAngle(kLimeTopAngle); // TODO: set correct angle
+        }
+    }
+
 
 }

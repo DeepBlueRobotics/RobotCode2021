@@ -193,7 +193,7 @@ public class RobotContainer {
         new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
         new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
-
+        new JoystickButton(controller, Constants.OI.Controller.kLimelightToggleButton).whenPressed(new InstantCommand(() -> {intake.changeServoStatus(!intake.isLimelightSearching());}));
         // Power cell regurgitate button
         //new JoystickButton(controller, Constants.OI.Controller.kRegurgitateButton).whileHeld(new Regurgitate(intake, feeder));
 
