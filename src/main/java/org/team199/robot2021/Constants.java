@@ -235,8 +235,6 @@ public final class Constants {
             // intake/feeder
             public static final int kIntakeButton = X;
             public static final int kOuttakeButton = Y;
-            //limelight servo
-            public static final int kLimelightButton = 0; //TODO: change button
             //public static final int kRegurgitateButton = B;
         }
     }
