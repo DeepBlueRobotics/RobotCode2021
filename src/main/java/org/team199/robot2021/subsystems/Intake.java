@@ -84,13 +84,12 @@ public class Intake extends SubsystemBase {
     public boolean isLimelightSearching() {
         return isLimelightSearching;
     }
-    public void changeServoStatus() {
+    public void changeServoStatus(boolean status) {
+        isLimelightSearching = status;
         if (isLimelightSearching() == false) {
             limelightServo.setAngle(kLimeBottomDegree); // TODO: set correct angle
-            isLimelightSearching = true;
         } else {
             limelightServo.setAngle(kLimeTopDegree); // TODO: set correct angle
-            isLimelightSearching = false;
         }
     }
 
