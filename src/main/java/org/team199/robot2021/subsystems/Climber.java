@@ -51,8 +51,8 @@ public class Climber extends SubsystemBase {
     public static final double kWinchFinalHeight = -80; //No longer necessary
     public boolean isFinishedDeploying = false;
     // Winch height for after extension
-    private final WPI_VictorSPX liftMotor = MotorControllerFactory.createVictor(Constants.Drive.kClimberLift); //this is a 775
-    private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.Drive.kClimberWinch);
+    private final WPI_VictorSPX liftMotor = MotorControllerFactory.createVictor(Constants.DrivePorts.kClimberLift); //this is a 775
+    private final CANSparkMax winchMotor = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kClimberWinch);
     private final Encoder liftEnc = new Encoder(2, 3);
     private final CANEncoder winchEnc = winchMotor.getEncoder();
     private final PowerDistributionPanel powerDistributionPanel = new PowerDistributionPanel(1); //TODO: set correct module

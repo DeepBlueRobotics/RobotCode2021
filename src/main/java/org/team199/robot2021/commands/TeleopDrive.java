@@ -7,33 +7,33 @@
 
 package org.team199.robot2021.commands;
 
-import frc.robot.lib.Limelight;
+import java.util.function.Supplier;
+
 import org.team199.robot2021.Constants;
 import org.team199.robot2021.subsystems.Drivetrain;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class TeleopDrive extends CommandBase {
-  private static final double kSlowDriveSpeed = 0.6;
-  private static final double kSlowDriveRotation = 0.6;
+  //private static final double kSlowDriveSpeed = 0.6;
+  //private static final double kSlowDriveRotation = 0.6;
 
   private final Drivetrain drivetrain;
-  private final Joystick leftJoy, rightJoy;
-  private final Limelight lime;
-  private Limelight.Mode limelightMode = Limelight.Mode.STEER;
-  private final double minError = 0.05; // currently only used for steer and distance combo
-
+  private Supplier<Double> fwd;
+  private Supplier<Double> str;
+  private Supplier<Double> rcw;
+  double currentForward = 0;
+  double currentStrafe = 0;
   /**
    * Creates a new TeleopDrive.
    */
-  public TeleopDrive(Drivetrain drivetrain, Joystick leftJoy, Joystick rightJoy, Limelight lime) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public TeleopDrive(Drivetrain drivetrain, Supplier<Double> fwd, Supplier<Double> str, Supplier<Double> rcw) {
     addRequirements(this.drivetrain = drivetrain);
-    this.leftJoy = leftJoy;
-    this.rightJoy = rightJoy;
-    this.lime = lime;
+    this.fwd = fwd;
+    this.str = str;
+    this.rcw = rcw;
   }
 
   // Called when the command is initially scheduled.
@@ -44,38 +44,42 @@ public class TeleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boolean slowLeft = leftJoy.getRawButton(Constants.OI.LeftJoy.kSlowDriveButton);
-    boolean slowRight = rightJoy.getRawButton(Constants.OI.RightJoy.kSlowDriveButton);
+    double rawForward, rawStrafe, rotateClockwise, deltaT;
+    deltaT = .05;
+    // Sets all values less than or equal to a very small value (determined by the idle joystick state) to zero.
+    // Used to make sure that the robot does not try to change its angle unless it is moving,
+    if (Math.abs(fwd.get()) <= Constants.OI.JOY_THRESH) rawForward = 0.0;
+    else rawForward = Constants.DriveConstants.maxForward * fwd.get();
+    if (Math.abs(str.get()) <= Constants.OI.JOY_THRESH) rawStrafe = 0.0;
+    else rawStrafe = Constants.DriveConstants.maxStrafe * str.get();
 
-    if (SmartDashboard.getBoolean("Arcade Drive", true)) {
-      double speed = -leftJoy.getY();
-      double rotation = rightJoy.getX();
-      if (Math.abs(speed) < 0.001) { speed = 0.0; }
-      if (Math.abs(rotation) < 0.001) { rotation = 0.0; }
-
-      if (slowLeft) speed *= kSlowDriveSpeed;
-      if (slowRight) rotation *= kSlowDriveRotation;
-
-      if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-        drivetrain.charDriveArcade(speed, rotation);
-      } else {
-        drivetrain.arcadeDrive(speed, rotation);
-      }
+    if (!SmartDashboard.getBoolean("Teleop Face Direction of Travel", false)) {
+      rotateClockwise = rcw.get();
+      if (Math.abs(rotateClockwise) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
+      else rotateClockwise = Constants.DriveConstants.maxRCW * rotateClockwise;
     } else {
-      double left = -leftJoy.getY();
-      double right = -rightJoy.getX();
-
-      if (slowLeft) left *= kSlowDriveSpeed;
-      if (slowRight) right *= kSlowDriveRotation;
-
-      if (SmartDashboard.getBoolean("Characterized Drive", false)) {
-        drivetrain.charDriveTank(left, right);
-      } else {
-        drivetrain.tankDrive(left, right, true);
-      }
+      rotateClockwise = drivetrain.getHeading()/160;
     }
+    //double currentForward = drivetrain.getSpeeds().vxMetersPerSecond;
+    //double currentStrafe = -drivetrain.getSpeeds().vyMetersPerSecond;
+    Vector2d targetAcceleration = new Vector2d((rawForward - currentForward)/deltaT, (rawStrafe - currentStrafe)/deltaT);
+    double accelerationMagnitude = targetAcceleration.magnitude();
+    if (accelerationMagnitude >= Constants.DriveConstants.autoMaxAccel) {
+      targetAcceleration.x *= Constants.DriveConstants.autoMaxAccel/accelerationMagnitude;
+      targetAcceleration.y *= Constants.DriveConstants.autoMaxAccel/accelerationMagnitude;
+    }
+    currentForward += targetAcceleration.x*deltaT;
+    currentStrafe += targetAcceleration.y*deltaT;
+    if (Math.abs(currentForward) <= Constants.OI.JOY_THRESH)
+      currentForward = 0;
+    if (Math.abs(currentStrafe) <= Constants.OI.JOY_THRESH)
+      currentStrafe = 0;
+    //SmartDashboard.putNumber("Forward (mps)", currentForward);
+   // SmartDashboard.putNumber("Strafe (mps)", currentStrafe);
+    drivetrain.drive(currentForward, currentStrafe, rotateClockwise);
   }
 
+  /*
   private void autoAlign() {
     double adjustment;
     if (limelightMode == Limelight.Mode.DIST) {
@@ -105,11 +109,11 @@ public class TeleopDrive extends CommandBase {
     SmartDashboard.putNumber("Left Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.LEFT));
     SmartDashboard.putNumber("Right Encoder Distance", drivetrain.getEncPos(Drivetrain.Side.RIGHT));
   }
+  */
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.tankDrive(0, 0, true);
   }
 
   // Returns true when the command should end.

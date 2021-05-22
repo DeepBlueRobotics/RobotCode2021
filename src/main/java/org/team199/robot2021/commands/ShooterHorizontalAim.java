@@ -17,8 +17,8 @@ public class ShooterHorizontalAim extends CommandBase {
     }
 
     public void execute() {
-        double adjustment = limelight.steeringAssist();
-        drivetrain.tankDrive(adjustment, -adjustment, false);
+        double adjustment = limelight.steeringAssist(drivetrain.getHeading());
+        //drivetrain.tankDrive(adjustment, -adjustment, false);
     }
 
     public boolean isFinished() {

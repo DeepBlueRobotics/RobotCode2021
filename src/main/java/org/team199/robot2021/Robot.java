@@ -10,9 +10,18 @@ package org.team199.robot2021;
 import frc.robot.lib.MotorErrors;
 import frc.robot.lib.logging.Log;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,21 +33,39 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   
   private RobotContainer robotContainer;
+  //private Timer timer;
+  private File debugFile;
+  private FileWriter writer;
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
    */
   @Override
   public void robotInit() {
-    SmartDashboard.putBoolean("Arcade Drive", true);
-    SmartDashboard.putBoolean("Characterized Drive", false);
+    //SmartDashboard.putBoolean("Arcade Drive", true);
+    //SmartDashboard.putBoolean("Characterized Drive", false);
+    SmartDashboard.putBoolean("Field Oriented", true);
+    LiveWindow.disableAllTelemetry();
     robotContainer = new RobotContainer();
     Log.init();
+    /*
+    debugFile = new File("/home/lvuser/debug.txt");
+    try {
+      debugFile.createNewFile();
+      writer = new FileWriter(debugFile);
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }*/
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    double batteryVolts = robotContainer.pdp.getVoltage();
+    double totalAmps = robotContainer.pdp.getTotalCurrent();
+    SmartDashboard.putNumber("PDP Voltage", batteryVolts);
+    SmartDashboard.putNumber("PDP Current", totalAmps);
     Log.logData();
     MotorErrors.printSparkMaxErrorMessages();
   }
@@ -49,8 +76,22 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.drivetrain.brake();
+    robotContainer.drivetrain.resetOdometry();
     robotContainer.getAutonomousCommand().schedule();
     Log.setDataLoggingDisabled(false);
+
+    /*
+    try {
+      for (Trajectory.State state : robotContainer.trajectory.getStates()) {
+        writer.write("Trajectory pose at t = " + state.timeSeconds + ": " + state.poseMeters + "\n");
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    timer = new Timer();
+    timer.start();
+    */
   }
 
   /**
@@ -58,6 +99,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    /*
+    double time = timer.get();
+    try {
+      writer.write("Odometry pose at t = " + time + ": " + robotContainer.drivetrain.getOdometry().getPoseMeters() + "\n");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }*/
   }
 
   /**
