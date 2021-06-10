@@ -153,6 +153,7 @@ public final class Constants {
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
+        public static final int kLimelightServoPort = 0; //TODO: set proper channel
     }
 
     /**
@@ -236,7 +237,7 @@ public final class Constants {
             public static final int kIntakeButton = X;
             public static final int kOuttakeButton = Y;
             // limelight toggle
-            public static final int kLimelightToggleButton = 0; //TODO: set button
+            public static final int kLimelightToggleButton = LB; //Limelight Toggle button set to Left Button
             //public static final int kRegurgitateButton = B;
         }
     }

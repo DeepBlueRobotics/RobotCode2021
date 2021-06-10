@@ -16,11 +16,11 @@ public class Intake extends SubsystemBase {
     // TODO: find good values and then set to final
     private static double kIntakeSpeed = .6;
     private static double kSlowSpeed = -0.1;
-    private static double kLimeBottomAngle = 0; //TODO: set correct angle
-    private static double kLimeTopAngle = 0; //TODO: set correct angle
+    private static double kLimeBottomAngleDegs = 0; //TODO: set correct angle
+    private static double kLimeTopAngleDegs = 0; //TODO: set correct angle
 
     private final CANSparkMax rollerMotor = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kIntakeRoller);
-    private final Servo limelightServo = new Servo(0); //TODO: set proper channel
+    private final Servo limelightServo = new Servo(Constants.DrivePorts.kLimelightServoPort); 
     private final DoubleSolenoid intakePistons1 = new DoubleSolenoid(Constants.DrivePorts.kIntakePistons[2], Constants.DrivePorts.kIntakePistons[3]);
     private final DoubleSolenoid intakePistons2 = new DoubleSolenoid(Constants.DrivePorts.kIntakePistons[0], Constants.DrivePorts.kIntakePistons[1]);
 
@@ -84,12 +84,12 @@ public class Intake extends SubsystemBase {
     public boolean isLimelightSearching() {
         return isLimelightSearching;
     }
-    public void changeServoStatus(boolean status) {
+    public void setLimelightSearching(boolean status) {
         isLimelightSearching = status;
-        if (isLimelightSearching() == false) {
-            limelightServo.setAngle(kLimeBottomAngle); // TODO: set correct angle
+        if (isLimelightSearching() == true) {
+            limelightServo.setAngle(kLimeBottomAngleDegs); // TODO: set correct angle
         } else {
-            limelightServo.setAngle(kLimeTopAngle); // TODO: set correct angle
+            limelightServo.setAngle(kLimeTopAngleDegs); // TODO: set correct angle
         }
     }
 
