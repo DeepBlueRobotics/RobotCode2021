@@ -237,7 +237,7 @@ public final class Constants {
             public static final int kIntakeButton = X;
             public static final int kOuttakeButton = Y;
             // limelight toggle
-            public static final int kLimelightToggleButton = LB; //Limelight Toggle button set to Left Button
+            public static final int kLimelightToggleButton = LT; //Limelight Toggle button set to Left Button
             //public static final int kRegurgitateButton = B;
         }
     }
