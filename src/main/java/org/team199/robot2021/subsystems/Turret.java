@@ -1,5 +1,6 @@
 package org.team199.robot2021.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 
@@ -7,6 +8,7 @@ import org.team199.robot2021.Constants;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,13 +19,14 @@ public class Turret extends SubsystemBase {
     
     private final DigitalInput homeSensor = new DigitalInput(Constants.DrivePorts.kTurretHomeSensor);
     private final DigitalInput limitSensor = new DigitalInput(Constants.DrivePorts.kTurretLimitSensor);
-    private final CANSparkMax motor = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kTurretMotor);
-    private final CANEncoder encoder = motor.getEncoder();
+    private final WPI_TalonSRX motor = MotorControllerFactory.createTalon(Constants.DrivePorts.kTurretMotor);
+    private final Encoder encoder = new Encoder(new DigitalInput(Constants.DrivePorts.kTurretEncoderPort1), new DigitalInput(Constants.DrivePorts.kTurretEncoderPort2));
     private final double gearing = 50D;
     private final double maxSpeed = 75; // RPM
     private final double manualTurnSpeed = 0.25;
     private final double limitSpeed = 0.1; // How fast to turn away from limit points
     private final double minEncoderDistToLimit = 100; // If we are at the limit and the encoder is less than this distance, the reported direction of the turret will be assumed to be inaccurate
+    private double encoderOffset = 0;
 
     private double simPos = 10;
     private long simLastUpdate = -1;
@@ -33,7 +36,8 @@ public class Turret extends SubsystemBase {
     private final double sensorRange = 10; // +- degrees
 
     public Turret() {
-        encoder.setPositionConversionFactor(360 / gearing);
+        encoder.setDistancePerPulse(360 / gearing);
+        encoder.reset();
         if(RobotBase.isSimulation()) {
             simHomeSensor = new DIOSim(homeSensor);
             simLimitSensor = new DIOSim(limitSensor);
@@ -44,7 +48,7 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Turret Position", encoder.getPosition());
+        SmartDashboard.putNumber("Turret Position", encoder.getDistance());
         double speed = getSpeedSetpoint();
         if(speed == 0) {
             if(isAtLimit() && Math.abs(getPosition()) > minEncoderDistToLimit) {
@@ -90,11 +94,16 @@ public class Turret extends SubsystemBase {
     }
 
     public double getPosition() {
-        return encoder.getPosition();
+        return encoder.getDistance() + encoderOffset;
     }
 
     public void setPosition(double pos) {
-        encoder.setPosition(pos);
+        encoder.reset();
+        encoderOffset = pos;
+    }
+
+    public double getEncoderOffset() {
+        return encoderOffset;
     }
 
     public boolean limited(double speed) {
@@ -108,7 +117,7 @@ public class Turret extends SubsystemBase {
             if(simLastUpdate != -1) {
                 double deltaPos = simLastSpeed * ((maxSpeed / 60D) * ((currentTimeMillis - simLastUpdate)/1000D)) * 360D;
                 simPos += deltaPos;
-                encoder.setPosition(encoder.getPosition()+deltaPos);
+                setPosition(getPosition()+deltaPos);
                 SmartDashboard.putNumber("Simulated Turret Position", simPos);
                 simHomeSensor.setValue(isInRange(simPos, 0, sensorRange));
                 simLimitSensor.setValue(isInRange(Math.abs(simPos), 180, sensorRange));

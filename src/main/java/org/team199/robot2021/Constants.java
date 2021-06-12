@@ -157,6 +157,8 @@ public final class Constants {
         //TODO: Set Values
         public static final int kTurretLimitSensor = 3; //TODO: Set Correct Value
         public static final int kTurretHomeSensor = 2; //TODO: Set Correct Value
+        public static final int kTurretEncoderPort1 = 0; //TODO: Set Correct Value
+        public static final int kTurretEncoderPort2 = 0; //TODO: Set Correct Value
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
