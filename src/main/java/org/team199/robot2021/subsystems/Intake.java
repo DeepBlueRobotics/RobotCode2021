@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
      * Vectored intake that rolls balls through the bumper gap and into feeder.
      */
     public Intake() {
-        rollerMotor.setInverted(true);
+        //rollerMotor.setInverted(true);
         rollerMotor.setSmartCurrentLimit(30);
 
         SmartDashboard.putNumber("Intake.kIntakeSpeed", kIntakeSpeed);
