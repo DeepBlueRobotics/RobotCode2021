@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.MotorControllerFactory;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+
 public class Intake extends SubsystemBase {
     // TODO: find good values and then set to final
     private static double kIntakeSpeed = .6;
