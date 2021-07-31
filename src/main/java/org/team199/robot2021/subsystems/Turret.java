@@ -48,7 +48,7 @@ public class Turret extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Turret Position", encoder.getDistance());
+        SmartDashboard.putNumber("Turret Position", getPosition());
         double speed = getSpeedSetpoint();
         if(speed == 0) {
             if(isAtLimit() && Math.abs(getPosition()) > minEncoderDistToLimit) {
