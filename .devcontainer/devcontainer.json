@@ -22,7 +22,6 @@
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"redhat.java",
-		"vscjava.vscode-java-pack",
 		"ms-vscode.cpptools",
 		"vcjava.vscode-java-debug",
 		"ms-toolsai.jupyter",
