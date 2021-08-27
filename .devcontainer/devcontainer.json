@@ -35,7 +35,7 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "java -version",
-	"postCreateCommand": "rm -rf lib199 & git submodule update --init"
+	"postCreateCommand": "rm -rf lib199 & git submodule update --init",
 
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode"
