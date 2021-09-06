@@ -35,9 +35,7 @@ public class CalibrateTurret extends CommandBase {
             return;
         }
         if(turret.isAtHome() && hasTurned180) {
-            // System.out.println(speed + " " + SmartDashboard.getNumber("Simulated Turret Position", 0D));
             turret.setPosition(Math.copySign(alignError, -speed));
-            // System.out.println(turret.getPosition() - SmartDashboard.getNumber("Simulated Turret Position", 0D));
             speed = 0;
         } else if(turret.limited(speed)) {
             speed *= -1;
@@ -48,9 +46,6 @@ public class CalibrateTurret extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if(cancel || (turret.isAtHome() && hasTurned180)) {
-            System.out.println("fin");
-        }
         return cancel || (turret.isAtHome() && hasTurned180);
     }
 
