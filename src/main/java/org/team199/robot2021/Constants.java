@@ -106,8 +106,13 @@ public final class Constants {
         // TODO: Find experimental value for current draw
         public static final double intakeCurrentDraw = 8.0;
 
+        // TODO: change these to current for 2021 robot
         public static final double cameraHeight = Units.inchesToMeters(40.0);
         public static final double cameraMountingAngleDeg = 29.5;
+
+        // TODO: Find distances between intake and limelight
+        public static final double xLimeDistIntake = 0.0;
+        public static final double zLimeDistIntake = 0.0;
     }
 
     public static final class DrivePorts {
