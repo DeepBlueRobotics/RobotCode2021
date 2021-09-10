@@ -89,7 +89,7 @@ public class Intake extends SubsystemBase {
     }
     public void setLimelightSearching(boolean status) {
         isLimelightSearching = status;
-        if (isLimelightSearching() == true) {
+        if (isLimelightSearching) {
             limelightServo.setAngle(kLimeBottomAngleDegs); // TODO: set correct angle
             NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
         } else {

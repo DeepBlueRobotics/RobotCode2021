@@ -28,11 +28,14 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import org.team199.lib.RobotPath;
 import org.team199.robot2021.Constants.OI;
+import org.team199.robot2021.commands.BallSearchAndPickup;
 import org.team199.robot2021.commands.GalacticSearchCommand;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.commands.ToggleIntake;
 import org.team199.robot2021.subsystems.Drivetrain;
+import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;
+import org.team199.robot2021.subsystems.Shooter;
 
 import frc.robot.lib.Limelight;
 
@@ -46,9 +49,9 @@ import frc.robot.lib.Limelight;
 public class RobotContainer {
     final Drivetrain drivetrain = new Drivetrain();
     private final Limelight lime = new Limelight();
-    //private final Shooter shooter = new Shooter(lime);
+    private final Shooter shooter = new Shooter(lime);
     private final Intake intake = new Intake();
-    //private final Feeder feeder = new Feeder();
+    private final Feeder feeder = new Feeder();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.port);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.port);
     private final Joystick controller = new Joystick(Constants.OI.Controller.port);
@@ -192,7 +195,8 @@ public class RobotContainer {
         new JoystickButton(controller, Constants.OI.Controller.A).whenPressed(new InstantCommand(() -> {drivetrain.resetHeading();}));
         new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
-        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
+        // new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
+        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new BallSearchAndPickup(drivetrain, intake, feeder, shooter, lime));
         new JoystickButton(controller, Constants.OI.Controller.kLimelightToggleButton).whenPressed(new InstantCommand(() -> {
             intake.setLimelightSearching(!intake.isLimelightSearching()); 
         
