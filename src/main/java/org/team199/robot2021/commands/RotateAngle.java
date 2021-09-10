@@ -8,14 +8,15 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.team199.robot2021.subsystems.Drivetrain;
 
 public class RotateAngle extends CommandBase {
-  private Drivetrain dt;
-  private double goalAngle;
+  private Drivetrain drivetrain;
+  private double rotateAngle;
   private double currentAngle;
+  private double goalAngle;
   /** Creates a new RotateAngle. */
-  public RotateAngle(Drivetrain dt, double goalAngle) {
+  public RotateAngle(Drivetrain drivetrain, double rotateAngle) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.dt = dt;
-    this.goalAngle = goalAngle;
+    this.drivetrain = drivetrain;
+    this.rotateAngle = rotateAngle;
 
   }
 
@@ -23,18 +24,30 @@ public class RotateAngle extends CommandBase {
   @Override
   public void initialize() {
     //TODO: determine speed angle rotates
-    dt.drive(0, 0, 0.1);
+    //Rotates based on if rotateAngle is positive or negative
+    //TODO: define goalAngle as the final angle based on odometry values
+    //TODO: ensure getHeading returns an angle
+    goalAngle = drivetrain.getHeading() *Math.PI/180 + rotateAngle;
+    if (Math.abs(rotateAngle) != rotateAngle) {
+      drivetrain.drive(0, 0, -0.1);
+    } else {
+      drivetrain.drive(0, 0, 0.1);
+    }
     //TODO: use getHeading to find the angle we want the drivetrain to rotate. 
     //TODO: Change goalAngle to turnAngle, with goalAngle being the angle we want the drivetrian to rotate
     }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    currentAngle = drivetrain.getHeading()*Math.PI/180;
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    drivetrain.drive(0, 0 , 0);
+  }
 
   // Returns true when the command should end.
   @Override

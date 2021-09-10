@@ -10,12 +10,15 @@ import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;
 import org.team199.robot2021.subsystems.Shooter;
 import org.team199.robot2021.Constants;
+import org.team199.robot2021.commands.RotateAngle;
+import org.team199.robot2021.commands.DriveDistance;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class BallSearchAndPickup extends CommandBase {
+public class BallSearchAndPickup extends SequentialCommandGroup {
   private Drivetrain drivetrain;
   private Intake intake;
   private Feeder feeder;
@@ -28,12 +31,8 @@ public class BallSearchAndPickup extends CommandBase {
     this.lime = lime;
     this.drivetrain = drivetrain;
     addRequirements(drivetrain, intake, feeder, shooter);
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
+    // Use addRequirements() here to declare subsystem dependencies.
     //Search for Balls
     double[] distComponents = lime.determineObjectDist(Constants.DriveConstants.cameraHeight, 0.0, Constants.DriveConstants.cameraMountingAngleDeg);
     double xOffset = Constants.DriveConstants.xLimeDistIntake;
@@ -44,28 +43,14 @@ public class BallSearchAndPickup extends CommandBase {
     //Find angle and distance from balls using trigonometry and getObjectDistance method in Limelight class (0 is forward, 1 is strafe)
     double angle = Math.atan2(distComponents[0], distComponents[1]);
     double distance = Math.hypot(distComponents[0], distComponents[1]);
+    RotateAngle rotate = new RotateAngle(drivetrain, angle);
+    DriveDistance drive = new DriveDistance(drivetrain, distance);
     //Rotate Robot along angle till it's facing ball
       //Create new command to do this where isfinished checks if the goal angle is the same as the current angle
-    //Run the intake
-    //Drive robot forward the distance plus a little bit
-    //Congrats you're done
+    //Run the intak
+    addCommands(rotate, new InstantCommand(() -> intake.deploy()), new InstantCommand(() -> intake.intake()), drive);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+  // Called when the command is initially scheduled.
+  
 }
