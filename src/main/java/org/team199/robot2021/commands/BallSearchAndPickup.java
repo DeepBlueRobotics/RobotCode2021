@@ -47,8 +47,8 @@ public class BallSearchAndPickup extends SequentialCommandGroup {
     DriveDistance drive = new DriveDistance(drivetrain, distance);
     //Rotate Robot along angle till it's facing ball
       //Create new command to do this where isfinished checks if the goal angle is the same as the current angle
-    //Run the intak
-    addCommands(rotate, new InstantCommand(() -> intake.deploy()), new InstantCommand(() -> intake.intake()), drive);
+    //Run the intake
+    addCommands(rotate, new InstantCommand(() -> intake.deploy()), new InstantCommand(() -> intake.intake()), drive, new InstantCommand(() -> intake.stop()), new InstantCommand(() -> intake.retract()));
   }
 
   // Called when the command is initially scheduled.
