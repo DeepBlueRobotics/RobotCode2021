@@ -23,8 +23,9 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
         TimeOfFlight shooterDistanceSensor = feeder.getShooterDistanceSensor();
         ShooterHorizontalAim aim = new ShooterHorizontalAim(drivetrain, lime);
         AutoShoot shoot = new AutoShoot(feeder, shooter, shooterDistanceSensor, 3);
+        BallSearchAndPickup search = new BallSearchAndPickup(drivetrain, intake, feeder, shooter, lime);
 
-        /*
+        
         addCommands(
             aim,
             new InstantCommand(() -> { 
@@ -36,7 +37,7 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
                 intake.intake();
                 intake.doTheFlop();
             }, intake),
-            path.getPathCommand(),
+            path.getPathCommand(true, true),
             new InstantCommand(() -> {
                 intake.retract();
                 intake.stop();
@@ -45,8 +46,9 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
             new InstantCommand(() -> { 
                 SmartDashboard.putNumber("Shooter.kTargetSpeed", linearInterpol.calculate(drivetrain.getOdometry().getPoseMeters().getTranslation().getDistance(target))); 
             }),
-            shoot
+            shoot, 
+            search
         );
-        */
+        
     }
 }
