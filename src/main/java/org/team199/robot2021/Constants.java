@@ -106,8 +106,13 @@ public final class Constants {
         // TODO: Find experimental value for current draw
         public static final double intakeCurrentDraw = 8.0;
 
+        // TODO: change these to current for 2021 robot
         public static final double cameraHeight = Units.inchesToMeters(40.0);
         public static final double cameraMountingAngleDeg = 29.5;
+
+        // TODO: Find distances between intake and limelight
+        public static final double xLimeDistIntake = 0.0;
+        public static final double zLimeDistIntake = 0.0;
     }
 
     public static final class DrivePorts {
@@ -153,6 +158,7 @@ public final class Constants {
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
+        public static final int kLimelightServoPort = 0; //TODO: set proper channel
     }
 
     /**
@@ -235,6 +241,8 @@ public final class Constants {
             // intake/feeder
             public static final int kIntakeButton = X;
             public static final int kOuttakeButton = Y;
+            // limelight toggle
+            public static final int kLimelightToggleButton = LT; //Limelight Toggle button set to Left Button
             //public static final int kRegurgitateButton = B;
         }
     }
