@@ -1,8 +1,6 @@
 package org.team199.robot2021.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANSparkMax;
 
 import org.team199.robot2021.Constants;
 

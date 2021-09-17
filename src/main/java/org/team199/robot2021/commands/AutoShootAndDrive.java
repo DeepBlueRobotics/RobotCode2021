@@ -20,7 +20,7 @@ public class AutoShootAndDrive extends SequentialCommandGroup {
         addRequirements(drivetrain, intake, feeder, shooter, turret);
 
         TimeOfFlight shooterDistanceSensor = feeder.getShooterDistanceSensor();
-        ShooterHorizontalAim aim = new ShooterHorizontalAim(drivetrain, turret, lime);
+        ShooterHorizontalAim aim = new ShooterHorizontalAim(turret, lime);
         AutoShoot shoot = new AutoShoot(feeder, shooter, shooterDistanceSensor, 3);
 
         /*

@@ -1,15 +1,12 @@
 package org.team199.robot2021.commands;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-
-import frc.robot.lib.Limelight;
-
-import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Turret;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.lib.Limelight;
+
 public class ShooterHorizontalAim extends CommandBase {
-    private final Drivetrain drivetrain;
     private final Limelight limelight;
     private final Turret turret;
     private final double txRange = 2.0;     // TODO: Determine correct txRange
@@ -17,8 +14,7 @@ public class ShooterHorizontalAim extends CommandBase {
     private double rot180Speed;
     private static final int REVERSE_ZERO_TV_MASK = 1 << 0;
     private static final int ROTATE_180_MASK = 1 << 1;
-    public ShooterHorizontalAim(Drivetrain drivetrain, Turret turret, Limelight limelight){
-        this.drivetrain = drivetrain;
+    public ShooterHorizontalAim(Turret turret, Limelight limelight){
         this.turret = turret;
         this.limelight = limelight;
         addRequirements(turret);
@@ -37,7 +33,7 @@ public class ShooterHorizontalAim extends CommandBase {
                 state = state & ~ROTATE_180_MASK;
             }
         } else {
-            double adjustment = limelight.steeringAssist(drivetrain.getHeading());
+            double adjustment = limelight.steeringAssist(turret.getPosition());
             if(tv == 1.0) {
                 state = state & ~REVERSE_ZERO_TV_MASK;
                 if(turret.limited(adjustment)) {
