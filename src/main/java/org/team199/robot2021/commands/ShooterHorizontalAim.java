@@ -10,10 +10,9 @@ public class ShooterHorizontalAim extends CommandBase {
     private final Limelight limelight;
     private final Turret turret;
     private final double txRange = 2.0;     // TODO: Determine correct txRange
-    private int state;
+    private boolean reverseZeroTv;
+    private boolean rotate180;
     private double rot180Speed;
-    private static final int REVERSE_ZERO_TV_MASK = 1 << 0;
-    private static final int ROTATE_180_MASK = 1 << 1;
     public ShooterHorizontalAim(Turret turret, Limelight limelight){
         this.turret = turret;
         this.limelight = limelight;
@@ -22,30 +21,31 @@ public class ShooterHorizontalAim extends CommandBase {
 
     @Override
     public void initialize() {
-        state = 0;
+        reverseZeroTv = false;
+        rotate180 = false;
     }
 
     public void execute() {
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0.0);
-        if((state & ROTATE_180_MASK) == ROTATE_180_MASK) {
+        if(rotate180) {
             turret.set(rot180Speed);
             if(turret.limited(rot180Speed)) {
-                state = state & ~ROTATE_180_MASK;
+                rotate180 = false;
             }
         } else {
             double adjustment = limelight.steeringAssist(turret.getPosition());
             if(tv == 1.0) {
-                state = state & ~REVERSE_ZERO_TV_MASK;
+                reverseZeroTv = false;
                 if(turret.limited(adjustment)) {
-                    state = state | ROTATE_180_MASK;
+                    rotate180 = true;
                     rot180Speed = Math.copySign(1.0, adjustment) * -1.0;
                 }
             } else {
-                if((state & REVERSE_ZERO_TV_MASK) == REVERSE_ZERO_TV_MASK) {
+                if(reverseZeroTv) {
                     adjustment *= -1;
                 }
                 if(turret.limited(adjustment)) {
-                    state = state ^ REVERSE_ZERO_TV_MASK;
+                    reverseZeroTv = !reverseZeroTv;
                 }
             }
             turret.set(adjustment);
