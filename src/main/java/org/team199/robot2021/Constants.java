@@ -144,12 +144,21 @@ public final class Constants {
         //public static final int kClimberWinch = 9;
         //public static final int kClimberLift = 13;
 
+        //TODO: Set Value
+        public static final int kTurretMotor = 19; //TODO: Set Correct Value
+
         // solenoids
         public static final int[] kIntakePistons = { 0, 1, 2, 5 };
 
         // other
         public static final int kFeederInSensor = 11;
         public static final int kFeederOutSensor = 10;
+
+        //TODO: Set Values
+        public static final int kTurretLimitSensor = 3; //TODO: Set Correct Value
+        public static final int kTurretHomeSensor = 2; //TODO: Set Correct Value
+        public static final int kTurretEncoderPort1 = 4; //TODO: Set Correct Value
+        public static final int kTurretEncoderPort2 = 5; //TODO: Set Correct Value
 
         public static final int kAutoPathSwitch1Port = 0;
         public static final int kAutoPathSwitch2Port = 1;
@@ -178,7 +187,7 @@ public final class Constants {
         public static final class RightJoy {
             public static final int port = 1;
 
-            //public static final int alignAndShootButton = 2;
+            public static final int kAlignAndShootButton = 2;
             //public static final int slowDriveButton = 5;
         }
 
@@ -236,6 +245,11 @@ public final class Constants {
             public static final int kIntakeButton = X;
             public static final int kOuttakeButton = Y;
             //public static final int kRegurgitateButton = B;
+
+            // turret
+            public static final int kTurnTurretCounterclockwiseButton = LT; // TODO: change button
+            public static final int kTurnTurretClockwiseButton = RT; // TODO: change button
+            public static final int kCalibrateTurret = START; //TODO: change button
         }
     }
 

@@ -12,28 +12,31 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.constraint.EllipticalRegionConstraint;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
 import org.team199.lib.RobotPath;
 import org.team199.robot2021.Constants.OI;
+import org.team199.robot2021.commands.CalibrateTurret;
 import org.team199.robot2021.commands.GalacticSearchCommand;
+import org.team199.robot2021.commands.Shoot;
+import org.team199.robot2021.commands.ShooterHorizontalAim;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.commands.ToggleIntake;
 import org.team199.robot2021.subsystems.Drivetrain;
+import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;
+import org.team199.robot2021.subsystems.Turret;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.constraint.EllipticalRegionConstraint;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.lib.Limelight;
 
 /**
@@ -48,11 +51,12 @@ public class RobotContainer {
     private final Limelight lime = new Limelight();
     //private final Shooter shooter = new Shooter(lime);
     private final Intake intake = new Intake();
-    //private final Feeder feeder = new Feeder();
+    private final Feeder feeder = new Feeder();
     private final Joystick leftJoy = new Joystick(Constants.OI.LeftJoy.port);
     private final Joystick rightJoy = new Joystick(Constants.OI.RightJoy.port);
     private final Joystick controller = new Joystick(Constants.OI.Controller.port);
     //private final Climber climber = new Climber();
+    private final Turret turret = new Turret();
     private final SendableChooser<Command> autoCommandChooser;
     public Trajectory trajectory;
     public PowerDistributionPanel pdp = new PowerDistributionPanel();
@@ -109,6 +113,8 @@ public class RobotContainer {
                     intake.intake();
             }
         }, feeder, intake));*/
+
+        turret.setDefaultCommand(new RunCommand(turret::stop, turret));
 
         autoCommandChooser = new SendableChooser<Command>();
         autoCommandChooser.setDefaultOption("No autonomous", new InstantCommand());
@@ -185,7 +191,8 @@ public class RobotContainer {
     private void configureButtonBindingsRightJoy() {
         new JoystickButton(rightJoy, 3).whenPressed(new InstantCommand(drivetrain::toggleMode, drivetrain));
         // Align the robot and then shoots
-        //new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(drivetrain, lime), new Shoot(feeder)));
+        new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(turret, lime), new Shoot(feeder)));
+        //new JoystickButton(rightJoy, Constants.OI.RightJoy.kAlignAndShootButton).whileHeld(new SequentialCommandGroup(new ShooterHorizontalAim(turret, lime), new Shoot(feeder)));
     }
 
     private void configureButtonBindingsController() {
@@ -205,6 +212,13 @@ public class RobotContainer {
 
         // climb button
         //new JoystickButton(controller, Constants.OI.Controller.kRaiseRobotButton).whenPressed(new RaiseRobot(climber));
+
+        // turn turret
+        new JoystickButton(controller, Constants.OI.Controller.kTurnTurretCounterclockwiseButton).whileHeld(new InstantCommand(turret::turnCounterclockwise, turret));
+        new JoystickButton(controller, Constants.OI.Controller.kTurnTurretClockwiseButton).whileHeld(new InstantCommand(turret::turnClockwise, turret));
+
+        // calibrate turret
+        new JoystickButton(controller, Constants.OI.Controller.kCalibrateTurret).whenPressed(new CalibrateTurret(turret));
     }
 
     public Command getAutonomousCommand() {
