@@ -4,7 +4,7 @@ import com.playingwithfusion.TimeOfFlight;
 
 import frc.robot.lib.Limelight;
 import frc.robot.lib.LinearInterpolation;
-import org.team199.lib.RobotPath;
+import frc.robot.lib.path.RobotPath;
 import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;

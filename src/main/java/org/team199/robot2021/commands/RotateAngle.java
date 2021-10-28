@@ -27,7 +27,7 @@ public class RotateAngle extends CommandBase {
     //Rotates based on if rotateAngle is positive or negative
     //TODO: define goalAngle as the final angle based on odometry values
     //TODO: ensure getHeading returns an angle
-    goalAngle = drivetrain.getHeading() *Math.PI/180 + rotateAngle;
+    goalAngle = drivetrain.getHeadingDeg() *Math.PI/180 + rotateAngle;
     if (Math.abs(rotateAngle) != rotateAngle) {
       drivetrain.drive(0, 0, -0.1);
     } else {
@@ -40,7 +40,7 @@ public class RotateAngle extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    currentAngle = drivetrain.getHeading()*Math.PI/180;
+    currentAngle = drivetrain.getHeadingDeg()*Math.PI/180;
   }
 
   // Called once the command ends or is interrupted.

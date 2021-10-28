@@ -13,6 +13,8 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.lib.MotorControllerFactory;
+import frc.robot.lib.path.SwerveDriveInterface;
+
 import org.team199.robot2021.Constants;
 import org.team199.robot2021.SwerveModule;
 
@@ -32,7 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Drivetrain extends SubsystemBase {
+public class Drivetrain extends SubsystemBase implements SwerveDriveInterface{
   // compassOffset is magnetic north relative to the current heading
   private final double compassOffset;
   private final AHRS gyro = new AHRS(SPI.Port.kMXP); //Also try kUSB and kUSB2
@@ -68,7 +70,7 @@ public class Drivetrain extends SubsystemBase {
     Translation2d locationBR = new Translation2d(-Constants.DriveConstants.wheelBase / 2, -Constants.DriveConstants.trackWidth / 2);
 
     kinematics = new SwerveDriveKinematics(locationFL, locationFR, locationBL, locationBR);
-    odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(Units.degreesToRadians(getHeading())));
+    odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(Units.degreesToRadians(getHeadingDeg())));
 
     Supplier<Float> pitchSupplier = () -> gyro.getPitch();
     Supplier<Float> rollSupplier = () -> gyro.getRoll();
@@ -109,7 +111,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     // Update the odometry with current heading and encoder position
-    odometry.update(Rotation2d.fromDegrees(getHeading()), modules[0].getCurrentState(), modules[1].getCurrentState(),
+    odometry.update(Rotation2d.fromDegrees(getHeadingDeg()), modules[0].getCurrentState(), modules[1].getCurrentState(),
                     modules[2].getCurrentState(), modules[3].getCurrentState());
   
     // SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getTranslation().getX());
@@ -134,7 +136,7 @@ public class Drivetrain extends SubsystemBase {
     gyro.reset();
   }
 
-  public double getHeading() {
+  public double getHeadingDeg() {
     double x = gyro.getAngle();
     if (SmartDashboard.getBoolean("Field Oriented", true)) {
       x -= SmartDashboard.getNumber("Field Offset from North (degrees)", 0);
@@ -179,7 +181,7 @@ public class Drivetrain extends SubsystemBase {
   private ChassisSpeeds getChassisSpeeds(double forward, double strafe, double rotation) {
     ChassisSpeeds speeds;
     if (SmartDashboard.getBoolean("Field Oriented", true)) {
-      speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Rotation2d.fromDegrees(getHeading()));
+      speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Rotation2d.fromDegrees(getHeadingDeg()));
     } else {
       speeds = new ChassisSpeeds(forward, strafe, rotation);
     }
@@ -208,5 +210,26 @@ public class Drivetrain extends SubsystemBase {
 
   public void coast() {
     for (int i = 0; i < 4; i++) modules[i].coast();
+  }
+
+  @Override
+  public double getMaxAccelMps2() {
+    return Constants.DriveConstants.autoMaxAccel;
+  }
+
+  @Override
+  public double getMaxSpeedMps() {
+    return Constants.DriveConstants.maxSpeed;
+  }
+
+  @Override
+  public void stop() {
+    drive(0, 0, 0);
+
+  }
+
+  @Override
+  public double[][] getPIDConstants() {
+    return new double[][] {Constants.DriveConstants.xPIDController, Constants.DriveConstants.yPIDController, Constants.DriveConstants.thetaPIDController};
   }
 }

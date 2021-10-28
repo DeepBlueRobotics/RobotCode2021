@@ -25,8 +25,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
-import org.team199.lib.RobotPath;
+import edu.wpi.first.wpilibj.trajectory.constraint.MaxVelocityConstraint;
+import edu.wpi.first.wpilibj.trajectory.constraint.TrajectoryConstraint;
+import frc.robot.lib.path.RobotPath;
 import org.team199.robot2021.Constants.OI;
 import org.team199.robot2021.commands.BallSearchAndPickup;
 import org.team199.robot2021.commands.GalacticSearchCommand;
@@ -36,6 +37,7 @@ import org.team199.robot2021.subsystems.Drivetrain;
 import org.team199.robot2021.subsystems.Feeder;
 import org.team199.robot2021.subsystems.Intake;
 import org.team199.robot2021.subsystems.Shooter;
+
 
 import frc.robot.lib.Limelight;
 
@@ -122,39 +124,39 @@ public class RobotContainer {
         // Barrel Racing
         List<EllipticalRegionConstraint>  barrelRegions = new ArrayList<EllipticalRegionConstraint>();
         // Add circular regions around each of the loops around the markers
-        barrelRegions.add(RobotPath.createRegionConstraint(3.8, -3, 1, 1, 0, curvatureRadius));
-        barrelRegions.add(RobotPath.createRegionConstraint(6.1, -1.5, 1, 1, 0, curvatureRadius));
-        barrelRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
+        barrelRegions.add(createRegionConstraint(3.8, -3, 1, 1, 0, curvatureRadius));
+        barrelRegions.add(createRegionConstraint(6.1, -1.5, 1, 1, 0, curvatureRadius));
+        barrelRegions.add(createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
         loadPath("AutoNav: Barrel Racing", "barrelRacing", false, false, false, true, Constants.DriveConstants.autoMaxSpeed, barrelRegions);
         
         // Slalom
         List<EllipticalRegionConstraint>  slalomRegions = new ArrayList<EllipticalRegionConstraint>();
         // Add elliptical regions around where we weave between markers
-        slalomRegions.add(RobotPath.createRegionConstraint(2.3, -3.1, 0.1, 0.9, 90, curvatureRadius));
-        slalomRegions.add(RobotPath.createRegionConstraint(6.8, -3.1, 0.1, 0.9, 90, curvatureRadius));
+        slalomRegions.add(createRegionConstraint(2.3, -3.1, 0.1, 0.9, 90, curvatureRadius));
+        slalomRegions.add(createRegionConstraint(6.8, -3.1, 0.1, 0.9, 90, curvatureRadius));
         // Add a circular region around the end loop
-        slalomRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
+        slalomRegions.add(createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
         loadPath("AutoNav: Slalom","slalom", false, false, false, false, Constants.DriveConstants.autoMaxSpeed, slalomRegions);
         
         // Bounce
         List<EllipticalRegionConstraint>  bounceRegions = new ArrayList<EllipticalRegionConstraint>();
         // Add elliptical regions around each marker we weave through / get close to 
-        bounceRegions.add(RobotPath.createRegionConstraint(2.3, -3, 1, 1, 0, curvatureRadius));
-        bounceRegions.add(RobotPath.createRegionConstraint(3.8, -3, 1, 1, 0, curvatureRadius));
-        bounceRegions.add(RobotPath.createRegionConstraint(5.3, -3, 1, 1, 0, curvatureRadius));
-        bounceRegions.add(RobotPath.createRegionConstraint(6.1, -3, 1, 1, 0, curvatureRadius));
-        bounceRegions.add(RobotPath.createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
-        bounceRegions.add(RobotPath.createRegionConstraint(1.5, -1.5, 1, 1, 0, curvatureRadius));
-        bounceRegions.add(RobotPath.createRegionConstraint(3, -1.5, 1, 1, 0, curvatureRadius));
-        bounceRegions.add(RobotPath.createRegionConstraint(3.8, -1.5, 1, 1, 0, curvatureRadius));
-        bounceRegions.add(RobotPath.createRegionConstraint(5.3, -1.5, 1, 1, 0, curvatureRadius));
-        bounceRegions.add(RobotPath.createRegionConstraint(7.6, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(createRegionConstraint(2.3, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(createRegionConstraint(3.8, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(createRegionConstraint(5.3, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(createRegionConstraint(6.1, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(createRegionConstraint(7.6, -3, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(createRegionConstraint(1.5, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(createRegionConstraint(3, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(createRegionConstraint(3.8, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(createRegionConstraint(5.3, -1.5, 1, 1, 0, curvatureRadius));
+        bounceRegions.add(createRegionConstraint(7.6, -1.5, 1, 1, 0, curvatureRadius));
         // Create a SequentialCommandGroup for the multiple parts of bounce
         try {
-            Command bounce1 = new RobotPath("Bounce1", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed*0, bounceRegions).getPathCommand(false, false);
-            Command bounce2 = new RobotPath("Bounce2", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed*0, bounceRegions).getPathCommand(false, false);
-            Command bounce3 = new RobotPath("Bounce3", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed*0, bounceRegions).getPathCommand(false, false);
-            Command bounce4 = new RobotPath("Bounce4", drivetrain, intake, false, false, Constants.DriveConstants.autoMaxSpeed, bounceRegions).getPathCommand(false, true);
+            Command bounce1 = applyConstraints(new RobotPath("Bounce1", drivetrain, false, new Translation2d()).setMaxSpeedMps(Constants.DriveConstants.autoMaxSpeed), bounceRegions).getPathCommand(false, false);
+            Command bounce2 = applyConstraints(new RobotPath("Bounce2", drivetrain, false, new Translation2d()).setMaxSpeedMps(Constants.DriveConstants.autoMaxSpeed), bounceRegions).getPathCommand(false, false);
+            Command bounce3 = applyConstraints(new RobotPath("Bounce3", drivetrain, false, new Translation2d()).setMaxSpeedMps(Constants.DriveConstants.autoMaxSpeed), bounceRegions).getPathCommand(false, false);
+            Command bounce4 = applyConstraints(new RobotPath("Bounce4", drivetrain, false, new Translation2d()).setMaxSpeedMps(Constants.DriveConstants.autoMaxSpeed), bounceRegions).getPathCommand(false, false);
             autoCommandChooser.addOption("AutoNav: Bounce", bounce1.andThen(bounce2, bounce3, bounce4));
         } catch (IOException io) {
             System.err.println("Could not create Bounce autonomous command.");
@@ -171,6 +173,12 @@ public class RobotContainer {
         autoCommandChooser.addOption("Galactic Search: Solution 3", new GalacticSearchCommand(drivetrain, intake, lime));
         SmartDashboard.putData(autoCommandChooser);
         //linearInterpol = new LinearInterpolation("ShooterData.csv");
+    }
+
+    public static EllipticalRegionConstraint createRegionConstraint(double centerX, double centerY, double xWidth, double yWidth,
+                                                                    double rotation, double curvatureRadius) {
+        return new EllipticalRegionConstraint(new Translation2d(centerX, centerY), xWidth, yWidth, Rotation2d.fromDegrees(rotation),
+                                              new MaxVelocityConstraint(Math.sqrt(curvatureRadius * Constants.DriveConstants.autoCentripetalAccel)));
     }
 
     private void configureButtonBindingsLeftJoy() {
@@ -230,7 +238,7 @@ public class RobotContainer {
     private void loadPath(final String chooserName, final String pathName, final boolean faceInPathDirection, final boolean deployIntake, 
                           final boolean isInverted, final boolean stopAtEnd, final double endVelocity, final List<EllipticalRegionConstraint> regionConstraints) {
         try {
-            RobotPath path = new RobotPath(pathName, drivetrain, intake, deployIntake, isInverted, endVelocity, regionConstraints);
+            RobotPath path = new RobotPath(pathName, drivetrain, isInverted, new Translation2d());
             autoCommandChooser.addOption(chooserName, path.getPathCommand(faceInPathDirection, stopAtEnd));
         } catch(final Exception e) {
             e.printStackTrace(System.err);
@@ -276,6 +284,11 @@ public class RobotContainer {
         //processedInput = (((1-Math.cos(value*Math.PI))/2)*((1-Math.cos(value*Math.PI))/2))*(value/Math.abs(value));
         processedInput = Math.copySign(((1-Math.cos(value*Math.PI))/2)*((1-Math.cos(value*Math.PI))/2),value);
         return processedInput;
+    }
+
+    private RobotPath applyConstraints(RobotPath path, List<? extends TrajectoryConstraint> constraints) {
+        path.getTrajectoryConfig().addConstraints(constraints);
+        return path;
     }
 
     /*
