@@ -205,8 +205,8 @@ public class RobotContainer {
         // Intake toggle button
         // new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
         new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new BallSearchAndPickup(drivetrain, intake, feeder, shooter, lime));
-        new JoystickButton(controller, Constants.OI.Controller.kLimelightToggleButton).whenPressed(new InstantCommand(() -> {
-            intake.setLimelightSearching(!intake.isLimelightSearching()); 
+        // new JoystickButton(controller, Constants.OI.Controller.kLimelightToggleButton).whenPressed(new InstantCommand(() -> {
+            // intake.setLimelightSearching(!intake.isLimelightSearching()); 
         
         }));
         // Power cell regurgitate button

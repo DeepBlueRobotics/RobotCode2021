@@ -117,16 +117,16 @@ public final class Constants {
 
     public static final class DrivePorts {
         // CAN ids for each of the drive motor controllers.
-        public static final int driveFrontLeft = 9;
-        public static final int driveFrontRight = 7;
-        public static final int driveBackLeft = 4;
-        public static final int driveBackRight = 2;
+        public static final int driveFrontLeft = 15;
+        public static final int driveFrontRight = 16;
+        public static final int driveBackLeft = 14;
+        public static final int driveBackRight = 13;
 
         // CAN ids for each of the turn motor controllers.
-        public static final int turnFrontLeft = 1;
-        public static final int turnFrontRight = 11;
-        public static final int turnBackLeft = 3;
-        public static final int turnBackRight = 5;
+        public static final int turnFrontLeft = 6;
+        public static final int turnFrontRight = 8;
+        public static final int turnBackLeft = 5;
+        public static final int turnBackRight = 7;
 
         // CAN ids for each of the CANCoders
         // TODO: figure out correct ports
