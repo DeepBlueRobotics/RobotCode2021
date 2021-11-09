@@ -5,10 +5,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 
+import org.team199.robot2021.Constants;
+
 import com.revrobotics.CANPIDController;
 
 import frc.robot.lib.Limelight;
-//import frc.robot.lib.MotorControllerFactory;
+import frc.robot.lib.MotorControllerFactory;
 import frc.robot.lib.logging.Log;
 //import org.team199.robot2021.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,8 +30,8 @@ public class Shooter extends SubsystemBase {
     private double kTargetSpeed = 4200;
     private final double speedOffset = 100;
 
-    private final CANSparkMax master = null;//MotorControllerFactory.createSparkMax(Constants.Drive.kShooterMaster);
-    private final CANSparkMax slave = null;//MotorControllerFactory.createSparkMax(Constants.Drive.kShooterSlave);
+    private final CANSparkMax master = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kShooterMaster);
+    private final CANSparkMax slave = MotorControllerFactory.createSparkMax(Constants.DrivePorts.kShooterSlave);
     private final CANPIDController pidController = master.getPIDController();
 
     private final Limelight lime;

@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj.trajectory.constraint.MaxVelocityConstraint;
 import edu.wpi.first.wpilibj.trajectory.constraint.TrajectoryConstraint;
 import frc.robot.lib.path.RobotPath;
 import org.team199.robot2021.Constants.OI;
-import org.team199.robot2021.commands.BallSearchAndPickup;
+//import org.team199.robot2021.commands.BallSearchAndPickup;
 import org.team199.robot2021.commands.GalacticSearchCommand;
 import org.team199.robot2021.commands.TeleopDrive;
 import org.team199.robot2021.commands.ToggleIntake;
@@ -204,7 +204,7 @@ public class RobotContainer {
         new JoystickButton(controller, Constants.OI.Controller.B).whenPressed(new InstantCommand(() -> { SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true)); }));
         // Intake toggle button
         // new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new ToggleIntake(intake));
-        new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new BallSearchAndPickup(drivetrain, intake, feeder, shooter, lime));
+        // new JoystickButton(controller, Constants.OI.Controller.kIntakeButton).whenPressed(new BallSearchAndPickup(drivetrain, intake, feeder, shooter, lime));
         // new JoystickButton(controller, Constants.OI.Controller.kLimelightToggleButton).whenPressed(new InstantCommand(() -> {
             // intake.setLimelightSearching(!intake.isLimelightSearching()); 
         

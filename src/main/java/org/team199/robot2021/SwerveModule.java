@@ -149,6 +149,7 @@ public class SwerveModule {
         }        
         prevTurnVelocity = state.velocity;
         SmartDashboard.putNumber(moduleString + " error (deg)", turnPIDController.getPositionError());
+        updateSmartDashboard();
     }
 
     /**

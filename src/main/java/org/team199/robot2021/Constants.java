@@ -135,7 +135,7 @@ public final class Constants {
         public static final int canCoderPortBL = 1;
         public static final int canCoderPortBR = 2;
 
-        public static final int kIntakeRoller = 13;
+        public static final int kIntakeRoller = 10; //Initially 13
 
         public static final int kPDPCANPort = 0;
         public static final int kIntakeRollerPDP = 3;
@@ -143,8 +143,8 @@ public final class Constants {
         public static final int kFeederEjector = 7;
         public static final int kFeederBelt = 8;
 
-        //public static final int kShooterMaster = 1;     // Left
-        //public static final int kShooterSlave = 14;     // Right
+        public static final int kShooterMaster = 2;     // Left initially 1
+        public static final int kShooterSlave = 3;     // Right initially 14
 
         //public static final int kClimberWinch = 9;
         //public static final int kClimberLift = 13;
@@ -171,10 +171,10 @@ public final class Constants {
         public static enum StickType {LEFT, RIGHT};
         public static enum StickDirection {X, Y};
 
-        public static ControlType CONTROL_TYPE = ControlType.GAMEPAD;
+        public static ControlType CONTROL_TYPE = ControlType.JOYSTICKS;
         public static final double JOY_THRESH = 0.01;
         public static final class LeftJoy {
-            public static final int port = 2;
+            public static final int port = 0;
 
             //public static final int toggleDriveModeButton = 4;
             //public static final int characterizedDriveButton = 5;
@@ -189,7 +189,7 @@ public final class Constants {
         }
 
         public static final class Controller {
-            public static final int port = 0;
+            public static final int port = 2;
             public static Joystick controller = new Joystick(port);
             public static int X;
             public static int A;
